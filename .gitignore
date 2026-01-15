@@ -87,3 +87,6 @@ Tuist/.build
 
 # Fastlane.swift runner binary
 **/fastlane/FastlaneRunner
+
+# 환경 변수
+**/fastlane/.env.default
