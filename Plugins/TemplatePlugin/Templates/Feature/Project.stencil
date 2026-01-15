@@ -1,0 +1,25 @@
+//
+//  Project.swift
+//  ProjectDescriptionHelpers
+//
+//  Created by {{ author }} on {{ current_date }}.
+//
+
+import ProjectDescription
+import ProjectDescriptionHelpers
+import DependencyPlugin
+
+let project = Project.makeModule(
+    name: "{{name}}Feature",
+    targets: [
+        .makeFrameworkTarget(
+            name: "{{name}}Feature",
+            dependencies: [
+                .Features.baseFeatureDependency
+            ],
+            scripts: [.swiftLint],
+            isStatic: true,
+            hasResources: false
+        )
+    ]
+)
