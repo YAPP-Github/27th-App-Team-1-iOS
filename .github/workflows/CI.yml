@@ -19,16 +19,35 @@ jobs:
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.SSH_KEY }}
-          known_hosts: ${{ secrets.KNOWN_HOSTS }}`
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
 
-      - name: 3️⃣ Run Onboarding via Makefile
-        env:
-          CI: true # 스크립트가 SSH 주소를 선택하게 함
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+      - name: 3️⃣ 보안 설정 파일 가져오기
         run: |
-          make setup
+          git clone $CONFIG_REPO $TEMP_DIR
+
+          SOURCE_PATH="$TEMP_DIR/PrivateFile"
           
-      - name: 4️⃣ Build Check & Discord Notification
+          cp SOURCE_PATH/Debug.xcconfig xcconfigs/
+          cp SOURCE_PATH/Release.xcconfig xcconfigs/
+          cp SOURCE_PATH/.env.default fastlane/
+          rm -rf temp_private_configs
+        env:
+          CONFIG_REPO: ${{ secrets.PRIVATE_REPO }}
+          TEMP_DIR: "temp_private_configs"
+
+      # mise-action을 써서 tuist, ruby 등 도구 설치 (PATH 자동 등록)
+      - name: 4️⃣ mise를 통한 도구 설치 (Tuist/Ruby)
+        uses: jdx/mise-action@v2
+        with:
+          install: true
+
+      - name: 5️⃣ 의존성 설치 및 프로젝트 생성
+        run: |
+          bundle install
+          tuist install
+          tuist generate --no-open
+
+      - name: 6️⃣ Build Check & Discord Notification
         env:
           DISCORD_URL: ${{ secrets.DISCORD_URL }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
