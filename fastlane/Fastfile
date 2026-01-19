@@ -1,0 +1,92 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+platform :ios do
+  
+  # ---------------------------------------------------------
+  # 1. CI 전용 레인 (PR 시 빌드 확인용)
+  # ---------------------------------------------------------
+  desc "Check Build (CI)"
+  lane :ci_check do
+    begin
+      xcodebuild(
+        workspace: "NDGL-iOS.xcworkspace",
+        scheme: "App",
+        configuration: "Debug",
+        sdk: "iphonesimulator",
+        xcargs: "CODE_SIGNING_ALLOWED=NO"
+      )
+      # 성공 시 CI용 메시지 전송
+      send_discord_message(message: "CI 빌드 체크 성공!", success: true, type: "CI")
+    rescue => exception
+      # 실패 시 에러 내용과 함께 알림
+      send_discord_message(message: "CI 빌드 실패: #{exception}", success: false, type: "CI")
+      raise exception
+    end
+  end
+
+  # ---------------------------------------------------------
+  # 2. 배포 전용 레인 (App Store / TestFlight 업로드)
+  # ---------------------------------------------------------
+  desc "Push a new release build to the App Store"
+  lane :release do
+    begin
+      # match(type: "appstore", readonly: true) # CI 환경이라면 추가 권장
+      build_app(scheme: "NDGL-iOS-Workspace")
+      upload_to_app_store(skip_metadata: true, skip_screenshots: true)
+      
+      send_discord_message(message: "TestFlight 업로드 완료! 테스터 알림이 전송되었습니다. 🚀", success: true, type: "배포")
+    rescue => exception
+      send_discord_message(message: "배포 실패 에러: #{exception}", success: false, type: "배포")
+      raise exception
+    end
+  end
+
+  # ---------------------------------------------------------
+  # 3. 기기 관리 (로컬용)
+  # ---------------------------------------------------------
+  desc "Register Devices"
+  lane :register_new_device do |options|
+    device_name = prompt(text: "Enter the device name: ")
+    device_udid = prompt(text: "Enter the device UDID: ")
+    register_devices(devices: { device_name => device_udid })
+    match(type: "development", force_for_new_devices: true)
+  end
+end
+
+# ---------------------------------------------------------
+# 🔔 Discord 메시지 전송 함수 (공통)
+# ---------------------------------------------------------
+# ---------------------------------------------------------
+# 🔔 Discord 메시지 전송 함수 (공통)
+# ---------------------------------------------------------
+def send_discord_message(message:, success:, type: "CI")
+  project_path = "./Projects/App/App.xcodeproj" 
+
+  version = get_version_number(xcodeproj: project_path)
+  build_number = get_build_number(xcodeproj: project_path)
+  
+  emoji = success ? "✅" : "🚨"
+  title_text = success ? "#{type} 성공" : "#{type} 실패"
+
+  discord_notifier(
+    webhook_url: ENV["DISCORD_URL"],
+    title: "#{emoji} #{title_text} — v#{version} (#{build_number})",
+    description: message,
+    success: success
+  )
+end

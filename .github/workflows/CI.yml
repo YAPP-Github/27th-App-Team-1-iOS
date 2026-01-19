@@ -1,0 +1,58 @@
+# This workflow will build a Swift project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
+
+name: CI
+
+on:
+  pull_request:
+    branches: [ "develop" ]
+
+jobs:
+  build:
+    runs-on: macos-15
+
+    steps:
+      - name: 1️⃣ Checkout Project
+        uses: actions/checkout@v4
+
+      - name: 2️⃣ SSH key 설치
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+
+      - name: 3️⃣ 보안 설정 파일 가져오기
+        env:
+          CONFIG_REPO: ${{ secrets.PRIVATE_REPO }}
+          TEMP_DIR: "temp_private_configs"
+        run: |
+          git clone $CONFIG_REPO $TEMP_DIR
+
+          SOURCE_PATH="$TEMP_DIR/PrivateFile"
+
+          echo "📁 파일 복사 중: $SOURCE_PATH"
+          cp "$SOURCE_PATH/Debug.xcconfig" xcconfigs/
+          cp "$SOURCE_PATH/Release.xcconfig" xcconfigs/
+          cp "$SOURCE_PATH/.env.default" fastlane/
+
+          rm -rf "$TEMP_DIR"
+          echo "✅ 보안 파일 배치 완료"
+
+      # mise-action을 써서 tuist, ruby 등 도구 설치 (PATH 자동 등록)
+      - name: 4️⃣ mise를 통한 도구 설치 (Tuist/Ruby)
+        uses: jdx/mise-action@v2
+        with:
+          install: true
+
+      - name: 5️⃣ 의존성 설치 및 프로젝트 생성
+        run: |
+          bundle install
+          tuist install
+          tuist generate --no-open
+
+      - name: 6️⃣ Build Check & Discord Notification
+        env:
+          DISCORD_URL: ${{ secrets.DISCORD_URL }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+        run: |
+          bundle exec fastlane ci_check
