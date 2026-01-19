@@ -22,18 +22,21 @@ jobs:
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
 
       - name: 3️⃣ 보안 설정 파일 가져오기
+        env:
+          CONFIG_REPO: ${{ secrets.PRIVATE_REPO }}
+          TEMP_DIR: "temp_private_configs"
         run: |
           git clone $CONFIG_REPO $TEMP_DIR
 
           SOURCE_PATH="$TEMP_DIR/PrivateFile"
-          
-          cp SOURCE_PATH/Debug.xcconfig xcconfigs/
-          cp SOURCE_PATH/Release.xcconfig xcconfigs/
-          cp SOURCE_PATH/.env.default fastlane/
-          rm -rf temp_private_configs
-        env:
-          CONFIG_REPO: ${{ secrets.PRIVATE_REPO }}
-          TEMP_DIR: "temp_private_configs"
+
+          echo "📁 파일 복사 중: $SOURCE_PATH"
+          cp "$SOURCE_PATH/Debug.xcconfig" xcconfigs/
+          cp "$SOURCE_PATH/Release.xcconfig" xcconfigs/
+          cp "$SOURCE_PATH/.env.default" fastlane/
+
+          rm -rf "$TEMP_DIR"
+          echo "✅ 보안 파일 배치 완료"
 
       # mise-action을 써서 tuist, ruby 등 도구 설치 (PATH 자동 등록)
       - name: 4️⃣ mise를 통한 도구 설치 (Tuist/Ruby)
