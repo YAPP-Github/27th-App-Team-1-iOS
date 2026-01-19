@@ -31,9 +31,10 @@ public extension Project {
         "NSAppTransportSecurity": .dictionary([
             "NSAllowsArbitraryLoads": .boolean(true)
         ]),
-        "ITSAppUsesNonExemptEncryption": .boolean(false)
+        "ITSAppUsesNonExemptEncryption": .boolean(false),
+        "BASE_URL": .string("$(BASE_URL)")
     ]
-    
+
     static let demoInfoPlist: [String: Plist.Value] = [
         "CFBundleShortVersionString": .string("1.0.0"),
         "CFBundleDevelopmentRegion": .string("ko"),
@@ -57,9 +58,10 @@ public extension Project {
         "NSAppTransportSecurity": .dictionary([
             "NSAllowsArbitraryLoads": .boolean(true)
         ]),
-        "ITSAppUsesNonExemptEncryption": .boolean(false)
+        "ITSAppUsesNonExemptEncryption": .boolean(false),
+        "BASE_URL": .string("$(BASE_URL)")
     ]
-    
+
     static let framework: InfoPlist = .extendingDefault(with: [
         "CFBundlePackageType": "FMWK"
     ])
