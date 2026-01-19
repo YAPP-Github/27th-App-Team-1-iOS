@@ -12,14 +12,7 @@ cd "$(dirname "$0")/.."
 # 1. PrivateFile 레포지토리를 통한 보안 파일 자동 세팅
 # ---------------------------------------------------------
 
-# CI 환경인지 로컬 환경인지 확인하여 URL 분기
-if [ "$CI" = "true" ]; then
-    echo "🌐 CI 환경 감지: SSH 주소를 사용합니다."
-    PRIVATE_REPO_URL="git@github.com:ChoiAnYong/fastlane-match.git"
-else
-    echo "💻 로컬 환경 감지: HTTPS 주소를 사용합니다."
-    PRIVATE_REPO_URL="https://github.com/ChoiAnYong/fastlane-match.git"
-fi
+PRIVATE_REPO_URL="https://github.com/ChoiAnYong/fastlane-match.git"
 TEMP_DIR="temp_private_configs"
 
 echo "🔐 보안 설정 파일을 가져오는 중 (PrivateFile 레포지토리)..."
