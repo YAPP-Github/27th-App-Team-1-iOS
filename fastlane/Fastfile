@@ -22,3 +22,15 @@ platform :ios do
     upload_to_app_store(skip_metadata: true, skip_screenshots: true)
   end
 end
+
+### Device Management
+
+ desc "Register Devices"
+ lane :register_new_device do  |options|
+   device_name = prompt(text: "Enter the device name: ")
+   device_udid = prompt(text: "Enter the device UDID: ")
+   device_hash = {}
+   device_hash[device_name] = device_udid
+   register_devices(devices: device_hash)
+   match(type: "development", force_for_new_devices: true)
+ end

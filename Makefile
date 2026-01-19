@@ -25,3 +25,7 @@ feature:
 setup:
 	@chmod +x Scripts/onboarding.sh
 	@/bin/bash Scripts/onboarding.sh
+
+# 디바이스 추가
+device:
+	bundle exec fastlane register_new_device
