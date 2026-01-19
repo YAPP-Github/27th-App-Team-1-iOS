@@ -8,16 +8,30 @@
 
 import Foundation
                                                                                                    
-struct SignupRequest: Encodable {
-    let fcmToken: String
-    let deviceModel: String?
-    let deviceOs: String?
-    let deviceOsVersion: String?
-    let appVersion: String?
+public struct SignupRequest: Encodable {
+    public let fcmToken: String
+    public let deviceModel: String?
+    public let deviceOs: String?
+    public let deviceOsVersion: String?
+    public let appVersion: String?
+
+    public init(
+        fcmToken: String,
+        deviceModel: String? = nil,
+        deviceOs: String? = nil,
+        deviceOsVersion: String? = nil,
+        appVersion: String? = nil
+    ) {
+        self.fcmToken = fcmToken
+        self.deviceModel = deviceModel
+        self.deviceOs = deviceOs
+        self.deviceOsVersion = deviceOsVersion
+        self.appVersion = appVersion
+    }
 }
 
-struct SignupResponse: Decodable {
-    let uuid: String
-    let accessToken: String
-    let nickname: String
+public struct SignupResponse: Decodable {
+    public let uuid: String
+    public let accessToken: String
+    public let nickname: String
 }

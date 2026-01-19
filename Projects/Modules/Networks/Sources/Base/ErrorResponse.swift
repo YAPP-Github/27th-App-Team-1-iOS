@@ -8,13 +8,13 @@
 
 import Foundation
                                                                                                                       
-struct ErrorResponse: Decodable {
-    let code: String?
-    let message: String?
-    let errors: [ErrorDetail]?
-                                                                                                                      
-    struct ErrorDetail: Decodable {
-        let field: String?
-        let message: String?
+public struct ErrorResponse: Decodable {
+    public let code: String?
+    public let message: String?
+    public let errors: [ErrorDetail]?
+
+    public struct ErrorDetail: Decodable {
+        public let field: String?
+        public let message: String?
     }
 }   

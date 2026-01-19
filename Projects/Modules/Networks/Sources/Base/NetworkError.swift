@@ -8,12 +8,12 @@
 
 import Foundation
 
-enum NetworkError: Error {
+public enum NetworkError: Error {
     case connectionFailed
     case decodingFailed
     case unknown(Error)
-                                                                                                                      
-    var message: String {
+
+    public var message: String {
         switch self {
         case .connectionFailed:
             return "네트워크 연결을 확인해주세요"

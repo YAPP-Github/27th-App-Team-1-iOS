@@ -9,11 +9,11 @@
 import Foundation
 
 
-enum SignupField {
+public enum SignupField {
     case fcmToken
     case unknown(String)
-    
-    init(rawValue: String) {
+
+    public init(rawValue: String) {
         switch rawValue {
         case "fcmToken":    self = .fcmToken
         default:            self = .unknown(rawValue)
@@ -22,21 +22,21 @@ enum SignupField {
 }
 
 // MARK: - Error
-struct SignupError: APIErrorProtocol {
-    let type: ErrorType
-    let message: String
-    let field: SignupField?
-    let fieldMessage: String?
-    
-    enum ErrorType {
+public struct SignupError: APIErrorProtocol {
+    public let type: ErrorType
+    public let message: String
+    public let field: SignupField?
+    public let fieldMessage: String?
+
+    public enum ErrorType {
         case validationError
         case internalServerError
         case undefined(code: String)
     }
-    
-    init(code: String, message: String, errors: [ErrorResponse.ErrorDetail]) {
+
+    public init(code: String, message: String, errors: [ErrorResponse.ErrorDetail]) {
         self.message = message
-        
+
         if let firstError = errors.first {
             self.field = SignupField(rawValue: firstError.field ?? "")
             self.fieldMessage = firstError.message
@@ -44,7 +44,7 @@ struct SignupError: APIErrorProtocol {
             self.field = nil
             self.fieldMessage = nil
         }
-        
+
         switch code {
         case "COMM-01-005": self.type = .validationError
         case "COMM-08-001": self.type = .internalServerError

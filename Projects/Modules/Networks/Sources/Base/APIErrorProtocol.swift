@@ -8,8 +8,8 @@
                                                                                   
 import Foundation
                                                                                                                       
-protocol APIErrorProtocol: Error {
+public protocol APIErrorProtocol: Error {
     var message: String { get }
-                                                                                                                      
+
     init(code: String, message: String, errors: [ErrorResponse.ErrorDetail])
 }

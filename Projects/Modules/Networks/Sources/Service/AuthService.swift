@@ -9,19 +9,18 @@
 import Foundation
 import Moya
 
-protocol AuthServiceProtocol {
+public protocol AuthServiceProtocol {
     func signup(request: SignupRequest) async -> NetworkResult<SignupResponse, SignupError>
 }
 
-
-final class AuthService: AuthServiceProtocol {
+public final class AuthService: AuthServiceProtocol {
     private let provider: MoyaProvider<AuthAPI>
-    
-    init(provider: MoyaProvider<AuthAPI> = MoyaProvider<AuthAPI>()) {
+
+    public init(provider: MoyaProvider<AuthAPI> = MoyaProvider<AuthAPI>()) {
         self.provider = provider
     }
-    
-    func signup(request: SignupRequest) async -> NetworkResult<SignupResponse, SignupError> {
+
+    public func signup(request: SignupRequest) async -> NetworkResult<SignupResponse, SignupError> {
         await provider.request(.signup(request: request), errorType: SignupError.self)
     }
 }

@@ -6,40 +6,42 @@
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
+import Alamofire
 import Foundation
 import Moya
                                                                                                                       
-enum AuthAPI {
+public enum AuthAPI {
     case signup(request: SignupRequest)
 }
-                                                                                                                      
+
 extension AuthAPI: TargetType {
-    var baseURL: URL {
+    public var baseURL: URL {
         return NetworkConfiguration.baseURL
     }
-                                                                                                                      
-    var path: String {
+
+    public var path: String {
         switch self {
         case .signup:
-            return "/api/v1/auth/signup"
+            return "/api/v1/auth/users"
         }
     }
-                                                                                                                      
-    var method: Moya.Method {
+
+    public var method: Moya.Method {
         switch self {
         case .signup:
             return .post
         }
     }
-                                                                                                                      
-    var task: Moya.Task {
+
+    public var task: Moya.Task {
         switch self {
         case .signup(let request):
             return .requestJSONEncodable(request)
         }
     }
-                                                                                                                      
-    var headers: [String: String]? {
+
+    public var headers: [String: String]? {
         return ["Content-Type": "application/json"]
     }
+
 }
