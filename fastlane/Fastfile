@@ -31,7 +31,7 @@ platform :ios do
         xcargs: "CODE_SIGNING_ALLOWED=NO"
       )
       # 성공 시 CI용 메시지 전송
-      send_discord_message(message: "CI 빌드 체크 성공! 코드가 안전합니다. ✅", success: true, type: "CI")
+      send_discord_message(message: "CI 빌드 체크 성공!", success: true, type: "CI")
     rescue => exception
       # 실패 시 에러 내용과 함께 알림
       send_discord_message(message: "CI 빌드 실패: #{exception}", success: false, type: "CI")
@@ -75,7 +75,7 @@ end
 # 🔔 Discord 메시지 전송 함수 (공통)
 # ---------------------------------------------------------
 def send_discord_message(message:, success:, type: "CI")
-  project_path = "Projects/App/App.xcodeproj" 
+  project_path = "./Projects/App/App.xcodeproj" 
   
   # 프로젝트 파일이 존재하는지 확인 (에러 방지용 로그)
   unless File.exist?(project_path)
