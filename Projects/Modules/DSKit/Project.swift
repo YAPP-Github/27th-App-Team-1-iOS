@@ -15,7 +15,7 @@ let project = Project.makeModule(
         .makeFrameworkTarget(
             name: "DSKit",
             dependencies: [
-                .core   
+                .core
             ],
             scripts: [.swiftLint],
             hasResources: false

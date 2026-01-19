@@ -23,8 +23,8 @@ feature:
 
 # 팀원이 파일을 모두 배치한 후 실행
 setup:
-	@chmod +x Scripts/onboarding.sh
-	@/bin/bash Scripts/onboarding.sh
+	@chmod +x Scripts/Onboarding.sh
+	@/bin/bash Scripts/Onboarding.sh
 
 # 디바이스 추가
 device:
