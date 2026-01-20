@@ -8,7 +8,6 @@
 
 import Foundation
 
-
 public enum SignupField: Sendable {
     case fcmToken
     case unknown(String)
