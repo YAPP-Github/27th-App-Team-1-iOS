@@ -27,8 +27,6 @@ extension SignupError {
         switch code {
         case "COMM-01-005":
             self = .validationFailed(field: field, message: fieldMessage)
-        case "AUTH-01-001":
-            self = .userAlreadyExists
         case "COMM-08-001":
             self = .serverError(message: message)
         default:

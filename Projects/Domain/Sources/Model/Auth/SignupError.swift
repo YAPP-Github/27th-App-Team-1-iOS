@@ -20,7 +20,6 @@ public enum SignupField: Sendable, Equatable {
 
 public enum SignupError: Error, Sendable {
     case validationFailed(field: SignupField, message: String)
-    case userAlreadyExists
     case serverError(message: String?)
     case networkError(message: String)
     case unknown(code: String, message: String)
