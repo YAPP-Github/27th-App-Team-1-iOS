@@ -12,7 +12,7 @@ public extension Settings {
     static let frameworkSettings: Settings = .settings(
         base: [
             "SKIP_INSTALL": "YES",
-            "BUILD_LIBRARY_FOR_DISTRIBUTION": "YES",
+            "BUILD_LIBRARY_FOR_DISTRIBUTION": "NO",
             "DEFINES_MODULE": "YES",
             "ENABLE_BITCODE": "NO",
             "IPHONEOS_DEPLOYMENT_TARGET": .string(Environment.deploymentTarget),
