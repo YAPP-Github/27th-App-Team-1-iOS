@@ -11,10 +11,10 @@ import Moya
 
 extension MoyaProvider {
     private static var successCode: String { "2000" }
-    
-    func request<T: Decodable & Sendable, E: APIErrorProtocol & Sendable>(
+
+    func request<T: Decodable & Sendable, E: Error & Sendable>(
         _ target: Target,
-        errorType: E.Type
+        errorMapper: @escaping @Sendable (String, String, [ErrorResponse.ErrorDetail]) -> E
     ) async -> NetworkResult<T, E> {
         await withCheckedContinuation { continuation in
             self.request(target) { result in
@@ -25,7 +25,7 @@ extension MoyaProvider {
                             BaseResponse<T>.self,
                             from: response.data
                         )
-                        
+
                         if baseResponse.code == Self.successCode {
                             guard let data = baseResponse.data else {
                                 continuation.resume(returning: .networkFailure(.decodingFailed))
@@ -37,17 +37,17 @@ extension MoyaProvider {
                                 ErrorResponse.self,
                                 from: response.data
                             )
-                            let apiError = E(
-                                code: errorResponse.code ?? "",
-                                message: errorResponse.message ?? "",
-                                errors: errorResponse.errors ?? []
+                            let apiError = errorMapper(
+                                errorResponse.code ?? "",
+                                errorResponse.message ?? "",
+                                errorResponse.errors ?? []
                             )
                             continuation.resume(returning: .failure(apiError))
                         }
                     } catch {
                         continuation.resume(returning: .networkFailure(.decodingFailed))
                     }
-                    
+
                 case .failure(let moyaError):
                     let networkError = Self.mapMoyaError(moyaError)
                     continuation.resume(returning: .networkFailure(networkError))
@@ -55,10 +55,10 @@ extension MoyaProvider {
             }
         }
     }
-    
-    func requestPlain<E: APIErrorProtocol & Sendable>(
+
+    func requestPlain<E: Error & Sendable>(
         _ target: Target,
-        errorType: E.Type
+        errorMapper: @escaping @Sendable (String, String, [ErrorResponse.ErrorDetail]) -> E
     ) async -> NetworkResult<Void, E> {
         await withCheckedContinuation { continuation in
             self.request(target) { result in
@@ -69,7 +69,7 @@ extension MoyaProvider {
                             BaseResponse<EmptyResponse>.self,
                             from: response.data
                         )
-                        
+
                         if baseResponse.code == Self.successCode {
                             continuation.resume(returning: .success(()))
                         } else {
@@ -77,17 +77,17 @@ extension MoyaProvider {
                                 ErrorResponse.self,
                                 from: response.data
                             )
-                            let apiError = E(
-                                code: errorResponse.code ?? "",
-                                message: errorResponse.message ?? "",
-                                errors: errorResponse.errors ?? []
+                            let apiError = errorMapper(
+                                errorResponse.code ?? "",
+                                errorResponse.message ?? "",
+                                errorResponse.errors ?? []
                             )
                             continuation.resume(returning: .failure(apiError))
                         }
                     } catch {
                         continuation.resume(returning: .networkFailure(.decodingFailed))
                     }
-                    
+
                 case .failure(let moyaError):
                     let networkError = Self.mapMoyaError(moyaError)
                     continuation.resume(returning: .networkFailure(networkError))
@@ -95,7 +95,7 @@ extension MoyaProvider {
             }
         }
     }
-    
+
     private static func mapMoyaError(_ error: MoyaError) -> NetworkError {
         switch error {
         case .underlying(let nsError as NSError, _)
