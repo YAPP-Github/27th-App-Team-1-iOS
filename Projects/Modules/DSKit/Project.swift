@@ -18,7 +18,7 @@ let project = Project.makeModule(
                 .core
             ],
             scripts: [.swiftLint],
-            hasResources: false
+            hasResources: true
         )
     ]
 )
