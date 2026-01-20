@@ -8,12 +8,12 @@
 
 import Foundation
                                                                                                                       
-public struct ErrorResponse: Decodable {
+public struct ErrorResponse: Decodable, Sendable {
     public let code: String?
     public let message: String?
     public let errors: [ErrorDetail]?
 
-    public struct ErrorDetail: Decodable {
+    public struct ErrorDetail: Decodable, Sendable {
         public let field: String?
         public let message: String?
     }

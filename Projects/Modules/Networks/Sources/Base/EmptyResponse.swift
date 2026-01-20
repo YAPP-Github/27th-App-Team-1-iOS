@@ -8,4 +8,4 @@
 
 import Foundation
 
-struct EmptyResponse: Decodable {} 
+struct EmptyResponse: Decodable, Sendable {} 

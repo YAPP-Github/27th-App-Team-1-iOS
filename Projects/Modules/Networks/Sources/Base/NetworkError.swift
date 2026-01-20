@@ -8,10 +8,10 @@
 
 import Foundation
 
-public enum NetworkError: Error {
+public enum NetworkError: Error, Sendable {
     case connectionFailed
     case decodingFailed
-    case unknown(Error)
+    case unknown(String)
 
     public var message: String {
         switch self {
@@ -19,8 +19,8 @@ public enum NetworkError: Error {
             return "네트워크 연결을 확인해주세요"
         case .decodingFailed:
             return "데이터 처리 중 오류가 발생했습니다"
-        case .unknown:
-            return "알 수 없는 오류가 발생했습니다"
+        case .unknown(let description):
+            return "알 수 없는 오류: \(description)"
         }
     }
 }  

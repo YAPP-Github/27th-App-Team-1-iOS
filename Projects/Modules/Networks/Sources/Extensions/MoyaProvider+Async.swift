@@ -12,7 +12,7 @@ import Moya
 extension MoyaProvider {
     private static var successCode: String { "2000" }
     
-    func request<T: Decodable, E: APIErrorProtocol>(
+    func request<T: Decodable & Sendable, E: APIErrorProtocol & Sendable>(
         _ target: Target,
         errorType: E.Type
     ) async -> NetworkResult<T, E> {
@@ -56,7 +56,7 @@ extension MoyaProvider {
         }
     }
     
-    func requestPlain<E: APIErrorProtocol>(
+    func requestPlain<E: APIErrorProtocol & Sendable>(
         _ target: Target,
         errorType: E.Type
     ) async -> NetworkResult<Void, E> {
@@ -102,7 +102,7 @@ extension MoyaProvider {
             where nsError.domain == NSURLErrorDomain:
             return .connectionFailed
         default:
-            return .unknown(error)
+            return .unknown(error.localizedDescription)
         }
     }
 }

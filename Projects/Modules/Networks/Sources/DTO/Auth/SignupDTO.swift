@@ -8,7 +8,7 @@
 
 import Foundation
                                                                                                    
-public struct SignupRequest: Encodable {
+public struct SignupRequest: Encodable, Sendable {
     public let fcmToken: String
     public let deviceModel: String?
     public let deviceOs: String?
@@ -30,7 +30,7 @@ public struct SignupRequest: Encodable {
     }
 }
 
-public struct SignupResponse: Decodable {
+public struct SignupResponse: Decodable, Sendable {
     public let uuid: String
     public let accessToken: String
     public let nickname: String

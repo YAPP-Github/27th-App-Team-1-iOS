@@ -9,7 +9,7 @@
 import Foundation
 
 
-public enum SignupField {
+public enum SignupField: Sendable {
     case fcmToken
     case unknown(String)
 
@@ -22,13 +22,13 @@ public enum SignupField {
 }
 
 // MARK: - Error
-public struct SignupError: APIErrorProtocol {
+public struct SignupError: APIErrorProtocol, Sendable {
     public let type: ErrorType
     public let message: String
     public let field: SignupField?
     public let fieldMessage: String?
 
-    public enum ErrorType {
+    public enum ErrorType: Sendable {
         case validationError
         case internalServerError
         case undefined(code: String)

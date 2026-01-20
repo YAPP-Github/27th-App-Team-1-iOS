@@ -9,7 +9,7 @@
 import Foundation
                                                                                                                       
 @frozen
-public enum NetworkResult<T, E: APIErrorProtocol> {
+public enum NetworkResult<T: Sendable, E: APIErrorProtocol & Sendable>: Sendable {
     case success(T)
     case failure(E)
     case networkFailure(NetworkError)
