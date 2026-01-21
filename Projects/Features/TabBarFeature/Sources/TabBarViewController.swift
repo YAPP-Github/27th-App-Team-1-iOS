@@ -220,8 +220,10 @@ public final class TabBarViewController: UIViewController, TabBarPresentable, Ta
         let selectedVC = tabViewControllers[index]
         addChild(selectedVC)
         containerView.addSubview(selectedVC.view)
-        selectedVC.view.frame = containerView.bounds
-        selectedVC.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        selectedVC.view.translatesAutoresizingMaskIntoConstraints = false
+        selectedVC.view.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
         selectedVC.didMove(toParent: self)
     }
 

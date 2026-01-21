@@ -20,6 +20,7 @@ final class CategoryCollectionView: UICollectionView {
         let index: Int
         let title: String
         let isSelected: Bool
+        let isFirstItem: Bool
     }
 
     // MARK: - Properties
@@ -64,7 +65,7 @@ final class CategoryCollectionView: UICollectionView {
             ) as? CategoryCell else {
                 return UICollectionViewCell()
             }
-            cell.configure(title: item.title, isSelected: item.isSelected)
+            cell.configure(title: item.title, isSelected: item.isSelected, isFirstItem: item.isFirstItem)
             return cell
         }
     }
@@ -76,7 +77,12 @@ final class CategoryCollectionView: UICollectionView {
         snapshot.appendSections([0])
 
         let items = categories.enumerated().map { index, title in
-            CategoryItem(index: index, title: title, isSelected: index == selectedIndex)
+            CategoryItem(
+                index: index,
+                title: title,
+                isSelected: index == selectedIndex,
+                isFirstItem: index == 0
+            )
         }
         snapshot.appendItems(items)
 
