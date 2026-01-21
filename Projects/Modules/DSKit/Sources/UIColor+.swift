@@ -54,7 +54,7 @@ extension UIColor {
         public enum Icon {
             public static let primary = DSKitAsset.Colors.gray900.color
             public static let secondary = DSKitAsset.Colors.gray700.color
-            public static let teriary = DSKitAsset.Colors.gray500.color
+            public static let tertiary = DSKitAsset.Colors.gray500.color
             public static let danger = DSKitAsset.Colors.red700.color
             public static let disabled = DSKitAsset.Colors.gray400.color
             
