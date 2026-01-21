@@ -9,7 +9,7 @@
 import Foundation
 
 /// 인기 여행 따라가기
-public struct PopularTrip: Equatable {
+public struct PopularTrip: Hashable {
     public let id: Int
     public let title: String
     public let authorName: String
@@ -37,7 +37,7 @@ public struct PopularTrip: Equatable {
     }
 }
 
-public enum TripCategory: String, CaseIterable, Equatable {
+public enum TripCategory: String, CaseIterable, Hashable {
     case all = "전체"
     case vietnam = "베니트남"
     case europe = "유럽"

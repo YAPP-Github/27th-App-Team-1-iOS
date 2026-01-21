@@ -19,7 +19,7 @@ final class RecommendContentCollectionView: UICollectionView {
 
     weak var contentDelegate: RecommendContentCollectionViewDelegate?
 
-    private var recommendations: [Recommendation] = []
+    private var diffableDataSource: UICollectionViewDiffableDataSource<Int, Recommendation>?
 
     // MARK: - Initialization
 
@@ -31,6 +31,7 @@ final class RecommendContentCollectionView: UICollectionView {
 
         super.init(frame: .zero, collectionViewLayout: layout)
         setupCollectionView()
+        setupDataSource()
     }
 
     required init?(coder: NSCoder) {
@@ -43,36 +44,32 @@ final class RecommendContentCollectionView: UICollectionView {
         backgroundColor = .clear
         showsHorizontalScrollIndicator = false
         contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 24)
-        dataSource = self
         delegate = self
         register(RecommendContentCell.self, forCellWithReuseIdentifier: RecommendContentCell.identifier)
     }
 
+    private func setupDataSource() {
+        diffableDataSource = UICollectionViewDiffableDataSource<Int, Recommendation>(
+            collectionView: self
+        ) { collectionView, indexPath, recommendation in
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: RecommendContentCell.identifier,
+                for: indexPath
+            ) as? RecommendContentCell else {
+                return UICollectionViewCell()
+            }
+            cell.configure(with: recommendation)
+            return cell
+        }
+    }
+
     // MARK: - Public Methods
 
-    func configure(recommendations: [Recommendation]) {
-        self.recommendations = recommendations
-        reloadData()
-    }
-}
-
-// MARK: - UICollectionViewDataSource
-
-extension RecommendContentCollectionView: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return recommendations.count
-    }
-
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: RecommendContentCell.identifier,
-            for: indexPath
-        ) as? RecommendContentCell else {
-            return UICollectionViewCell()
-        }
-
-        cell.configure(with: recommendations[indexPath.item])
-        return cell
+    func applySnapshot(recommendations: [Recommendation]) {
+        var snapshot = NSDiffableDataSourceSnapshot<Int, Recommendation>()
+        snapshot.appendSections([0])
+        snapshot.appendItems(recommendations)
+        diffableDataSource?.apply(snapshot, animatingDifferences: false)
     }
 }
 

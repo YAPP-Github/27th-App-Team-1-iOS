@@ -9,7 +9,7 @@
 import Foundation
 
 /// 추천 따라하기 콘텐츠
-public struct Recommendation: Equatable {
+public struct Recommendation: Hashable {
     public let id: Int
     public let title: String
     public let authorName: String

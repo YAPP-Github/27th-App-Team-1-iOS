@@ -115,7 +115,7 @@ final class HomeViewController: UIViewController, HomePresentable, HomeViewContr
 extension HomeViewController {
     func updateCategories(_ categories: [TripCategory], selectedIndex: Int) {
         let categoryNames = categories.map { $0.rawValue }
-        categoryCollectionView.configure(categories: categoryNames, selectedIndex: selectedIndex)
+        categoryCollectionView.applySnapshot(categories: categoryNames, selectedIndex: selectedIndex)
     }
 
     func updateMyTrips(_ trips: [MyTrip]) {
@@ -125,11 +125,11 @@ extension HomeViewController {
     }
 
     func updatePopularTrips(_ trips: [PopularTrip]) {
-        youtuberContentCollectionView.configure(trips: trips)
+        youtuberContentCollectionView.applySnapshot(trips: trips)
     }
 
     func updateRecommendations(_ recommendations: [Recommendation]) {
-        recommendContentCollectionView.configure(recommendations: recommendations)
+        recommendContentCollectionView.applySnapshot(recommendations: recommendations)
     }
 
     func showLoading() {

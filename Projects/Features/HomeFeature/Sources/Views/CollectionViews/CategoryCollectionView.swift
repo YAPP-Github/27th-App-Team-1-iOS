@@ -14,12 +14,19 @@ protocol CategoryCollectionViewDelegate: AnyObject {
 
 final class CategoryCollectionView: UICollectionView {
 
+    // MARK: - Models
+
+    private struct CategoryItem: Hashable {
+        let index: Int
+        let title: String
+        let isSelected: Bool
+    }
+
     // MARK: - Properties
 
     weak var categoryDelegate: CategoryCollectionViewDelegate?
 
-    private var categories: [String] = []
-    private var selectedIndex: Int = 0
+    private var diffableDataSource: UICollectionViewDiffableDataSource<Int, CategoryItem>?
 
     // MARK: - Initialization
 
@@ -31,6 +38,7 @@ final class CategoryCollectionView: UICollectionView {
 
         super.init(frame: .zero, collectionViewLayout: layout)
         setupCollectionView()
+        setupDataSource()
     }
 
     required init?(coder: NSCoder) {
@@ -42,43 +50,37 @@ final class CategoryCollectionView: UICollectionView {
     private func setupCollectionView() {
         backgroundColor = .clear
         showsHorizontalScrollIndicator = false
-        dataSource = self
         delegate = self
         register(CategoryCell.self, forCellWithReuseIdentifier: CategoryCell.identifier)
     }
 
+    private func setupDataSource() {
+        diffableDataSource = UICollectionViewDiffableDataSource<Int, CategoryItem>(
+            collectionView: self
+        ) { collectionView, indexPath, item in
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: CategoryCell.identifier,
+                for: indexPath
+            ) as? CategoryCell else {
+                return UICollectionViewCell()
+            }
+            cell.configure(title: item.title, isSelected: item.isSelected)
+            return cell
+        }
+    }
+
     // MARK: - Public Methods
 
-    func configure(categories: [String], selectedIndex: Int = 0) {
-        self.categories = categories
-        self.selectedIndex = selectedIndex
-        reloadData()
-    }
+    func applySnapshot(categories: [String], selectedIndex: Int) {
+        var snapshot = NSDiffableDataSourceSnapshot<Int, CategoryItem>()
+        snapshot.appendSections([0])
 
-    func selectCategory(at index: Int) {
-        self.selectedIndex = index
-        reloadData()
-    }
-}
-
-// MARK: - UICollectionViewDataSource
-
-extension CategoryCollectionView: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return categories.count
-    }
-
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: CategoryCell.identifier,
-            for: indexPath
-        ) as? CategoryCell else {
-            return UICollectionViewCell()
+        let items = categories.enumerated().map { index, title in
+            CategoryItem(index: index, title: title, isSelected: index == selectedIndex)
         }
+        snapshot.appendItems(items)
 
-        let isSelected = indexPath.item == selectedIndex
-        cell.configure(title: categories[indexPath.item], isSelected: isSelected)
-        return cell
+        diffableDataSource?.apply(snapshot, animatingDifferences: false)
     }
 }
 
@@ -86,8 +88,6 @@ extension CategoryCollectionView: UICollectionViewDataSource {
 
 extension CategoryCollectionView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        // 내부 상태 변경 없이 delegate에게만 알림
-        // Interactor가 상태를 변경하고, configure()를 통해 UI가 업데이트됨
         categoryDelegate?.categoryCollectionView(self, didSelectCategoryAt: indexPath.item)
     }
 }

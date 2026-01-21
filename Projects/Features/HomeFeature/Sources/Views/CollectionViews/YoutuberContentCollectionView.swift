@@ -19,8 +19,8 @@ final class YoutuberContentCollectionView: UICollectionView {
 
     weak var contentDelegate: YoutuberContentCollectionViewDelegate?
 
-    private var trips: [PopularTrip] = []
     private let maxItemCount = 3
+    private var diffableDataSource: UICollectionViewDiffableDataSource<Int, PopularTrip>?
 
     // MARK: - Initialization
 
@@ -31,6 +31,7 @@ final class YoutuberContentCollectionView: UICollectionView {
 
         super.init(frame: .zero, collectionViewLayout: layout)
         setupCollectionView()
+        setupDataSource()
     }
 
     required init?(coder: NSCoder) {
@@ -42,36 +43,32 @@ final class YoutuberContentCollectionView: UICollectionView {
     private func setupCollectionView() {
         backgroundColor = .clear
         isScrollEnabled = false
-        dataSource = self
         delegate = self
         register(YoutuberContentCell.self, forCellWithReuseIdentifier: YoutuberContentCell.identifier)
     }
 
+    private func setupDataSource() {
+        diffableDataSource = UICollectionViewDiffableDataSource<Int, PopularTrip>(
+            collectionView: self
+        ) { collectionView, indexPath, trip in
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: YoutuberContentCell.identifier,
+                for: indexPath
+            ) as? YoutuberContentCell else {
+                return UICollectionViewCell()
+            }
+            cell.configure(with: trip)
+            return cell
+        }
+    }
+
     // MARK: - Public Methods
 
-    func configure(trips: [PopularTrip]) {
-        self.trips = Array(trips.prefix(maxItemCount))
-        reloadData()
-    }
-}
-
-// MARK: - UICollectionViewDataSource
-
-extension YoutuberContentCollectionView: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return trips.count
-    }
-
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: YoutuberContentCell.identifier,
-            for: indexPath
-        ) as? YoutuberContentCell else {
-            return UICollectionViewCell()
-        }
-
-        cell.configure(with: trips[indexPath.item])
-        return cell
+    func applySnapshot(trips: [PopularTrip]) {
+        var snapshot = NSDiffableDataSourceSnapshot<Int, PopularTrip>()
+        snapshot.appendSections([0])
+        snapshot.appendItems(Array(trips.prefix(maxItemCount)))
+        diffableDataSource?.apply(snapshot, animatingDifferences: false)
     }
 }
 
