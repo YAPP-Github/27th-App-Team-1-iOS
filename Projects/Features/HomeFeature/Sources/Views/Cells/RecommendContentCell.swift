@@ -9,6 +9,7 @@
 import Domain
 import UIKit
 import DSKit
+import Kingfisher
 import SnapKit
 import Then
 
@@ -16,27 +17,18 @@ final class RecommendContentCell: UICollectionViewCell {
 
     static let identifier = "RecommendContentCell"
 
+    // MARK: - Properties
+
+    private var currentThumbnailURL: String?
+
     // MARK: - UI Components
 
     private let thumbnailImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
-        $0.backgroundColor = .systemGray4
+        $0.backgroundColor = .systemGray5
         $0.layer.cornerRadius = 12
         $0.clipsToBounds = true
     }
-
-    private let gradientView = UIView()
-
-    private let countryTagView = UIView().then {
-        $0.backgroundColor = UIColor.white.withAlphaComponent(0.9)
-        $0.layer.cornerRadius = 12
-    }
-
-    private let flagImageView = UIImageView().then {
-        $0.contentMode = .scaleAspectFit
-    }
-
-    private let countryLabel = UILabel()
 
     private let titleLabel = UILabel().then {
         $0.numberOfLines = 2
@@ -64,28 +56,24 @@ final class RecommendContentCell: UICollectionViewCell {
         super.init(frame: frame)
         setupUI()
         setupConstraints()
-        setupGradient()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        updateGradientFrame()
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        currentThumbnailURL = nil
+        thumbnailImageView.kf.cancelDownloadTask()
+        thumbnailImageView.image = nil
+        thumbnailImageView.backgroundColor = .systemGray5
     }
 
     // MARK: - Setup
 
     private func setupUI() {
         contentView.addSubview(thumbnailImageView)
-        thumbnailImageView.addSubview(gradientView)
-
-        contentView.addSubview(countryTagView)
-        countryTagView.addSubview(flagImageView)
-        countryTagView.addSubview(countryLabel)
-
         contentView.addSubview(titleLabel)
         contentView.addSubview(authorInfoView)
 
@@ -100,36 +88,13 @@ final class RecommendContentCell: UICollectionViewCell {
             $0.height.equalTo(180)
         }
 
-        gradientView.snp.makeConstraints {
-            $0.leading.trailing.bottom.equalToSuperview()
-            $0.height.equalTo(60)
-        }
-
-        countryTagView.snp.makeConstraints {
-            $0.leading.equalToSuperview().offset(8)
-            $0.bottom.equalTo(thumbnailImageView.snp.bottom).offset(-8)
-            $0.height.equalTo(24)
-        }
-
-        flagImageView.snp.makeConstraints {
-            $0.leading.equalToSuperview().offset(8)
-            $0.centerY.equalToSuperview()
-            $0.size.equalTo(16)
-        }
-
-        countryLabel.snp.makeConstraints {
-            $0.leading.equalTo(flagImageView.snp.trailing).offset(4)
-            $0.trailing.equalToSuperview().offset(-8)
-            $0.centerY.equalToSuperview()
-        }
-
         titleLabel.snp.makeConstraints {
-            $0.top.equalTo(thumbnailImageView.snp.bottom).offset(8)
+            $0.top.equalTo(thumbnailImageView.snp.bottom).offset(12)
             $0.leading.trailing.equalToSuperview()
         }
 
         authorInfoView.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(4)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(6)
             $0.leading.equalToSuperview()
             $0.bottom.lessThanOrEqualToSuperview()
         }
@@ -139,35 +104,38 @@ final class RecommendContentCell: UICollectionViewCell {
         }
     }
 
-    private func setupGradient() {
-        let gradientLayer = CAGradientLayer()
-        gradientLayer.colors = [
-            UIColor.clear.cgColor,
-            UIColor.black.withAlphaComponent(0.3).cgColor
-        ]
-        gradientLayer.locations = [0.0, 1.0]
-        gradientView.layer.insertSublayer(gradientLayer, at: 0)
-    }
-
-    private func updateGradientFrame() {
-        if let gradientLayer = gradientView.layer.sublayers?.first as? CAGradientLayer {
-            gradientLayer.frame = gradientView.bounds
-        }
-    }
-
     // MARK: - Configuration
 
     func configure(with recommendation: Recommendation) {
         titleLabel.setText(.bodyMSB, text: recommendation.title, color: UIColor.NDGL.Text.primary)
-        countryLabel.setText(.bodySR, text: recommendation.destination, color: UIColor.NDGL.Text.primary)
         authorLabel.setText(.bodySR, text: recommendation.authorName, color: UIColor.NDGL.Text.tertiary)
         durationLabel.setText(.bodySR, text: " · \(recommendation.duration)", color: UIColor.NDGL.Text.tertiary)
 
-        // 국기 이미지 설정 (임시)
-        flagImageView.image = UIImage(systemName: "flag.fill")
-        flagImageView.tintColor = .systemOrange
+        // URL 저장 및 이미지 로딩 (교차 검증)
+        let thumbnailURL = recommendation.thumbnailURL
+        currentThumbnailURL = thumbnailURL
 
-        // TODO: 실제 이미지 로딩
-        thumbnailImageView.backgroundColor = .systemGray4
+        if let urlString = thumbnailURL, let url = URL(string: urlString) {
+            thumbnailImageView.kf.setImage(
+                with: url,
+                placeholder: nil,
+                options: [
+                    .transition(.fade(0.2)),
+                    .cacheOriginalImage
+                ]
+            ) { [weak self] result in
+                guard let self = self else { return }
+                guard self.currentThumbnailURL == urlString else { return }
+
+                switch result {
+                case .success:
+                    break
+                case .failure:
+                    self.thumbnailImageView.backgroundColor = .systemGray5
+                }
+            }
+        } else {
+            thumbnailImageView.backgroundColor = .systemGray5
+        }
     }
 }

@@ -17,6 +17,10 @@ final class YoutuberContentCell: UICollectionViewCell {
 
     static let identifier = "YoutuberContentCell"
 
+    // MARK: - Properties
+
+    private var currentThumbnailURL: String?
+
     // MARK: - UI Components
 
     private let thumbnailImageView = UIImageView().then {
@@ -54,8 +58,10 @@ final class YoutuberContentCell: UICollectionViewCell {
 
     override func prepareForReuse() {
         super.prepareForReuse()
+        currentThumbnailURL = nil
         thumbnailImageView.kf.cancelDownloadTask()
         thumbnailImageView.image = nil
+        thumbnailImageView.backgroundColor = .systemGray5
     }
 
     // MARK: - Setup
@@ -85,10 +91,21 @@ final class YoutuberContentCell: UICollectionViewCell {
     // MARK: - Configuration
 
     func configure(with trip: PopularTrip) {
+        // placeholder trip인 경우 숨김 처리
+        guard trip.id >= 0 else {
+            contentView.isHidden = true
+            return
+        }
+        contentView.isHidden = false
+
         titleLabel.setText(.bodyMSB, text: trip.title, color: UIColor.NDGL.Text.primary)
         infoLabel.setText(.bodySM, text: "\(trip.authorName) · \(trip.destination) · \(trip.duration)", color: UIColor.NDGL.Text.tertiary)
 
-        if let urlString = trip.thumbnailURL, let url = URL(string: urlString) {
+        // URL 저장 및 이미지 로딩 (교차 검증)
+        let thumbnailURL = trip.thumbnailURL
+        currentThumbnailURL = thumbnailURL
+
+        if let urlString = thumbnailURL, let url = URL(string: urlString) {
             thumbnailImageView.kf.setImage(
                 with: url,
                 placeholder: nil,
@@ -96,7 +113,18 @@ final class YoutuberContentCell: UICollectionViewCell {
                     .transition(.fade(0.2)),
                     .cacheOriginalImage
                 ]
-            )
+            ) { [weak self] result in
+                guard let self = self else { return }
+                // 교차 검증: 현재 URL이 요청한 URL과 같은지 확인
+                guard self.currentThumbnailURL == urlString else { return }
+
+                switch result {
+                case .success:
+                    break
+                case .failure:
+                    self.thumbnailImageView.backgroundColor = .systemGray5
+                }
+            }
         } else {
             thumbnailImageView.backgroundColor = .systemGray5
         }

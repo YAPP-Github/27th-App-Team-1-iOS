@@ -118,7 +118,6 @@ extension HomeViewController {
         categoryCollectionView.applySnapshot(categories: categoryNames, selectedIndex: selectedIndex)
     }
 
-
     func updatePopularTrips(_ tripsByCategory: [TripCategory: [PopularTrip]], categories: [TripCategory]) {
         youtuberContentCollectionView.applySnapshot(tripsByCategory: tripsByCategory, categories: categories)
     }

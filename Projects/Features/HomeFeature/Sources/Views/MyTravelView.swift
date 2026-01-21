@@ -53,7 +53,7 @@ final class MyTravelView: UIView {
             $0.leading.equalTo(messageLabel)
         }
         imageView.snp.makeConstraints {
-            $0.verticalEdges.equalToSuperview().inset(-8.19)
+            $0.verticalEdges.equalToSuperview().inset(8.19)
             $0.trailing.equalToSuperview().offset(-16)
             $0.width.equalTo(63.63)
         }
