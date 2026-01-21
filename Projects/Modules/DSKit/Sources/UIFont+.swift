@@ -8,7 +8,7 @@
 import UIKit
 
 extension UIFont {
-    public enum NGDL {
+    public enum NDGL {
         // Titles
         case titleLB // 행간 140%, 자간 -2.5%
         case titleLSB // 행간 140%, 자간 -2.5%
@@ -33,7 +33,7 @@ extension UIFont {
         case bodySM // 행간 130%, 자간 -2.5%
         case bodySR // 행간 130%, 자간 -2.5%
         
-        public var font: UIFont {
+        private var font: UIFont {
             switch self {
             case .titleLB:
                 return DSKitFontFamily.Pretendard.bold.font(size: 32)
@@ -76,8 +76,8 @@ extension UIFont {
     }
 }
 
-public extension UIFont.NGDL {
-    var lineHeightMultiple: CGFloat {
+extension UIFont.NDGL {
+    private var lineHeightMultiple: CGFloat {
         switch self {
         // Titles
         case .titleLB, .titleLSB, .titleMB, .titleMSB:
@@ -97,7 +97,7 @@ public extension UIFont.NGDL {
         }
     }
     
-    var kern: CGFloat {
+    private var kern: CGFloat {
         switch self {
         case .titleMB, .titleMSB:
             return -0.02
@@ -108,7 +108,7 @@ public extension UIFont.NGDL {
         }
     }
     
-    var attributes: [NSAttributedString.Key: Any] {
+    public var attributes: [NSAttributedString.Key: Any] {
         let paragraphStyle = NSMutableParagraphStyle()
         let targetHeight = font.pointSize * lineHeightMultiple
         
