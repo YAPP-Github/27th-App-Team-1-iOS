@@ -16,7 +16,8 @@ let project = Project.makeModule(
             name: "BaseFeatureDependency",
             dependencies: [
                 .domain,
-                .Modules.dsKit
+                .Modules.dsKit,
+                .SPM.RIBs
             ],
             scripts: [.swiftLint],
             hasResources: false
