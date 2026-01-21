@@ -37,7 +37,7 @@ public struct PopularTrip: Equatable {
     }
 }
 
-public enum TripCategory: String, Equatable {
+public enum TripCategory: String, CaseIterable, Equatable {
     case all = "전체"
     case vietnam = "베니트남"
     case europe = "유럽"
