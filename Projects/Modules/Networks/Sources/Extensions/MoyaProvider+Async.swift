@@ -16,10 +16,14 @@ extension MoyaProvider {
         _ target: Target,
         errorMapper: @escaping @Sendable (String, String, [ErrorResponse.ErrorDetail]) -> E
     ) async -> NetworkResult<T, E> {
-        await withCheckedContinuation { continuation in
+        NetworkLogger.logRequest(target)
+
+        return await withCheckedContinuation { continuation in
             self.request(target) { result in
                 switch result {
                 case .success(let response):
+                    NetworkLogger.logResponse(response)
+
                     do {
                         let baseResponse = try JSONDecoder().decode(
                             BaseResponse<T>.self,
@@ -49,6 +53,7 @@ extension MoyaProvider {
                     }
 
                 case .failure(let moyaError):
+                    NetworkLogger.logError(moyaError)
                     let networkError = Self.mapMoyaError(moyaError)
                     continuation.resume(returning: .networkFailure(networkError))
                 }
@@ -60,10 +65,14 @@ extension MoyaProvider {
         _ target: Target,
         errorMapper: @escaping @Sendable (String, String, [ErrorResponse.ErrorDetail]) -> E
     ) async -> NetworkResult<Void, E> {
-        await withCheckedContinuation { continuation in
+        NetworkLogger.logRequest(target)
+
+        return await withCheckedContinuation { continuation in
             self.request(target) { result in
                 switch result {
                 case .success(let response):
+                    NetworkLogger.logResponse(response)
+
                     do {
                         let baseResponse = try JSONDecoder().decode(
                             BaseResponse<EmptyResponse>.self,
@@ -89,6 +98,7 @@ extension MoyaProvider {
                     }
 
                 case .failure(let moyaError):
+                    NetworkLogger.logError(moyaError)
                     let networkError = Self.mapMoyaError(moyaError)
                     continuation.resume(returning: .networkFailure(networkError))
                 }
