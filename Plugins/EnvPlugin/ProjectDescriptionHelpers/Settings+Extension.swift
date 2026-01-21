@@ -16,7 +16,7 @@ public extension Settings {
             "DEFINES_MODULE": "YES",
             "ENABLE_BITCODE": "NO",
             "IPHONEOS_DEPLOYMENT_TARGET": .string(Environment.deploymentTarget),
-            "SWIFT_VERSION": "6.0",
+            "SWIFT_VERSION": "5",
             "CLANG_ENABLE_MODULES": "YES",
             "ENABLE_USER_SCRIPT_SANDBOXING": "NO",
             "ENABLE_MODULE_VERIFIER": "YES",
@@ -35,7 +35,7 @@ public extension Settings {
             "CURRENT_PROJECT_VERSION": .string(Environment.App.buildNumber),
             "ENABLE_BITCODE": "NO",
             "IPHONEOS_DEPLOYMENT_TARGET": .string(Environment.deploymentTarget),
-            "SWIFT_VERSION": "6.0",
+            "SWIFT_VERSION": "5",
             "CLANG_ENABLE_MODULES": "YES",
             "ENABLE_USER_SCRIPT_SANDBOXING": "NO",
             "ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES"
@@ -79,7 +79,7 @@ public extension Settings {
             "CODE_SIGN_STYLE": "Automatic",
             "DEVELOPMENT_TEAM": SettingValue(stringLiteral: "$(DEVELOPMENT_TEAM)"),
             "IPHONEOS_DEPLOYMENT_TARGET": .string(Environment.deploymentTarget),
-            "SWIFT_VERSION": "6.0",
+            "SWIFT_VERSION": "5",
             "ENABLE_TESTABILITY": "YES"
         ]
     )
