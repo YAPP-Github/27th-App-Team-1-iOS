@@ -51,29 +51,15 @@ public final class TabBarViewController: UIViewController, TabBarPresentable, Ta
         $0.spacing = 0
     }
 
-    private lazy var planTabButton = createTabButton(
-        icon: "doc.text",
-        title: "일정",
-        tag: 0
-    )
-
-    private lazy var homeTabButton = createTabButton(
-        icon: "house.fill",
-        title: "홈",
-        tag: 1,
-        isSelected: true
-    )
-
-    private lazy var myTabButton = createTabButton(
-        icon: "bag",
-        title: "내 여행",
-        tag: 2
-    )
+    private let planTabButton = UIView()
+    private let homeTabButton = UIView()
+    private let myTabButton = UIView()
 
     // MARK: - Lifecycle
 
     public override func viewDidLoad() {
         super.viewDidLoad()
+        setupTabButtons()
         setupUI()
         setupConstraints()
         updateTabSelection(index: 1)
@@ -81,38 +67,14 @@ public final class TabBarViewController: UIViewController, TabBarPresentable, Ta
 
     // MARK: - Setup
 
-    private func setupUI() {
-        view.backgroundColor = .white
-        view.addSubview(containerView)
-        view.addSubview(customTabBarView)
-
-        customTabBarView.addSubview(tabStackView)
-        [planTabButton, homeTabButton, myTabButton].forEach {
-            tabStackView.addArrangedSubview($0)
-        }
+    private func setupTabButtons() {
+        configureTabButton(planTabButton, icon: "doc.text", title: "일정", tag: 0)
+        configureTabButton(homeTabButton, icon: "house.fill", title: "홈", tag: 1, isSelected: true)
+        configureTabButton(myTabButton, icon: "bag", title: "내 여행", tag: 2)
     }
 
-    private func setupConstraints() {
-        // 컨텐츠가 탭바 뒤로도 스크롤되도록 전체 화면으로 설정
-        containerView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
-
-        customTabBarView.snp.makeConstraints {
-            $0.leading.equalToSuperview().offset(40)
-            $0.trailing.equalToSuperview().offset(-40)
-            $0.bottom.equalTo(view.safeAreaLayoutGuide)
-            $0.height.equalTo(56)
-        }
-
-        tabStackView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
-    }
-
-    private func createTabButton(icon: String, title: String, tag: Int, isSelected: Bool = false) -> UIView {
-        let containerView = UIView()
-        containerView.tag = tag
+    private func configureTabButton(_ button: UIView, icon: String, title: String, tag: Int, isSelected: Bool = false) {
+        button.tag = tag
 
         let stackView = UIStackView()
         stackView.axis = .horizontal
@@ -134,7 +96,7 @@ public final class TabBarViewController: UIViewController, TabBarPresentable, Ta
         stackView.addArrangedSubview(iconView)
         stackView.addArrangedSubview(label)
 
-        containerView.addSubview(stackView)
+        button.addSubview(stackView)
 
         iconView.snp.makeConstraints {
             $0.size.equalTo(24)
@@ -149,7 +111,7 @@ public final class TabBarViewController: UIViewController, TabBarPresentable, Ta
             backgroundView.backgroundColor = .black
             backgroundView.layer.cornerRadius = 20
             backgroundView.tag = 100
-            containerView.insertSubview(backgroundView, at: 0)
+            button.insertSubview(backgroundView, at: 0)
             backgroundView.snp.makeConstraints {
                 $0.center.equalToSuperview()
                 $0.height.equalTo(40)
@@ -158,9 +120,35 @@ public final class TabBarViewController: UIViewController, TabBarPresentable, Ta
         }
 
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tabButtonTapped(_:)))
-        containerView.addGestureRecognizer(tapGesture)
+        button.addGestureRecognizer(tapGesture)
+    }
 
-        return containerView
+    private func setupUI() {
+        view.backgroundColor = .white
+        view.addSubview(containerView)
+        view.addSubview(customTabBarView)
+
+        customTabBarView.addSubview(tabStackView)
+        [planTabButton, homeTabButton, myTabButton].forEach {
+            tabStackView.addArrangedSubview($0)
+        }
+    }
+
+    private func setupConstraints() {
+        containerView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+
+        customTabBarView.snp.makeConstraints {
+            $0.leading.equalToSuperview().offset(40)
+            $0.trailing.equalToSuperview().offset(-40)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide)
+            $0.height.equalTo(56)
+        }
+
+        tabStackView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
     }
 
     @objc private func tabButtonTapped(_ gesture: UITapGestureRecognizer) {
@@ -188,15 +176,17 @@ public final class TabBarViewController: UIViewController, TabBarPresentable, Ta
                 label?.textColor = .white
                 label?.isHidden = false
 
-                let backgroundView = UIView()
-                backgroundView.backgroundColor = .black
-                backgroundView.layer.cornerRadius = 20
-                backgroundView.tag = 100
-                button.insertSubview(backgroundView, at: 0)
-                backgroundView.snp.makeConstraints {
-                    $0.center.equalToSuperview()
-                    $0.height.equalTo(40)
-                    $0.width.equalTo(stackView!.snp.width).offset(32)
+                if let stackView = stackView {
+                    let backgroundView = UIView()
+                    backgroundView.backgroundColor = .black
+                    backgroundView.layer.cornerRadius = 20
+                    backgroundView.tag = 100
+                    button.insertSubview(backgroundView, at: 0)
+                    backgroundView.snp.makeConstraints {
+                        $0.center.equalToSuperview()
+                        $0.height.equalTo(40)
+                        $0.width.equalTo(stackView.snp.width).offset(32)
+                    }
                 }
             } else {
                 iconView?.tintColor = .gray
