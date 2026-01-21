@@ -76,10 +76,13 @@ final class HomeViewController: UIViewController, HomePresentable, HomeViewContr
         $0.textColor = .black
     }
 
+    private lazy var categoryScrollView = UIScrollView().then {
+        $0.showsHorizontalScrollIndicator = false
+    }
+
     private lazy var categoryStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 8
-        $0.distribution = .fillProportionally
     }
 
     private lazy var popularTripsCollectionView: UICollectionView = {
@@ -128,6 +131,11 @@ final class HomeViewController: UIViewController, HomePresentable, HomeViewContr
         setupCategoryButtons()
     }
 
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        scrollView.contentInset.bottom = 70
+    }
+
     // MARK: - Setup
 
     private func setupUI() {
@@ -138,10 +146,12 @@ final class HomeViewController: UIViewController, HomePresentable, HomeViewContr
         scrollView.addSubview(contentView)
 
         [myTripsHeaderLabel, myTripsCollectionView,
-         popularTripsHeaderLabel, categoryStackView, popularTripsCollectionView,
+         popularTripsHeaderLabel, categoryScrollView, popularTripsCollectionView,
          recommendationsHeaderLabel, recommendationsCollectionView].forEach {
             contentView.addSubview($0)
         }
+
+        categoryScrollView.addSubview(categoryStackView)
     }
 
     private func setupConstraints() {
@@ -150,7 +160,8 @@ final class HomeViewController: UIViewController, HomePresentable, HomeViewContr
         }
 
         scrollView.snp.makeConstraints {
-            $0.edges.equalTo(view.safeAreaLayoutGuide)
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.leading.trailing.bottom.equalToSuperview()
         }
 
         contentView.snp.makeConstraints {
@@ -176,14 +187,19 @@ final class HomeViewController: UIViewController, HomePresentable, HomeViewContr
             $0.leading.equalToSuperview().offset(16)
         }
 
-        categoryStackView.snp.makeConstraints {
+        categoryScrollView.snp.makeConstraints {
             $0.top.equalTo(popularTripsHeaderLabel.snp.bottom).offset(12)
-            $0.leading.equalToSuperview().offset(16)
-            $0.trailing.lessThanOrEqualToSuperview().offset(-16)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(36)
+        }
+
+        categoryStackView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+            $0.height.equalToSuperview()
         }
 
         popularTripsCollectionView.snp.makeConstraints {
-            $0.top.equalTo(categoryStackView.snp.bottom).offset(12)
+            $0.top.equalTo(categoryScrollView.snp.bottom).offset(12)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(220)
         }
@@ -198,11 +214,13 @@ final class HomeViewController: UIViewController, HomePresentable, HomeViewContr
             $0.top.equalTo(recommendationsHeaderLabel.snp.bottom).offset(12)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(200)
-            $0.bottom.equalToSuperview().offset(-20)
+            $0.bottom.equalToSuperview()
         }
     }
 
     private func setupCategoryButtons() {
+        categoryScrollView.contentInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+
         let categories: [TripCategory] = [.all, .japan, .vietnam, .europe, .hongkong, .singapore]
 
         categories.forEach { category in

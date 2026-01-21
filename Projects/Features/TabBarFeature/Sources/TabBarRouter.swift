@@ -58,7 +58,7 @@ final class TabBarRouter: ViewableRouter<TabBarInteractable, TabBarViewControlla
         self.homeRouter = homeRouter
         attachChild(homeRouter)
 
-        // 탭에 표시할 ViewController 설정
+        // Home VC만 전달, 나머지는 TabBarViewController에서 placeholder로 처리
         viewController.setViewControllers([homeRouter.viewControllable])
     }
 }
