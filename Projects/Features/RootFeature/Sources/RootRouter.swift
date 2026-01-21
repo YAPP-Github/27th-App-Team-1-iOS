@@ -8,11 +8,11 @@
 
 import RIBs
 
-import HomeFeature
+import TabBarFeature
 
 // MARK: - RootInteractable
 
-protocol RootInteractable: Interactable, HomeListener {
+protocol RootInteractable: Interactable, TabBarListener {
     var router: RootRouting? { get set }
     var listener: RootListener? { get set }
 }
@@ -28,47 +28,47 @@ public protocol RootViewControllable: ViewControllable {
 // MARK: - RootRouting
 
 public protocol RootRouting: ViewableRouting {
-    func attachHome()
-    func detachHome()
+    func attachTabBar()
+    func detachTabBar()
 }
 
 // MARK: - RootRouter
 
 final class RootRouter: LaunchRouter<RootInteractable, RootViewControllable>, RootRouting {
 
-    private let homeBuilder: HomeBuildable
-    private var homeRouter: HomeRouting?
+    private let tabBarBuilder: TabBarBuildable
+    private var tabBarRouter: TabBarRouting?
 
     init(
         interactor: RootInteractable,
         viewController: RootViewControllable,
-        homeBuilder: HomeBuildable
+        tabBarBuilder: TabBarBuildable
     ) {
-        self.homeBuilder = homeBuilder
+        self.tabBarBuilder = tabBarBuilder
         super.init(interactor: interactor, viewController: viewController)
         interactor.router = self
     }
 
     override func didLoad() {
         super.didLoad()
-        attachHome()
+        attachTabBar()
     }
 
     // MARK: - RootRouting
 
-    func attachHome() {
-        guard homeRouter == nil else { return }
+    func attachTabBar() {
+        guard tabBarRouter == nil else { return }
 
-        let router = homeBuilder.build(withListener: interactor)
-        homeRouter = router
+        let router = tabBarBuilder.build(withListener: interactor)
+        tabBarRouter = router
         attachChild(router)
         viewController.setRootViewController(router.viewControllable)
     }
 
-    func detachHome() {
-        guard let router = homeRouter else { return }
+    func detachTabBar() {
+        guard let router = tabBarRouter else { return }
 
         detachChild(router)
-        homeRouter = nil
+        tabBarRouter = nil
     }
 }

@@ -10,8 +10,9 @@ import ProjectDescription
 public extension TargetDependency {
     struct Features {
         public struct Home {}
+        public struct TabBar {}
     }
-    
+
     struct Modules {}
 }
 
@@ -39,6 +40,12 @@ public extension TargetDependency.Features {
 
 public extension TargetDependency.Features.Home {
     static let group = "Home"
-    
+
+    static let feature = TargetDependency.Features.project(name: "Feature", group: group)
+}
+
+public extension TargetDependency.Features.TabBar {
+    static let group = "TabBar"
+
     static let feature = TargetDependency.Features.project(name: "Feature", group: group)
 }

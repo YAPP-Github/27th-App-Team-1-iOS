@@ -6,6 +6,7 @@
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
+import Domain
 import RIBs
 import RxSwift
 
@@ -19,7 +20,12 @@ public protocol HomeListener: AnyObject {
 
 protocol HomePresentable: Presentable {
     var listener: HomePresentableListener? { get set }
-    // Interactor에서 ViewController로 전달할 메서드 정의
+
+    func updateMyTrips(_ trips: [MyTrip])
+    func updatePopularTrips(_ trips: [PopularTrip])
+    func updateRecommendations(_ recommendations: [Recommendation])
+    func showLoading()
+    func hideLoading()
 }
 
 // MARK: - HomeInteractor
@@ -29,26 +35,59 @@ final class HomeInteractor: PresentableInteractor<HomePresentable>, HomeInteract
     weak var router: HomeRouting?
     weak var listener: HomeListener?
 
+    private let repository: TravelRepositoryProtocol
     private let disposeBag = DisposeBag()
 
-    override init(presenter: HomePresentable) {
+    init(presenter: HomePresentable, repository: TravelRepositoryProtocol) {
+        self.repository = repository
         super.init(presenter: presenter)
         presenter.listener = self
     }
 
     override func didBecomeActive() {
         super.didBecomeActive()
-        // RIB이 활성화될 때 수행할 로직
+        loadHomeData()
     }
 
     override func willResignActive() {
         super.willResignActive()
-        // RIB이 비활성화될 때 수행할 로직
+    }
+
+    // MARK: - Private Methods
+
+    private func loadHomeData() {
+        presenter.showLoading()
+
+        Task { @MainActor in
+            async let myTrips = repository.fetchMyTrips()
+            async let popularTrips = repository.fetchPopularTrips(category: .all)
+            async let recommendations = repository.fetchRecommendations()
+
+            let (myTripsData, popularTripsData, recommendationsData) = await (
+                myTrips,
+                popularTrips,
+                recommendations
+            )
+
+            presenter.hideLoading()
+            presenter.updateMyTrips(myTripsData)
+            presenter.updatePopularTrips(popularTripsData)
+            presenter.updateRecommendations(recommendationsData)
+        }
     }
 }
 
 // MARK: - HomePresentableListener
 
 extension HomeInteractor: HomePresentableListener {
-    // ViewController에서 Interactor로 전달하는 이벤트 처리
+    func didSelectCategory(_ category: TripCategory) {
+        Task { @MainActor in
+            let trips = await repository.fetchPopularTrips(category: category)
+            presenter.updatePopularTrips(trips)
+        }
+    }
+
+    func didTapRefresh() {
+        loadHomeData()
+    }
 }

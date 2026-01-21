@@ -6,6 +6,7 @@
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
+import Domain
 import RIBs
 
 // MARK: - HomeDependency
@@ -17,7 +18,10 @@ public protocol HomeDependency: Dependency {
 // MARK: - HomeComponent
 
 final class HomeComponent: Component<HomeDependency> {
-    // 자식 RIB에 전달할 의존성 정의
+    var travelRepository: TravelRepositoryProtocol {
+        // TODO: 실제 API 연동 시 실제 Repository로 교체
+        MockTravelRepository()
+    }
 }
 
 // MARK: - HomeBuildable
@@ -37,7 +41,10 @@ public final class HomeBuilder: Builder<HomeDependency>, HomeBuildable {
     public func build(withListener listener: HomeListener) -> HomeRouting {
         let component = HomeComponent(dependency: dependency)
         let viewController = HomeViewController()
-        let interactor = HomeInteractor(presenter: viewController)
+        let interactor = HomeInteractor(
+            presenter: viewController,
+            repository: component.travelRepository
+        )
         interactor.listener = listener
 
         let router = HomeRouter(

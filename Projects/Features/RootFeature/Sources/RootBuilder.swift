@@ -8,7 +8,7 @@
 
 import RIBs
 
-import HomeFeature
+import TabBarFeature
 
 // MARK: - RootDependency
 
@@ -18,8 +18,8 @@ public protocol RootDependency: Dependency {
 
 // MARK: - RootComponent
 
-final class RootComponent: Component<RootDependency>, HomeDependency {
-    // Home RIB에 전달할 의존성
+final class RootComponent: Component<RootDependency>, TabBarDependency {
+    // TabBar RIB에 전달할 의존성
 }
 
 // MARK: - RootBuildable
@@ -41,12 +41,12 @@ public final class RootBuilder: Builder<RootDependency>, RootBuildable {
         let viewController = RootViewController()
         let interactor = RootInteractor(presenter: viewController)
 
-        let homeBuilder = HomeBuilder(dependency: component)
+        let tabBarBuilder = TabBarBuilder(dependency: component)
 
         let router = RootRouter(
             interactor: interactor,
             viewController: viewController,
-            homeBuilder: homeBuilder
+            tabBarBuilder: tabBarBuilder
         )
 
         return router
