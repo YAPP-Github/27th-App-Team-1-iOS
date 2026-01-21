@@ -1,0 +1,47 @@
+//
+//  AuthAPI.swift
+//  Networks
+//
+//  Created by kimnahun on 1/19/26.
+//  Copyright © 2026 NDGL-iOS. All rights reserved.
+//
+
+import Alamofire
+import Foundation
+import Moya
+                                                                                                                      
+public enum AuthAPI {
+    case signup(request: SignupRequest)
+}
+
+extension AuthAPI: TargetType {
+    public var baseURL: URL {
+        return NetworkConfiguration.baseURL
+    }
+
+    public var path: String {
+        switch self {
+        case .signup:
+            return "/api/v1/auth/users"
+        }
+    }
+
+    public var method: Moya.Method {
+        switch self {
+        case .signup:
+            return .post
+        }
+    }
+
+    public var task: Moya.Task {
+        switch self {
+        case .signup(let request):
+            return .requestJSONEncodable(request)
+        }
+    }
+
+    public var headers: [String: String]? {
+        return ["Content-Type": "application/json"]
+    }
+
+}
