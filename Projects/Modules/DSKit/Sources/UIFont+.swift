@@ -8,31 +8,56 @@
 import UIKit
 
 extension UIFont {
+    /// NDGL 디자인 시스템에서 정의한 타이포그래피 스타일 가이드입니다.
+    /// 모든 스타일은 Pretendard 폰트를 기본으로 하며, 행간(LineHeight)과 자간(Kern) 설정이 포함되어 있습니다.
+    /// 각 case의 네이밍은 디자인 시스템의 네이밍을 사용하였습니다.
     public enum NDGL {
-        // Titles
-        case titleLB // 행간 140%, 자간 -2.5%
-        case titleLSB // 행간 140%, 자간 -2.5%
-        case titleMB // 행간 140%, 자간 -2%
-        case titleMSB // 행간 140%, 자간 -2%
+        // MARK: - Titles
         
-        // SubTitles
-        case subTitleLSB // 행간 140%, 자간 -2.5%
-        case subTitleLM // 행간 140%, 자간 -2.5%
-        case subTitleMB // 행간 130%, 자간 -2.5%
-        case subTitleMSB // 행간 130%, 자간 -2.5%
-        case subTitleMM // 행간 130%, 자간 -2.5%
+        /// Title/Lg/Bold: 32pt / Bold / 행간 140% / 자간 -2.5%
+        case titleLB
+        /// Title/Lg/Semi Bold: 32pt / SemiBold / 행간 140% / 자간 -2.5%
+        case titleLSB
+        /// Title/Md/Bold: 22pt / Bold / 행간 140% / 자간 -2%
+        case titleMB
+        /// Title/Md/Semi Bold: 22pt / SemiBold / 행간 140% / 자간 -2%
+        case titleMSB
         
-        // Body
-        case bodyLSB // 행간 130%, 자간 -2.5%
-        case bodyLM // 행간 130%, 자간 -2.5%
-        case bodyLR // 행간 130%, 자간 -2.5%
-        case bodyMSB // 행간 130%, 자간 -2.5%
-        case bodyMM // 행간 130%, 자간 -2.5%
-        case bodyMR // 행간 130%, 자간 -2.5%
-        case bodySSB // 행간 120%, 자간 -1%
-        case bodySM // 행간 130%, 자간 -2.5%
-        case bodySR // 행간 130%, 자간 -2.5%
+        // MARK: - SubTitles
+                
+        /// Subtitle/Lg/Semi Bold: 20pt / SemiBold / 행간 140% / 자간 -2.5%
+        case subTitleLSB
+        /// Subtitle/Lg/Medium: 20pt / Medium / 행간 140% / 자간 -2.5%
+        case subTitleLM
+        /// Subtitle/Md/Bold: 18pt / Bold / 행간 130% / 자간 -2.5%
+        case subTitleMB
+        /// Subtitle/Md/Semi Bold: 18pt / SemiBold / 행간 130% / 자간 -2.5%
+        case subTitleMSB
+        /// Subtitle/Md/Medium: 18pt / Medium / 행간 130% / 자간 -2.5%
+        case subTitleMM
         
+        // MARK: - Body
+                
+        /// Body/Lg/Semi Bold: 16pt / SemiBold / 행간 130% / 자간 -2.5%
+        case bodyLSB
+        /// Body/Lg/Medium: 16pt / Medium / 행간 130% / 자간 -2.5%
+        case bodyLM
+        /// Body/Lg/Regular: 16pt / Regular / 행간 130% / 자간 -2.5%
+        case bodyLR
+        /// Body/Md/Semi Bold: 14pt / SemiBold / 행간 130% / 자간 -2.5%
+        case bodyMSB
+        /// Body/Md/Medium: 14pt / Medium / 행간 130% / 자간 -2.5%
+        case bodyMM
+        /// Body/Md/Regular: 14pt / Regular / 행간 130% / 자간 -2.5%
+        case bodyMR
+        /// Body/Sm/Semi Bold: 12pt / SemiBold / 행간 120% / 자간 -1%
+        case bodySSB
+        /// Body/Sm/Medium: 12pt / Medium / 행간 130% / 자간 -2.5%
+        case bodySM
+        /// Body/Sm/Regular: 12pt / Regular / 행간 130% / 자간 -2.5%
+        case bodySR
+        
+        /// 해당 스타일의 프리텐다드 폰트 객체를 반환합니다.
         private var font: UIFont {
             switch self {
             case .titleLB:
@@ -77,6 +102,7 @@ extension UIFont {
 }
 
 extension UIFont.NDGL {
+    /// 해당 스타일의 행간 배수를 반환합니다.
     private var lineHeightMultiple: CGFloat {
         switch self {
         // Titles
@@ -97,6 +123,7 @@ extension UIFont.NDGL {
         }
     }
     
+    /// 해당 스타일의 자간 비율을 반환합니다.
     private var kern: CGFloat {
         switch self {
         case .titleMB, .titleMSB:
@@ -108,6 +135,8 @@ extension UIFont.NDGL {
         }
     }
     
+    /// `UILabel`, `UITextView` 등의 `attributedText`에 적용할 속성 딕셔너리입니다.
+    /// 폰트, 자간, 행간 및 중앙 정렬을 위한 baselineOffset이 포함되어 있습니다.
     public var attributes: [NSAttributedString.Key: Any] {
         let paragraphStyle = NSMutableParagraphStyle()
         let targetHeight = font.pointSize * lineHeightMultiple
