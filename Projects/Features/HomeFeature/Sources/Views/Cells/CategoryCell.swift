@@ -6,6 +6,7 @@
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
+import Core
 import DSKit
 import UIKit
 import SnapKit
@@ -83,15 +84,15 @@ final class CategoryCell: UICollectionViewCell {
     // MARK: - Configuration
 
     func configure(title: String, isSelected: Bool, isFirstItem: Bool) {
-        titleLabel.setText(.bodyMSB, text: title, color: isSelected ? .white : UIColor.NDGL.Text.secondary)
+        titleLabel.setText(.bodyMSB, text: title, color: isSelected ? UIColor.NDGL.Text.Interactive.inverse :   UIColor(hexCode: "#757575"))
         iconImageView.isHidden = isFirstItem
 
         if isSelected {
-            containerView.backgroundColor = .black
+            containerView.backgroundColor = UIColor(hexCode: "#2C2C2C")
             containerView.layer.borderColor = UIColor.clear.cgColor
             iconImageView.tintColor = .white
         } else {
-            containerView.backgroundColor = .white
+            containerView.backgroundColor = UIColor.NDGL.Bg.primary
             containerView.layer.borderColor = UIColor.NDGL.Border.secondary.cgColor
             iconImageView.tintColor = UIColor.NDGL.Text.secondary
         }

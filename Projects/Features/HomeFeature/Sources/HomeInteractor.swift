@@ -23,8 +23,9 @@ protocol HomePresentable: Presentable {
 
     func updateCategories(_ categories: [TripCategory], selectedIndex: Int)
     func updateMyTrips(_ trips: [MyTrip])
-    func updatePopularTrips(_ trips: [PopularTrip])
+    func updatePopularTrips(_ tripsByCategory: [TripCategory: [PopularTrip]], categories: [TripCategory])
     func updateRecommendations(_ recommendations: [Recommendation])
+    func scrollToCategory(at index: Int)
     func showLoading()
     func hideLoading()
 }
@@ -33,7 +34,8 @@ protocol HomePresentable: Presentable {
 
 protocol HomePresentableListener: AnyObject {
     func didSelectCategory(at index: Int)
-    func didSelectPopularTrip(at index: Int)
+    func didScrollToCategory(at index: Int)
+    func didSelectPopularTrip(at index: Int, in section: Int)
     func didSelectRecommendation(at index: Int)
     func didTapShowMoreTrips()
     func didTapAddButton()
@@ -55,7 +57,7 @@ final class HomeInteractor: PresentableInteractor<HomePresentable>, HomeInteract
     private let categories: [TripCategory] = TripCategory.allCases
     private var selectedCategoryIndex: Int = 0
     private var myTrips: [MyTrip] = []
-    private var popularTrips: [PopularTrip] = []
+    private var tripsByCategory: [TripCategory: [PopularTrip]] = [:]
     private var recommendations: [Recommendation] = []
 
     init(presenter: HomePresentable, repository: TravelRepositoryProtocol) {
@@ -81,31 +83,23 @@ final class HomeInteractor: PresentableInteractor<HomePresentable>, HomeInteract
 
         Task { @MainActor in
             async let myTripsResult = repository.fetchMyTrips()
-            async let popularTripsResult = repository.fetchPopularTrips(category: categories[selectedCategoryIndex])
+            async let tripsByCategoryResult = repository.fetchAllPopularTrips()
             async let recommendationsResult = repository.fetchRecommendations()
 
-            let (myTripsData, popularTripsData, recommendationsData) = await (
+            let (myTripsData, tripsByCategoryData, recommendationsData) = await (
                 myTripsResult,
-                popularTripsResult,
+                tripsByCategoryResult,
                 recommendationsResult
             )
 
             self.myTrips = myTripsData
-            self.popularTrips = popularTripsData
+            self.tripsByCategory = tripsByCategoryData
             self.recommendations = recommendationsData
 
             presenter.hideLoading()
             presenter.updateMyTrips(myTripsData)
-            presenter.updatePopularTrips(popularTripsData)
+            presenter.updatePopularTrips(tripsByCategoryData, categories: categories)
             presenter.updateRecommendations(recommendationsData)
-        }
-    }
-
-    private func loadPopularTrips(for category: TripCategory) {
-        Task { @MainActor in
-            let trips = await repository.fetchPopularTrips(category: category)
-            self.popularTrips = trips
-            presenter.updatePopularTrips(trips)
         }
     }
 }
@@ -117,12 +111,20 @@ extension HomeInteractor: HomePresentableListener {
         guard index != selectedCategoryIndex, index < categories.count else { return }
         selectedCategoryIndex = index
         presenter.updateCategories(categories, selectedIndex: index)
-        loadPopularTrips(for: categories[index])
+        presenter.scrollToCategory(at: index)
     }
 
-    func didSelectPopularTrip(at index: Int) {
-        guard index < popularTrips.count else { return }
-        let trip = popularTrips[index]
+    func didScrollToCategory(at index: Int) {
+        guard index != selectedCategoryIndex, index < categories.count else { return }
+        selectedCategoryIndex = index
+        presenter.updateCategories(categories, selectedIndex: index)
+    }
+
+    func didSelectPopularTrip(at index: Int, in section: Int) {
+        guard section < categories.count else { return }
+        let category = categories[section]
+        guard let trips = tripsByCategory[category], index < trips.count else { return }
+        let trip = trips[index]
         // TODO: 상세 화면으로 이동
         print("Selected popular trip: \(trip.title)")
     }

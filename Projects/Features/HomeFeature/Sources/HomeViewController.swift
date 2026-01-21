@@ -6,6 +6,7 @@
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
+import Core
 import Domain
 import DSKit
 import UIKit
@@ -37,14 +38,7 @@ final class HomeViewController: UIViewController, HomePresentable, HomeViewContr
         $0.hidesWhenStopped = true
     }
 
-    private let myTripView = UIView().then {
-        $0.backgroundColor = UIColor.NDGL.Bg.Interactive.subtle02
-        $0.layer.cornerRadius = 12
-    }
-
-    private let myTripLabel = UILabel().then {
-        $0.setText(.bodyMM, text: "아직 등록된 여행이 없어요", color: UIColor.NDGL.Text.secondary)
-    }
+    private let myTravelView = MyTravelView()
 
     private let followGuideLabel = UILabel().then {
         $0.setText(.subTitleLSB, text: "인기 여행 따라가기", color: .NDGL.Text.primary)
@@ -58,8 +52,10 @@ final class HomeViewController: UIViewController, HomePresentable, HomeViewContr
         $0.setTitle("여행 따라가기 더보기", for: .normal)
         $0.setTitleColor(UIColor.NDGL.Text.secondary, for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 14, weight: .medium)
-        $0.backgroundColor = UIColor.NDGL.Bg.Interactive.subtle02
+        $0.backgroundColor = UIColor.NDGL.Bg.primary
         $0.layer.cornerRadius = 8
+        $0.layer.borderWidth = 1.0
+        $0.layer.borderColor = UIColor(hexCode: "#D9D9D9").cgColor
     }
 
     private let recommendContentGuideLabel = UILabel().then {
@@ -113,23 +109,26 @@ final class HomeViewController: UIViewController, HomePresentable, HomeViewContr
 // MARK: - HomePresentable
 
 extension HomeViewController {
+    func updateMyTrips(_ trips: [Domain.MyTrip]) {
+        
+    }
+    
     func updateCategories(_ categories: [TripCategory], selectedIndex: Int) {
         let categoryNames = categories.map { $0.rawValue }
         categoryCollectionView.applySnapshot(categories: categoryNames, selectedIndex: selectedIndex)
     }
 
-    func updateMyTrips(_ trips: [MyTrip]) {
-        if trips.isEmpty {
-            myTripLabel.setText(.bodyMM, text: "아직 등록된 여행이 없어요", color: UIColor.NDGL.Text.secondary)
-        }
-    }
 
-    func updatePopularTrips(_ trips: [PopularTrip]) {
-        youtuberContentCollectionView.applySnapshot(trips: trips)
+    func updatePopularTrips(_ tripsByCategory: [TripCategory: [PopularTrip]], categories: [TripCategory]) {
+        youtuberContentCollectionView.applySnapshot(tripsByCategory: tripsByCategory, categories: categories)
     }
 
     func updateRecommendations(_ recommendations: [Recommendation]) {
         recommendContentCollectionView.applySnapshot(recommendations: recommendations)
+    }
+
+    func scrollToCategory(at index: Int) {
+        youtuberContentCollectionView.scrollToCategory(at: index, animated: true)
     }
 
     func showLoading() {
@@ -151,11 +150,10 @@ extension HomeViewController {
         }
         scrollView.addSubview(contentView)
 
-        [myTripView, followGuideLabel, categoryCollectionView, youtuberContentCollectionView, showOtherTravelButton, recommendContentGuideLabel, recommendContentCollectionView].forEach {
+        [myTravelView, followGuideLabel, categoryCollectionView, youtuberContentCollectionView, showOtherTravelButton, recommendContentGuideLabel, recommendContentCollectionView].forEach {
             contentView.addSubview($0)
         }
 
-        myTripView.addSubview(myTripLabel)
     }
 
     private func setupConstraints() {
@@ -170,17 +168,14 @@ extension HomeViewController {
             $0.edges.equalToSuperview()
             $0.width.equalToSuperview()
         }
-        myTripView.snp.makeConstraints {
+        myTravelView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(18)
             $0.leading.equalToSuperview().offset(24)
             $0.trailing.equalToSuperview().offset(-24)
             $0.height.equalTo(80)
         }
-        myTripLabel.snp.makeConstraints {
-            $0.center.equalToSuperview()
-        }
         followGuideLabel.snp.makeConstraints {
-            $0.top.equalTo(myTripView.snp.bottom).offset(40)
+            $0.top.equalTo(myTravelView.snp.bottom).offset(40)
             $0.leading.equalToSuperview().offset(24)
             $0.height.equalTo(28)
         }
@@ -232,8 +227,12 @@ extension HomeViewController: CategoryCollectionViewDelegate {
 // MARK: - YoutuberContentCollectionViewDelegate
 
 extension HomeViewController: YoutuberContentCollectionViewDelegate {
-    func youtuberContentCollectionView(_ collectionView: YoutuberContentCollectionView, didSelectItemAt index: Int) {
-        listener?.didSelectPopularTrip(at: index)
+    func youtuberContentCollectionView(_ collectionView: YoutuberContentCollectionView, didSelectItemAt index: Int, in section: Int) {
+        listener?.didSelectPopularTrip(at: index, in: section)
+    }
+
+    func youtuberContentCollectionView(_ collectionView: YoutuberContentCollectionView, didScrollToSection section: Int) {
+        listener?.didScrollToCategory(at: section)
     }
 }
 

@@ -9,6 +9,7 @@
 import Domain
 import UIKit
 import DSKit
+import Kingfisher
 import SnapKit
 import Then
 
@@ -20,18 +21,18 @@ final class YoutuberContentCell: UICollectionViewCell {
 
     private let thumbnailImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
-        $0.backgroundColor = .systemGray4
+        $0.backgroundColor = .systemGray5
         $0.layer.cornerRadius = 8
         $0.clipsToBounds = true
     }
 
-    private let flagImageView = UIImageView().then {
-        $0.contentMode = .scaleAspectFit
+    private let titleLabel = UILabel().then {
+        $0.numberOfLines = 1
     }
 
-    private let titleLabel = UILabel()
-
-    private let infoLabel = UILabel()
+    private let infoLabel = UILabel().then {
+        $0.numberOfLines = 1
+    }
 
     private let textStackView = UIStackView().then {
         $0.axis = .vertical
@@ -51,10 +52,16 @@ final class YoutuberContentCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        thumbnailImageView.kf.cancelDownloadTask()
+        thumbnailImageView.image = nil
+    }
+
     // MARK: - Setup
 
     private func setupUI() {
-        [thumbnailImageView, flagImageView, textStackView].forEach {
+        [thumbnailImageView, textStackView].forEach {
             contentView.addSubview($0)
         }
         [titleLabel, infoLabel].forEach {
@@ -65,19 +72,13 @@ final class YoutuberContentCell: UICollectionViewCell {
     private func setupConstraints() {
         thumbnailImageView.snp.makeConstraints {
             $0.leading.top.bottom.equalToSuperview()
-            $0.width.equalTo(120)
-        }
-
-        flagImageView.snp.makeConstraints {
-            $0.leading.equalTo(thumbnailImageView.snp.trailing).offset(12)
-            $0.top.equalToSuperview().offset(8)
-            $0.size.equalTo(20)
+            $0.width.equalTo(136)
         }
 
         textStackView.snp.makeConstraints {
-            $0.leading.equalTo(flagImageView.snp.trailing).offset(8)
+            $0.leading.equalTo(thumbnailImageView.snp.trailing).offset(12)
             $0.trailing.equalToSuperview()
-            $0.centerY.equalTo(flagImageView)
+            $0.centerY.equalToSuperview()
         }
     }
 
@@ -85,13 +86,19 @@ final class YoutuberContentCell: UICollectionViewCell {
 
     func configure(with trip: PopularTrip) {
         titleLabel.setText(.bodyMSB, text: trip.title, color: UIColor.NDGL.Text.primary)
-        infoLabel.setText(.bodySM, text: "\(trip.destination) · \(trip.duration)", color: UIColor.NDGL.Text.tertiary)
+        infoLabel.setText(.bodySM, text: "\(trip.authorName) · \(trip.destination) · \(trip.duration)", color: UIColor.NDGL.Text.tertiary)
 
-        // 국기 이미지 설정 (임시)
-        flagImageView.image = UIImage(systemName: "flag.fill")
-        flagImageView.tintColor = .systemBlue
-
-        // TODO: 실제 이미지 로딩
-        thumbnailImageView.backgroundColor = .systemGray4
+        if let urlString = trip.thumbnailURL, let url = URL(string: urlString) {
+            thumbnailImageView.kf.setImage(
+                with: url,
+                placeholder: nil,
+                options: [
+                    .transition(.fade(0.2)),
+                    .cacheOriginalImage
+                ]
+            )
+        } else {
+            thumbnailImageView.backgroundColor = .systemGray5
+        }
     }
 }

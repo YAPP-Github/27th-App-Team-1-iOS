@@ -15,9 +15,11 @@ let project = Project.makeModule(
         .makeFrameworkTarget(
             name: "BaseFeatureDependency",
             dependencies: [
+                .core,
                 .domain,
                 .Modules.dsKit,
-                .SPM.RIBs
+                .SPM.RIBs,
+                .SPM.Kingfisher
             ],
             scripts: [.swiftLint],
             hasResources: false
