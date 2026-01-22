@@ -1,8 +1,8 @@
 //
 //  Project.swift
-//  27th-App-Team-1-iOSManifests
+//  TabBarFeature
 //
-//  Created by 최안용 on 1/13/26.
+//  Created by kimnahun on 2026-01-22.
 //
 
 import ProjectDescription
@@ -10,12 +10,13 @@ import ProjectDescriptionHelpers
 import DependencyPlugin
 
 let project = Project.makeModule(
-    name: "RootFeature",
+    name: "TabBarFeature",
     targets: [
         .makeFrameworkTarget(
-            name: "RootFeature",
+            name: "TabBarFeature",
             dependencies: [
-                .Features.TabBar.feature
+                .Features.baseFeatureDependency,
+                .Features.Home.feature
             ],
             scripts: [.swiftLint],
             isStatic: true,
@@ -23,4 +24,3 @@ let project = Project.makeModule(
         )
     ]
 )
-
