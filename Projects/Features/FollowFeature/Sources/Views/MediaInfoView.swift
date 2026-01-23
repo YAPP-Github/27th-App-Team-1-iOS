@@ -9,9 +9,10 @@
 import Core
 import Domain
 import DSKit
-import UIKit
+import Kingfisher
 import SnapKit
 import Then
+import UIKit
 
 protocol MediaInfoViewDelegate: AnyObject {
     func mediaInfoViewDidToggleExpand(_ view: MediaInfoView, isExpanded: Bool)
@@ -50,6 +51,7 @@ final class MediaInfoView: UIView {
 
     private let expandedContainerView = UIView().then {
         $0.isHidden = true
+        $0.clipsToBounds = true
     }
 
     private let thumbnailImageView = UIImageView().then {
@@ -73,6 +75,7 @@ final class MediaInfoView: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
+        clipsToBounds = true
         setupUI()
         setupConstraints()
         setupActions()
@@ -129,9 +132,10 @@ final class MediaInfoView: UIView {
             $0.trailing.equalTo(toggleButton.snp.leading).offset(-8)
         }
 
+        // expandedContainerView는 top만 연결, bottom은 연결하지 않음
         expandedContainerView.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(16)
-            $0.leading.trailing.bottom.equalToSuperview()
+            $0.leading.trailing.equalToSuperview()
         }
 
         thumbnailImageView.snp.makeConstraints {
@@ -186,12 +190,44 @@ final class MediaInfoView: UIView {
 
     func configure(with detail: TravelDetail) {
         youtuberNameLabel.setText(.bodySM, text: detail.youtube.youtuber, color: UIColor.NDGL.Text.secondary)
-        locationLabel.setText(.bodySR, text: "\(detail.country) · \(detail.nights)박\(detail.days)일", color: UIColor.NDGL.Text.tertiary)
+        locationLabel.setText(
+            .bodySR,
+            text: "\(detail.country) · \(detail.nights)박\(detail.days)일",
+            color: UIColor.NDGL.Text.tertiary
+        )
         titleLabel.setText(.bodyLSB, text: detail.youtube.title, color: UIColor.NDGL.Text.primary)
-        budgetValueLabel.setText(.bodyMSB, text: formatBudget(detail.budgetPerPerson), color: UIColor.NDGL.Text.primary)
+        budgetValueLabel.setText(
+            .bodyMSB,
+            text: formatBudget(detail.budgetPerPerson),
+            color: UIColor.NDGL.Text.primary
+        )
         summaryLabel.setText(.bodyMR, text: detail.youtube.summary, color: UIColor.NDGL.Text.secondary)
 
-        // TODO: 이미지 로딩 (Kingfisher 사용)
+        // 프로필 이미지 로딩
+        if let profileURLString = detail.youtube.profileImage,
+           let profileURL = URL(string: profileURLString) {
+            profileImageView.kf.setImage(
+                with: profileURL,
+                placeholder: nil,
+                options: [
+                    .transition(.fade(0.2)),
+                    .cacheOriginalImage
+                ]
+            )
+        }
+
+        // 썸네일 이미지 로딩
+        if let thumbnailURLString = detail.youtube.thumbnail,
+           let thumbnailURL = URL(string: thumbnailURLString) {
+            thumbnailImageView.kf.setImage(
+                with: thumbnailURL,
+                placeholder: nil,
+                options: [
+                    .transition(.fade(0.2)),
+                    .cacheOriginalImage
+                ]
+            )
+        }
     }
 
     private func formatBudget(_ budget: Int) -> String {
@@ -204,10 +240,10 @@ final class MediaInfoView: UIView {
     // MARK: - Public Methods
 
     func getCollapsedHeight() -> CGFloat {
-        return 120
+        120
     }
 
     func getExpandedHeight() -> CGFloat {
-        return 450
+        450
     }
 }

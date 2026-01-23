@@ -12,15 +12,14 @@ import RIBs
 // MARK: - FollowDetailDependency
 
 public protocol FollowDetailDependency: Dependency {
-    // 부모 RIB로부터 주입받을 의존성 정의
+    var followRepository: FollowRepositoryProtocol { get }
 }
 
 // MARK: - FollowDetailComponent
 
 final class FollowDetailComponent: Component<FollowDetailDependency> {
-    var repository: FollowDetailRepositoryProtocol {
-        // TODO: 실제 API 연동 시 실제 Repository로 교체
-        MockFollowDetailRepository()
+    var repository: FollowRepositoryProtocol {
+        dependency.followRepository
     }
 }
 

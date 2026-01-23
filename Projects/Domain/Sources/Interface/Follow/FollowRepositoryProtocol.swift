@@ -1,5 +1,5 @@
 //
-//  FollowDetailRepositoryProtocol.swift
+//  FollowRepositoryProtocol.swift
 //  Domain
 //
 //  Created by kimnahun on 2026-01-23.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol FollowDetailRepositoryProtocol {
+public protocol FollowRepositoryProtocol {
     /// 여행 상세 정보 조회
     func fetchTravelDetail(id: Int) async -> TravelDetail?
 

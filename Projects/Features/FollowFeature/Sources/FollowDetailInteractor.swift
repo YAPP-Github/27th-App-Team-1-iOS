@@ -44,7 +44,7 @@ final class FollowDetailInteractor: PresentableInteractor<FollowDetailPresentabl
     weak var router: FollowDetailRouting?
     weak var listener: FollowDetailListener?
 
-    private let repository: FollowDetailRepositoryProtocol
+    private let repository: FollowRepositoryProtocol
     private let disposeBag = DisposeBag()
 
     // MARK: - Data (Source of Truth)
@@ -56,7 +56,7 @@ final class FollowDetailInteractor: PresentableInteractor<FollowDetailPresentabl
 
     init(
         presenter: FollowDetailPresentable,
-        repository: FollowDetailRepositoryProtocol,
+        repository: FollowRepositoryProtocol,
         recommendationId: Int
     ) {
         self.repository = repository

@@ -9,7 +9,7 @@
 import Domain
 import Foundation
 
-final class MockFollowDetailRepository: FollowDetailRepositoryProtocol {
+final class MockFollowDetailRepository: FollowRepositoryProtocol {
 
     func fetchTravelDetail(id: Int) async -> TravelDetail? {
         // 네트워크 지연 시뮬레이션

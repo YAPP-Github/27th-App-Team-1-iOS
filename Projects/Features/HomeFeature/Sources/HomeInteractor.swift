@@ -132,8 +132,9 @@ extension HomeInteractor: HomePresentableListener {
 
     func didSelectRecommendation(at index: Int) {
         guard index < recommendations.count else { return }
-        let recommendation = recommendations[index]
-        router?.routeToFollowDetail(with: recommendation.id)
+        // TODO: 실제 API 연동 시 recommendation.id 사용
+        // 현재는 테스트를 위해 항상 id 1로 이동
+        router?.routeToFollowDetail(with: 1)
     }
 
     func didTapShowMoreTrips() {
