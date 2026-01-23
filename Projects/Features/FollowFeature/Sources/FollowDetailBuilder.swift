@@ -6,6 +6,7 @@
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
+import Domain
 import RIBs
 
 // MARK: - FollowDetailDependency
@@ -17,7 +18,10 @@ public protocol FollowDetailDependency: Dependency {
 // MARK: - FollowDetailComponent
 
 final class FollowDetailComponent: Component<FollowDetailDependency> {
-    // 자식 RIB에 전달할 의존성
+    var repository: FollowDetailRepositoryProtocol {
+        // TODO: 실제 API 연동 시 실제 Repository로 교체
+        MockFollowDetailRepository()
+    }
 }
 
 // MARK: - FollowDetailBuildable
@@ -35,10 +39,11 @@ public final class FollowDetailBuilder: Builder<FollowDetailDependency>, FollowD
     }
 
     public func build(withListener listener: FollowDetailListener, recommendationId: Int) -> FollowDetailRouting {
-        _ = FollowDetailComponent(dependency: dependency)
+        let component = FollowDetailComponent(dependency: dependency)
         let viewController = FollowDetailViewController()
         let interactor = FollowDetailInteractor(
             presenter: viewController,
+            repository: component.repository,
             recommendationId: recommendationId
         )
         interactor.listener = listener
