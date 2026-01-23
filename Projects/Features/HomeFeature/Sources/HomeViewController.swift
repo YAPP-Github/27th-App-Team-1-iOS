@@ -82,6 +82,11 @@ final class HomeViewController: UIViewController, HomePresentable, HomeViewContr
         setupConstraints()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: animated)
+    }
+
     // MARK: - Setup
 
     private func setupDelegates() {
@@ -240,5 +245,17 @@ extension HomeViewController: YoutuberContentCollectionViewDelegate {
 extension HomeViewController: RecommendContentCollectionViewDelegate {
     func recommendContentCollectionView(_ collectionView: RecommendContentCollectionView, didSelectItemAt index: Int) {
         listener?.didSelectRecommendation(at: index)
+    }
+}
+
+// MARK: - HomeViewControllable
+
+extension HomeViewController {
+    func push(_ viewController: ViewControllable) {
+        navigationController?.pushViewController(viewController.uiviewController, animated: true)
+    }
+
+    func pop() {
+        navigationController?.popViewController(animated: true)
     }
 }

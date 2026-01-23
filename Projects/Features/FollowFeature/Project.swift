@@ -1,8 +1,8 @@
 //
 //  Project.swift
-//  27th-App-Team-1-iOSManifests
+//  FollowFeature
 //
-//  Created by 최안용 on 1/14/26.
+//  Created by kimnahun on 2026-01-23.
 //
 
 import ProjectDescription
@@ -10,13 +10,12 @@ import ProjectDescriptionHelpers
 import DependencyPlugin
 
 let project = Project.makeModule(
-    name: "HomeFeature",
+    name: "FollowFeature",
     targets: [
         .makeFrameworkTarget(
-            name: "HomeFeature",
+            name: "FollowFeature",
             dependencies: [
-                .Features.baseFeatureDependency,
-                .Features.Follow.feature
+                .Features.baseFeatureDependency
             ],
             scripts: [.swiftLint],
             isStatic: true,
@@ -24,4 +23,3 @@ let project = Project.makeModule(
         )
     ]
 )
-

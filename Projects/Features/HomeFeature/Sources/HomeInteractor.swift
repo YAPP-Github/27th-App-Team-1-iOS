@@ -7,6 +7,7 @@
 //
 
 import Domain
+import FollowFeature
 import RIBs
 import RxSwift
 
@@ -132,8 +133,7 @@ extension HomeInteractor: HomePresentableListener {
     func didSelectRecommendation(at index: Int) {
         guard index < recommendations.count else { return }
         let recommendation = recommendations[index]
-        // TODO: 상세 화면으로 이동
-        print("Selected recommendation: \(recommendation.title)")
+        router?.routeToFollowDetail(with: recommendation.id)
     }
 
     func didTapShowMoreTrips() {
@@ -148,5 +148,13 @@ extension HomeInteractor: HomePresentableListener {
 
     func didTapRefresh() {
         loadHomeData()
+    }
+}
+
+// MARK: - FollowDetailListener
+
+extension HomeInteractor: FollowDetailListener {
+    func followDetailDidTapClose() {
+        router?.detachFollowDetail()
     }
 }

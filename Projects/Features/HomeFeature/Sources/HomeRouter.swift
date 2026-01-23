@@ -8,9 +8,11 @@
 
 import RIBs
 
+import FollowFeature
+
 // MARK: - HomeInteractable
 
-protocol HomeInteractable: Interactable {
+protocol HomeInteractable: Interactable, FollowDetailListener {
     var router: HomeRouting? { get set }
     var listener: HomeListener? { get set }
 }
@@ -18,24 +20,50 @@ protocol HomeInteractable: Interactable {
 // MARK: - HomeViewControllable
 
 public protocol HomeViewControllable: ViewControllable {
-    // ViewController에 요청할 화면 전환 메서드 정의
+    func push(_ viewController: ViewControllable)
+    func pop()
 }
 
 // MARK: - HomeRouting
 
 public protocol HomeRouting: ViewableRouting {
-    // 자식 RIB으로 라우팅하는 메서드 정의
+    func routeToFollowDetail(with recommendationId: Int)
+    func detachFollowDetail()
 }
 
 // MARK: - HomeRouter
 
 final class HomeRouter: ViewableRouter<HomeInteractable, HomeViewControllable>, HomeRouting {
 
-    override init(
+    private let followDetailBuilder: FollowDetailBuildable
+    private var followDetailRouter: FollowDetailRouting?
+
+    init(
         interactor: HomeInteractable,
-        viewController: HomeViewControllable
+        viewController: HomeViewControllable,
+        followDetailBuilder: FollowDetailBuildable
     ) {
+        self.followDetailBuilder = followDetailBuilder
         super.init(interactor: interactor, viewController: viewController)
         interactor.router = self
+    }
+
+    // MARK: - HomeRouting
+
+    func routeToFollowDetail(with recommendationId: Int) {
+        guard followDetailRouter == nil else { return }
+
+        let router = followDetailBuilder.build(withListener: interactor, recommendationId: recommendationId)
+        followDetailRouter = router
+        attachChild(router)
+        viewController.push(router.viewControllable)
+    }
+
+    func detachFollowDetail() {
+        guard let router = followDetailRouter else { return }
+
+        viewController.pop()
+        detachChild(router)
+        followDetailRouter = nil
     }
 }
