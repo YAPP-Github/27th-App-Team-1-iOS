@@ -19,9 +19,9 @@ final class DayCell: UICollectionViewCell {
     // MARK: - UI Components
 
     private let containerView = UIView().then {
-        $0.layer.cornerRadius = 16
+        $0.layer.cornerRadius = 15
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = UIColor.NDGL.Border.primary.cgColor
+        $0.layer.borderColor = UIColor.NDGL.Border.secondary.cgColor
         $0.backgroundColor = UIColor.NDGL.Bg.primary
     }
 
@@ -67,19 +67,22 @@ final class DayCell: UICollectionViewCell {
     // MARK: - Configuration
 
     func configure(day: Int) {
-        dayLabel.setText(.bodyMM, text: "\(day)일차", color: UIColor.NDGL.Text.secondary)
+        dayLabel.text = "\(day)일차"
         updateSelectionState()
     }
 
     private func updateSelectionState() {
         if isSelected {
-            containerView.backgroundColor = UIColor.NDGL.Bg.Interactive.secondary
-            containerView.layer.borderColor = UIColor.clear.cgColor
-            dayLabel.setText(.bodyMSB, text: dayLabel.text ?? "", color: UIColor.NDGL.Text.Interactive.inverse)
+            containerView.backgroundColor = UIColor.init(hexCode: "#2C2C2C")
+            containerView.layer.borderWidth = 0
+            dayLabel.font = DSKitFontFamily.Pretendard.medium.font(size: 14)
+            dayLabel.textColor = UIColor.NDGL.Text.Interactive.inverse
         } else {
             containerView.backgroundColor = UIColor.NDGL.Bg.primary
-            containerView.layer.borderColor = UIColor.NDGL.Border.primary.cgColor
-            dayLabel.setText(.bodyMM, text: dayLabel.text ?? "", color: UIColor.NDGL.Text.secondary)
+            containerView.layer.borderWidth = 1
+            containerView.layer.borderColor = UIColor.NDGL.Border.secondary.cgColor
+            dayLabel.font = DSKitFontFamily.Pretendard.medium.font(size: 14)
+            dayLabel.textColor = UIColor.NDGL.Text.disabled
         }
     }
 }

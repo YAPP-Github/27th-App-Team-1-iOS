@@ -62,7 +62,12 @@ final class HomeRouter: ViewableRouter<HomeInteractable, HomeViewControllable>, 
     func detachFollowDetail() {
         guard let router = followDetailRouter else { return }
 
-        viewController.pop()
+        // FollowDetail VC가 아직 네비게이션 스택에 있는 경우에만 pop
+        if let navController = viewController.uiviewController.navigationController,
+           navController.viewControllers.contains(router.viewControllable.uiviewController) {
+            viewController.pop()
+        }
+
         detachChild(router)
         followDetailRouter = nil
     }

@@ -53,11 +53,12 @@ final class MediaInfoView: UIView {
     private let travelInfoLabel = UILabel()
 
     private let titleLabel = UILabel().then {
-        $0.numberOfLines = 2
+        $0.numberOfLines = 1
+        $0.lineBreakMode = .byTruncatingTail
     }
 
     private let toggleButton = UIButton(type: .system).then {
-        $0.setImage(DSKitAsset.Assets.icChevronDown1.image, for: .normal)
+        $0.setImage(DSKitAsset.Assets.icChevronDown3.image, for: .normal)
         $0.tintColor = UIColor.NDGL.Icon.disabled
     }
 
@@ -69,7 +70,7 @@ final class MediaInfoView: UIView {
     }
 
     private let thumbnailImageView = UIImageView().then {
-        $0.contentMode = .scaleAspectFill
+        $0.contentMode = .scaleAspectFit
         $0.backgroundColor = UIColor.NDGL.Bg.Interactive.subtle02
         $0.layer.cornerRadius = 8
         $0.clipsToBounds = true
@@ -160,15 +161,13 @@ final class MediaInfoView: UIView {
 
     private func setupConstraints() {
         profileImageView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(8)
+            $0.top.equalToSuperview().offset(16)
             $0.leading.equalToSuperview().offset(24)
             $0.size.equalTo(56)
-            // collapsed 상태의 bottom constraint
-            collapsedBottomConstraint = $0.bottom.equalToSuperview().offset(-8).constraint
         }
 
         travelInfoIconView.snp.makeConstraints {
-            $0.size.equalTo(16)
+            $0.size.equalTo(24)
         }
 
         travelInfoStackView.snp.makeConstraints {
@@ -177,19 +176,21 @@ final class MediaInfoView: UIView {
         }
 
         titleLabel.snp.makeConstraints {
-            $0.bottom.equalTo(profileImageView.snp.bottom)
+            $0.top.equalTo(travelInfoStackView.snp.bottom).offset(4)
             $0.leading.equalTo(travelInfoStackView)
             $0.trailing.equalTo(toggleButton.snp.leading).offset(-8)
+            // collapsed 상태의 bottom constraint (titleLabel 기준)
+            collapsedBottomConstraint = $0.bottom.equalToSuperview().offset(-16).constraint
         }
 
         toggleButton.snp.makeConstraints {
-            $0.centerY.equalTo(titleLabel)
+            $0.top.equalTo(titleLabel)
             $0.trailing.equalToSuperview().offset(-24)
             $0.size.equalTo(28)
         }
 
         expandedContainerView.snp.makeConstraints {
-            $0.top.equalTo(profileImageView.snp.bottom).offset(25)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(16)
             $0.leading.trailing.equalToSuperview().inset(24)
             // expanded 상태의 bottom constraint
             expandedBottomConstraint = $0.bottom.equalToSuperview().offset(-16).constraint
@@ -200,7 +201,8 @@ final class MediaInfoView: UIView {
         thumbnailImageView.snp.makeConstraints {
             $0.top.equalToSuperview()
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(150)
+            // 327:150 비율 유지
+            $0.height.equalTo(thumbnailImageView.snp.width).multipliedBy(150.0 / 327.0)
         }
 
         budgetIconView.snp.makeConstraints {
@@ -248,8 +250,11 @@ final class MediaInfoView: UIView {
 
     private func updateExpandedState() {
         expandedContainerView.isHidden = !isExpanded
-        let image = isExpanded ? DSKitAsset.Assets.icChevronUp1.image : DSKitAsset.Assets.icChevronDown1.image
+        let image = isExpanded ? DSKitAsset.Assets.icChevronUp3.image : DSKitAsset.Assets.icChevronDown3.image
         toggleButton.setImage(image, for: .normal)
+
+        // 타이틀 줄 수 토글 (collapsed: 1줄, expanded: 무제한)
+        titleLabel.numberOfLines = isExpanded ? 0 : 1
 
         // Bottom constraint 토글
         if isExpanded {
@@ -266,7 +271,7 @@ final class MediaInfoView: UIView {
     func configure(with detail: TravelDetail) {
         // 여행 정보 라벨 (유튜버 · 국가 · 3박4일)
         let travelInfoText = "\(detail.youtube.youtuber) · \(detail.country) · \(detail.nights)박\(detail.days)일"
-        travelInfoLabel.setText(.bodyMSB, text: travelInfoText, color: UIColor.NDGL.Text.tertiary)
+        travelInfoLabel.setText(.bodyMSB, text: travelInfoText, color: UIColor.NDGL.Text.disabled)
 
         // 제목
         titleLabel.setText(.subTitleLSB, text: detail.youtube.title, color: UIColor.NDGL.Text.primary)

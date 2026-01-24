@@ -9,11 +9,11 @@
 import Core
 import Domain
 import DSKit
-import UIKit
 import RIBs
 import RxSwift
 import SnapKit
 import Then
+import UIKit
 
 // MARK: - FollowDetailViewController
 
@@ -24,8 +24,11 @@ public final class FollowDetailViewController: UIViewController, FollowDetailPre
     weak var listener: FollowDetailPresentableListener?
 
     private let disposeBag = DisposeBag()
+    private var dayCollectionViewOriginY: CGFloat = CGFloat.greatestFiniteMagnitude
+    private var currentSelectedDay: Int = 1
+    private var totalDays: Int = 0
 
-    // MARK: - UI Components
+    // MARK: - UI Components (스크롤 영역)
 
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = true
@@ -43,6 +46,17 @@ public final class FollowDetailViewController: UIViewController, FollowDetailPre
     private let mapView = TravelMapView()
 
     private let placeListCollectionView = PlaceListCollectionView()
+
+    // MARK: - UI Components (스티키 헤더)
+
+    private let stickyHeaderView = UIView().then {
+        $0.backgroundColor = UIColor.NDGL.Bg.primary
+        $0.isHidden = true
+    }
+
+    private let stickyDayCollectionView = DayCollectionView()
+
+    // MARK: - UI Components (고정 버튼/로딩)
 
     private let addToTripButton = UIButton(type: .system).then {
         $0.setTitle("내 여행에 담기", for: .normal)
@@ -82,21 +96,39 @@ public final class FollowDetailViewController: UIViewController, FollowDetailPre
         navigationController?.setNavigationBarHidden(false, animated: animated)
     }
 
-    // MARK: - Setup
+    public override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        // 네비게이션 백버튼으로 돌아갈 때 RIB detach 처리
+        if isMovingFromParent {
+            listener?.didTapCloseButton()
+        }
+    }
 
+    public override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        // dayCollectionView의 scrollView 내 위치 계산
+        dayCollectionViewOriginY = dayCollectionView.frame.origin.y
+    }
+
+    // MARK: - Setup
 
     private func setupUI() {
         view.backgroundColor = UIColor.NDGL.Bg.primary
 
-        [scrollView, addToTripButton, loadingIndicator].forEach {
-            view.addSubview($0)
-        }
-
+        // 스크롤 영역
+        view.addSubview(scrollView)
         scrollView.addSubview(contentView)
-
         [mediaInfoView, dayCollectionView, budgetView, mapView, placeListCollectionView].forEach {
             contentView.addSubview($0)
         }
+
+        // 스티키 헤더 (scrollView 위에 배치)
+        view.addSubview(stickyHeaderView)
+        stickyHeaderView.addSubview(stickyDayCollectionView)
+
+        // 버튼 및 로딩
+        view.addSubview(addToTripButton)
+        view.addSubview(loadingIndicator)
     }
 
     private func setupConstraints() {
@@ -104,6 +136,7 @@ public final class FollowDetailViewController: UIViewController, FollowDetailPre
             $0.center.equalToSuperview()
         }
 
+        // 스크롤 영역
         scrollView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.leading.trailing.bottom.equalToSuperview()
@@ -122,7 +155,7 @@ public final class FollowDetailViewController: UIViewController, FollowDetailPre
             $0.top.equalTo(mediaInfoView.snp.bottom).offset(24)
             $0.leading.equalToSuperview().offset(16)
             $0.trailing.equalToSuperview().offset(-16)
-            $0.height.equalTo(40)
+            $0.height.equalTo(30)
         }
 
         budgetView.snp.makeConstraints {
@@ -147,6 +180,20 @@ public final class FollowDetailViewController: UIViewController, FollowDetailPre
             $0.height.greaterThanOrEqualTo(400)
         }
 
+        // 스티키 헤더
+        stickyHeaderView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(62)
+        }
+
+        stickyDayCollectionView.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(16)
+            $0.leading.equalToSuperview().offset(16)
+            $0.trailing.equalToSuperview().offset(-16)
+            $0.height.equalTo(30)
+        }
+
         addToTripButton.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(16)
             $0.trailing.equalToSuperview().offset(-16)
@@ -156,8 +203,10 @@ public final class FollowDetailViewController: UIViewController, FollowDetailPre
     }
 
     private func setupDelegates() {
+        scrollView.delegate = self
         mediaInfoView.delegate = self
         dayCollectionView.dayDelegate = self
+        stickyDayCollectionView.dayDelegate = self
         placeListCollectionView.placeDelegate = self
     }
 
@@ -175,6 +224,26 @@ public final class FollowDetailViewController: UIViewController, FollowDetailPre
         listener?.didTapAddToTrip()
     }
 
+    // MARK: - Private Methods
+
+    private func syncDaySelection(day: Int) {
+        currentSelectedDay = day
+        let indexPath = IndexPath(item: day - 1, section: 0)
+        dayCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
+        stickyDayCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
+    }
+}
+
+// MARK: - UIScrollViewDelegate
+
+extension FollowDetailViewController: UIScrollViewDelegate {
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offsetY = scrollView.contentOffset.y
+
+        // dayCollectionView가 화면 상단에 도달하면 스티키 헤더 표시
+        let threshold = dayCollectionViewOriginY - 16
+        stickyHeaderView.isHidden = offsetY < threshold
+    }
 }
 
 // MARK: - FollowDetailPresentable
@@ -190,7 +259,11 @@ extension FollowDetailViewController {
 
     func updateTravelDetail(_ detail: TravelDetail) {
         mediaInfoView.configure(with: detail)
+        totalDays = detail.days
+
+        // 두 컬렉션뷰 모두 업데이트
         dayCollectionView.applySnapshot(totalDays: detail.days, selectedDay: 1)
+        stickyDayCollectionView.applySnapshot(totalDays: detail.days, selectedDay: 1)
     }
 
     func updatePlaces(_ places: [TravelPlace]) {
@@ -215,6 +288,9 @@ extension FollowDetailViewController: MediaInfoViewDelegate {
     func mediaInfoViewDidToggleExpand(_ view: MediaInfoView, isExpanded: Bool) {
         UIView.animate(withDuration: 0.3) { [weak self] in
             self?.view.layoutIfNeeded()
+        } completion: { [weak self] _ in
+            // 레이아웃 변경 후 dayCollectionView 위치 재계산
+            self?.dayCollectionViewOriginY = self?.dayCollectionView.frame.origin.y ?? 0
         }
     }
 }
@@ -223,6 +299,8 @@ extension FollowDetailViewController: MediaInfoViewDelegate {
 
 extension FollowDetailViewController: DayCollectionViewDelegate {
     func dayCollectionView(_ collectionView: DayCollectionView, didSelectDay day: Int) {
+        // 두 컬렉션뷰 선택 상태 동기화
+        syncDaySelection(day: day)
         listener?.didSelectDay(day)
     }
 }

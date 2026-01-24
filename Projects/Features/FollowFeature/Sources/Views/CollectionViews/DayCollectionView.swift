@@ -32,7 +32,7 @@ final class DayCollectionView: UICollectionView {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumInteritemSpacing = 8
-        layout.itemSize = CGSize(width: 60, height: 32)
+        layout.itemSize = CGSize(width: 72, height: 30)
 
         super.init(frame: .zero, collectionViewLayout: layout)
         setupCollectionView()

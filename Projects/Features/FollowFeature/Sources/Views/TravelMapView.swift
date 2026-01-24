@@ -127,8 +127,8 @@ extension TravelMapView: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         if let polyline = overlay as? MKPolyline {
             let renderer = MKPolylineRenderer(polyline: polyline)
-            renderer.strokeColor = UIColor.NDGL.Bg.Interactive.primary
-            renderer.lineWidth = 2
+            renderer.strokeColor = .black
+            renderer.lineWidth = 1
             renderer.lineDashPattern = [4, 4]
             return renderer
         }

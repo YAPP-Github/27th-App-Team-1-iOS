@@ -28,7 +28,7 @@ final class MockFollowDetailRepository: FollowRepositoryProtocol {
                 thumbnail: "https://i.ytimg.com/vi/F2utz6L76D0/mqdefault.jpg",
                 profileImage: nil,
                 link: "https://www.youtube.com/watch?v=F2utz6L76D0",
-                summary: "빠니보틀은 주말을 이용해 직장인들도 충분히 다녀올 수 있는 '금요일 퇴근 후 방콕 여행'의 가능성을 보여주며, 곽튜브와의 티격태격 케미를 통해 방콕의 매력을 소개합니다"
+                summary: "빠니보틀은 주말을 이용해 직장인들도 충분히 다녀올 수 있는 '금요일 퇴근 후 방콕 여행'의 가능성을 보여주며"
             )
         )
     }
@@ -49,11 +49,11 @@ final class MockFollowDetailRepository: FollowRepositoryProtocol {
                     estimatedDuration: 60,
                     place: PlaceInfo(
                         googlePlaceId: "ChIJSc8jdZORQTURu6BMwxrKbGg",
+                        thumbnail: "https://example.com/airport.jpg",
                         latitude: 35.6585805,
                         longitude: 139.7454329,
                         name: "인도 국제 공항",
-                        regularOpeningHours: "00:00~24:00",
-                        category: .transportation
+                        regularOpeningHours: "00:00~24:00"
                     )
                 ),
                 TravelPlace(
@@ -64,11 +64,11 @@ final class MockFollowDetailRepository: FollowRepositoryProtocol {
                     estimatedDuration: 90,
                     place: PlaceInfo(
                         googlePlaceId: "ChIJN1t_tDeuEmsRUsoyG83frY4",
+                        thumbnail: "https://example.com/market.jpg",
                         latitude: 35.6592606,
                         longitude: 139.7002586,
                         name: "바라나시 시장 투어",
-                        regularOpeningHours: "06:00~18:00",
-                        category: .tourism
+                        regularOpeningHours: "06:00~18:00"
                     )
                 ),
                 TravelPlace(
@@ -79,11 +79,11 @@ final class MockFollowDetailRepository: FollowRepositoryProtocol {
                     estimatedDuration: 60,
                     place: PlaceInfo(
                         googlePlaceId: "ChIJabc123",
+                        thumbnail: "https://example.com/chicken.jpg",
                         latitude: 35.6600000,
                         longitude: 139.7100000,
                         name: "짱짱 탄두리 치킨",
-                        regularOpeningHours: "11:00~22:00",
-                        category: .restaurant
+                        regularOpeningHours: "11:00~22:00"
                     )
                 ),
                 TravelPlace(
@@ -94,11 +94,11 @@ final class MockFollowDetailRepository: FollowRepositoryProtocol {
                     estimatedDuration: 30,
                     place: PlaceInfo(
                         googlePlaceId: "ChIJdef456",
+                        thumbnail: "https://example.com/cafe.jpg",
                         latitude: 35.6610000,
                         longitude: 139.7150000,
                         name: "맛있다 카페",
-                        regularOpeningHours: "08:00~20:00",
-                        category: .cafe
+                        regularOpeningHours: "08:00~20:00"
                     )
                 ),
                 TravelPlace(
@@ -109,11 +109,11 @@ final class MockFollowDetailRepository: FollowRepositoryProtocol {
                     estimatedDuration: 480,
                     place: PlaceInfo(
                         googlePlaceId: "ChIJghi789",
+                        thumbnail: "https://example.com/hotel.jpg",
                         latitude: 35.6620000,
                         longitude: 139.7200000,
                         name: "쿨쿨호텔",
-                        regularOpeningHours: nil,
-                        category: .accommodation
+                        regularOpeningHours: nil
                     )
                 )
             ]
@@ -127,11 +127,11 @@ final class MockFollowDetailRepository: FollowRepositoryProtocol {
                     estimatedDuration: 120,
                     place: PlaceInfo(
                         googlePlaceId: "ChIJaaa111",
+                        thumbnail: "https://example.com/tajmahal.jpg",
                         latitude: 35.6700000,
                         longitude: 139.7300000,
                         name: "타지마할",
-                        regularOpeningHours: "06:00~18:00",
-                        category: .tourism
+                        regularOpeningHours: "06:00~18:00"
                     )
                 ),
                 TravelPlace(
@@ -142,11 +142,11 @@ final class MockFollowDetailRepository: FollowRepositoryProtocol {
                     estimatedDuration: 60,
                     place: PlaceInfo(
                         googlePlaceId: "ChIJbbb222",
+                        thumbnail: "https://example.com/restaurant.jpg",
                         latitude: 35.6710000,
                         longitude: 139.7310000,
                         name: "전통 음식점",
-                        regularOpeningHours: "10:00~21:00",
-                        category: .restaurant
+                        regularOpeningHours: "10:00~21:00"
                     )
                 )
             ]
@@ -160,11 +160,11 @@ final class MockFollowDetailRepository: FollowRepositoryProtocol {
                     estimatedDuration: 180,
                     place: PlaceInfo(
                         googlePlaceId: "ChIJccc333",
+                        thumbnail: "https://example.com/market2.jpg",
                         latitude: 35.6800000,
                         longitude: 139.7400000,
                         name: "현지 시장",
-                        regularOpeningHours: "09:00~20:00",
-                        category: .tourism
+                        regularOpeningHours: "09:00~20:00"
                     )
                 )
             ]

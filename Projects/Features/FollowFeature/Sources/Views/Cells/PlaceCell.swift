@@ -9,9 +9,10 @@
 import Core
 import Domain
 import DSKit
-import UIKit
+import Kingfisher
 import SnapKit
 import Then
+import UIKit
 
 final class PlaceCell: UICollectionViewCell {
 
@@ -22,13 +23,6 @@ final class PlaceCell: UICollectionViewCell {
     private let containerView = UIView().then {
         $0.backgroundColor = UIColor.NDGL.Bg.primary
     }
-
-    private let categoryTagView = UIView().then {
-        $0.backgroundColor = UIColor.NDGL.Bg.Interactive.selected
-        $0.layer.cornerRadius = 4
-    }
-
-    private let categoryLabel = UILabel()
 
     private let durationLabel = UILabel()
 
@@ -70,16 +64,21 @@ final class PlaceCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        thumbnailImageView.kf.cancelDownloadTask()
+        thumbnailImageView.image = nil
+    }
+
     // MARK: - Setup
 
     private func setupUI() {
         contentView.addSubview(containerView)
 
-        [categoryTagView, durationLabel, sequenceView, placeNameLabel, tipLabel, thumbnailImageView, separatorView, timeInfoLabel].forEach {
+        [durationLabel, sequenceView, placeNameLabel, tipLabel, thumbnailImageView, separatorView, timeInfoLabel].forEach {
             containerView.addSubview($0)
         }
 
-        categoryTagView.addSubview(categoryLabel)
         sequenceView.addSubview(sequenceLabel)
     }
 
@@ -88,27 +87,15 @@ final class PlaceCell: UICollectionViewCell {
             $0.edges.equalToSuperview()
         }
 
-        // 카테고리 태그
-        categoryTagView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(8)
-            $0.leading.equalToSuperview()
-            $0.height.equalTo(20)
-        }
-
-        categoryLabel.snp.makeConstraints {
-            $0.verticalEdges.equalToSuperview().inset(2)
-            $0.horizontalEdges.equalToSuperview().inset(8)
-        }
-
         // 예상 체류 시간
         durationLabel.snp.makeConstraints {
-            $0.centerY.equalTo(categoryTagView)
-            $0.leading.equalTo(categoryTagView.snp.trailing).offset(8)
+            $0.top.equalToSuperview().offset(8)
+            $0.leading.equalToSuperview()
         }
 
         // 순서 뷰
         sequenceView.snp.makeConstraints {
-            $0.top.equalTo(categoryTagView.snp.bottom).offset(8)
+            $0.top.equalTo(durationLabel.snp.bottom).offset(8)
             $0.leading.equalToSuperview()
             $0.size.equalTo(24)
         }
@@ -133,7 +120,7 @@ final class PlaceCell: UICollectionViewCell {
 
         // 썸네일
         thumbnailImageView.snp.makeConstraints {
-            $0.top.equalTo(categoryTagView.snp.bottom).offset(8)
+            $0.top.equalTo(durationLabel.snp.bottom).offset(8)
             $0.trailing.equalToSuperview()
             $0.size.equalTo(72)
         }
@@ -155,12 +142,24 @@ final class PlaceCell: UICollectionViewCell {
     // MARK: - Configuration
 
     func configure(with place: TravelPlace, isLast: Bool = false) {
-        categoryLabel.setText(.bodySSB, text: place.place.category.rawValue, color: UIColor.NDGL.Text.Interactive.primary)
-        durationLabel.setText(.bodySR, text: "• \(place.estimatedDuration)분 체류 예상", color: UIColor.NDGL.Text.tertiary)
+        durationLabel.setText(.bodySR, text: "\(place.estimatedDuration)분 체류 예상", color: UIColor.NDGL.Text.tertiary)
         sequenceLabel.setText(.bodySSB, text: "\(place.sequence)", color: UIColor.NDGL.Text.Interactive.inverse)
         placeNameLabel.setText(.bodyLSB, text: place.place.name, color: UIColor.NDGL.Text.primary)
-        tipLabel.setText(.bodySR, text: place.travelerTip ?? "", color: UIColor.NDGL.Text.tertiary)
+        tipLabel.setText(.bodySR, text: place.travelerTip, color: UIColor.NDGL.Text.tertiary)
         separatorView.isHidden = isLast
+
+        // 썸네일 이미지 로딩
+        if let thumbnailURLString = place.place.thumbnail,
+           let thumbnailURL = URL(string: thumbnailURLString) {
+            thumbnailImageView.kf.setImage(
+                with: thumbnailURL,
+                placeholder: nil,
+                options: [
+                    .transition(.fade(0.2)),
+                    .cacheOriginalImage
+                ]
+            )
+        }
 
         // 다음 장소까지 이동 시간 (Mock)
         if !isLast {

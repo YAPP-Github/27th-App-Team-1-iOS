@@ -43,7 +43,7 @@ extension YouTubeResponse {
 
 extension FollowItineraryResponse {
     func toDomain() -> [TravelPlace] {
-        places.map { $0.toDomain() }
+        itineraries.map { $0.toDomain() }
     }
 }
 
@@ -64,11 +64,11 @@ extension PlaceResponse {
     func toDomain() -> PlaceInfo {
         PlaceInfo(
             googlePlaceId: googlePlaceId,
+            thumbnail: thumbnail,
             latitude: latitude,
             longitude: longitude,
             name: name,
-            regularOpeningHours: regularOpeningHours,
-            category: PlaceCategory(rawValue: category ?? "") ?? .etc
+            regularOpeningHours: regularOpeningHours
         )
     }
 }

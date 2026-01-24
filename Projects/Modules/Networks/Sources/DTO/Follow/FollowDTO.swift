@@ -32,7 +32,7 @@ public struct YouTubeResponse: Decodable, Sendable {
 // MARK: - Itinerary Response (여행 일정)
 
 public struct FollowItineraryResponse: Decodable, Sendable {
-    public let places: [FollowPlaceResponse]
+    public let itineraries: [FollowPlaceResponse]
 }
 
 public struct FollowPlaceResponse: Decodable, Sendable {
@@ -46,9 +46,9 @@ public struct FollowPlaceResponse: Decodable, Sendable {
 
 public struct PlaceResponse: Decodable, Sendable {
     public let googlePlaceId: String
+    public let thumbnail: String?
     public let latitude: Double
     public let longitude: Double
     public let name: String
     public let regularOpeningHours: String?
-    public let category: String?
 }
