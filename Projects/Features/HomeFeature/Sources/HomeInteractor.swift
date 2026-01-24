@@ -8,13 +8,14 @@
 
 import Domain
 import FollowFeature
+import Foundation
 import RIBs
 import RxSwift
 
 // MARK: - HomeListener
 
 public protocol HomeListener: AnyObject {
-    // 부모 RIB에 전달할 이벤트 정의
+    func homeDidAddTrip(title: String, startDate: Date, endDate: Date)
 }
 
 // MARK: - HomePresentable
@@ -157,5 +158,11 @@ extension HomeInteractor: HomePresentableListener {
 extension HomeInteractor: FollowDetailListener {
     func followDetailDidTapClose() {
         router?.detachFollowDetail()
+    }
+
+    func followDetailDidAddTrip(title: String, startDate: Date, endDate: Date) {
+        router?.detachFollowDetail()
+        // TabBar에 알려서 Travel 탭으로 이동
+        listener?.homeDidAddTrip(title: title, startDate: startDate, endDate: endDate)
     }
 }

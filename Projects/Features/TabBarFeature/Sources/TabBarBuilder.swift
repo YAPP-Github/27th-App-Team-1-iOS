@@ -9,6 +9,7 @@
 import RIBs
 
 import HomeFeature
+import TravelFeature
 
 // MARK: - TabBarDependency
 
@@ -18,8 +19,8 @@ public protocol TabBarDependency: Dependency {
 
 // MARK: - TabBarComponent
 
-final class TabBarComponent: Component<TabBarDependency>, HomeDependency {
-    // Home RIB에 전달할 의존성
+final class TabBarComponent: Component<TabBarDependency>, HomeDependency, TravelDependency {
+    // Home, Travel RIB에 전달할 의존성
 }
 
 // MARK: - TabBarBuildable
@@ -43,11 +44,13 @@ public final class TabBarBuilder: Builder<TabBarDependency>, TabBarBuildable {
         interactor.listener = listener
 
         let homeBuilder = HomeBuilder(dependency: component)
+        let travelBuilder = TravelBuilder(dependency: component)
 
         let router = TabBarRouter(
             interactor: interactor,
             viewController: viewController,
-            homeBuilder: homeBuilder
+            homeBuilder: homeBuilder,
+            travelBuilder: travelBuilder
         )
 
         return router

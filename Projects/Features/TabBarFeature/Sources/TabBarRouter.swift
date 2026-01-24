@@ -9,10 +9,11 @@
 import RIBs
 
 import HomeFeature
+import TravelFeature
 
 // MARK: - TabBarInteractable
 
-protocol TabBarInteractable: Interactable, HomeListener {
+protocol TabBarInteractable: Interactable, HomeListener, TravelListener {
     var router: TabBarRouting? { get set }
     var listener: TabBarListener? { get set }
 }
@@ -34,14 +35,18 @@ public protocol TabBarRouting: ViewableRouting {
 final class TabBarRouter: ViewableRouter<TabBarInteractable, TabBarViewControllable>, TabBarRouting {
 
     private let homeBuilder: HomeBuildable
+    private let travelBuilder: TravelBuildable
     private var homeRouter: HomeRouting?
+    private var travelRouter: TravelRouting?
 
     init(
         interactor: TabBarInteractable,
         viewController: TabBarViewControllable,
-        homeBuilder: HomeBuildable
+        homeBuilder: HomeBuildable,
+        travelBuilder: TravelBuildable
     ) {
         self.homeBuilder = homeBuilder
+        self.travelBuilder = travelBuilder
         super.init(interactor: interactor, viewController: viewController)
         interactor.router = self
     }
@@ -58,7 +63,14 @@ final class TabBarRouter: ViewableRouter<TabBarInteractable, TabBarViewControlla
         self.homeRouter = homeRouter
         attachChild(homeRouter)
 
-        // Home VC만 전달, 나머지는 TabBarViewController에서 placeholder로 처리
-        viewController.setViewControllers([homeRouter.viewControllable])
+        let travelRouter = travelBuilder.build(withListener: interactor)
+        self.travelRouter = travelRouter
+        attachChild(travelRouter)
+
+        // Home과 Travel VC 전달
+        viewController.setViewControllers([
+            homeRouter.viewControllable,
+            travelRouter.viewControllable
+        ])
     }
 }

@@ -15,6 +15,7 @@ import RxSwift
 
 public protocol FollowDetailListener: AnyObject {
     func followDetailDidTapClose()
+    func followDetailDidAddTrip(title: String, startDate: Date, endDate: Date)
 }
 
 // MARK: - FollowDetailPresentable
@@ -155,10 +156,11 @@ extension FollowDetailInteractor: TripCalendarListener {
     func tripCalendarDidSelectRange(startDate: Date, endDate: Date) {
         router?.detachTripCalendar()
 
-        // TODO: 실제 여행 저장 API 호출
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        print("Trip added: \(formatter.string(from: startDate)) ~ \(formatter.string(from: endDate))")
+        // 여행 제목 (city + "여행")
+        let tripTitle = "\(travelDetail?.city ?? "새로운") 여행"
+
+        // Home으로 돌아가면서 Travel 탭으로 이동하도록 알림
+        listener?.followDetailDidAddTrip(title: tripTitle, startDate: startDate, endDate: endDate)
     }
 
     func tripCalendarDidCancel() {

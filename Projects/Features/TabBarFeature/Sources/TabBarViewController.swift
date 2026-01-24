@@ -49,23 +49,37 @@ public final class TabBarViewController: UITabBarController, TabBarPresentable, 
     }
     
     public func setViewControllers(_ viewControllers: [ViewControllable]) {
-        guard let homeVC = viewControllers.first?.uiviewController else { return }
+        guard viewControllers.count >= 2,
+              let homeVC = viewControllers[0].uiviewController as? UIViewController,
+              let travelVC = viewControllers[1].uiviewController as? UIViewController else {
+            return
+        }
+
         let infoDummy = UIViewController().then { $0.view.backgroundColor = .yellow }
-        let myTripDummy = UIViewController().then { $0.view.backgroundColor = .green }
 
         // Wrap each VC in a NavigationController for push navigation
         let infoNav = UINavigationController(rootViewController: infoDummy)
         let homeNav = UINavigationController(rootViewController: homeVC)
-        let myTripNav = UINavigationController(rootViewController: myTripDummy)
+        let travelNav = UINavigationController(rootViewController: travelVC)
 
         // Set delegate to handle tab bar visibility
-        [infoNav, homeNav, myTripNav].forEach { $0.delegate = self }
+        [infoNav, homeNav, travelNav].forEach { $0.delegate = self }
 
-        let finalControllers = [infoNav, homeNav, myTripNav]
+        let finalControllers = [infoNav, homeNav, travelNav]
 
         super.setViewControllers(finalControllers, animated: false)
 
         setupTabItems()
+    }
+
+    func switchToTab(at index: Int) {
+        guard index < tabItems.count else { return }
+
+        // 탭바 보이게 설정
+        customTabBarContainer.isHidden = false
+        customTabBarContainer.alpha = 1
+
+        updateSelection(at: index)
     }
 }
 
