@@ -276,6 +276,25 @@ extension FollowDetailViewController {
     func updateBudget(_ budget: Int) {
         budgetView.configure(budget: budget)
     }
+
+    func showPlaceDetail(_ place: TravelPlace) {
+        let contentView = PlaceDetailBottomSheetView()
+        contentView.configure(with: place)
+
+        let configuration = BottomSheetConfiguration(
+            showDim: true,
+            dimColor: UIColor.black.withAlphaComponent(0.7),
+            showIndicator: true
+        )
+
+        let bottomSheet = BottomSheetViewController(
+            contentView: contentView,
+            contentHeight: 280,
+            configuration: configuration
+        )
+
+        present(bottomSheet, animated: false)
+    }
 }
 
 // MARK: - FollowDetailViewControllable

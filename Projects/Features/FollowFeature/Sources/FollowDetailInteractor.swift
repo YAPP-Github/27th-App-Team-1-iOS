@@ -27,6 +27,7 @@ protocol FollowDetailPresentable: Presentable {
     func updateTravelDetail(_ detail: TravelDetail)
     func updatePlaces(_ places: [TravelPlace])
     func updateBudget(_ budget: Int)
+    func showPlaceDetail(_ place: TravelPlace)
 }
 
 // MARK: - FollowDetailPresentableListener
@@ -144,8 +145,7 @@ extension FollowDetailInteractor: FollowDetailPresentableListener {
     }
 
     func didSelectPlace(_ place: TravelPlace) {
-        // TODO: 장소 상세 화면으로 이동
-        print("Selected place: \(place.place.name)")
+        presenter.showPlaceDetail(place)
     }
 }
 
