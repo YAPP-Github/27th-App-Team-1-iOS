@@ -270,8 +270,10 @@ extension FollowDetailViewController {
         mapView.configure(with: places)
         placeListCollectionView.applySnapshot(places: places)
 
-        // PlaceList 높이 동적 업데이트
-        let height = CGFloat(places.count * 140)
+        // PlaceList 높이 동적 업데이트 (셀 높이 135 + spacing 8)
+        let cellHeight: CGFloat = 135
+        let spacing: CGFloat = 8
+        let height = CGFloat(places.count) * cellHeight + CGFloat(max(0, places.count - 1)) * spacing
         placeListCollectionView.snp.updateConstraints {
             $0.height.greaterThanOrEqualTo(max(400, height))
         }
