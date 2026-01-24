@@ -64,23 +64,23 @@ private extension NDGLTabItem {
     
     func setLayout() {
         self.snp.makeConstraints {
-            $0.size.equalTo(56.adjusted)
+            $0.width.equalTo(56.adjusted).priority(.high)
         }
-        
+
         containerStackView.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
-        
+
         iconView.snp.makeConstraints {
             $0.size.equalTo(24.adjusted)
         }
     }
-    
+
     func updateState(animation: Bool) {
         let duration = animation ? 0.4 : 0.0
-        
+
         self.snp.updateConstraints {
-            $0.width.equalTo(isTabSelected ? 184.adjusted : 56.adjusted)
+            $0.width.equalTo(isTabSelected ? 184.adjusted : 56.adjusted).priority(.high)
         }
         
         UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.5) {

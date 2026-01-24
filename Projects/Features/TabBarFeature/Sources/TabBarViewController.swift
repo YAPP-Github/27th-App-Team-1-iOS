@@ -52,11 +52,19 @@ public final class TabBarViewController: UITabBarController, TabBarPresentable, 
         guard let homeVC = viewControllers.first?.uiviewController else { return }
         let infoDummy = UIViewController().then { $0.view.backgroundColor = .yellow }
         let myTripDummy = UIViewController().then { $0.view.backgroundColor = .green }
-        
-        let finalControllers = [infoDummy, homeVC, myTripDummy]
-        
+
+        // Wrap each VC in a NavigationController for push navigation
+        let infoNav = UINavigationController(rootViewController: infoDummy)
+        let homeNav = UINavigationController(rootViewController: homeVC)
+        let myTripNav = UINavigationController(rootViewController: myTripDummy)
+
+        // Set delegate to handle tab bar visibility
+        [infoNav, homeNav, myTripNav].forEach { $0.delegate = self }
+
+        let finalControllers = [infoNav, homeNav, myTripNav]
+
         super.setViewControllers(finalControllers, animated: false)
-        
+
         setupTabItems()
     }
 }
@@ -172,6 +180,43 @@ private extension TabBarViewController {
         
         if animated {
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        }
+    }
+}
+
+// MARK: - UINavigationControllerDelegate
+
+extension TabBarViewController: UINavigationControllerDelegate {
+    public func navigationController(
+        _ navigationController: UINavigationController,
+        willShow viewController: UIViewController,
+        animated: Bool
+    ) {
+        // Hide custom tab bar when pushing (more than 1 VC in stack)
+        let shouldHideTabBar = navigationController.viewControllers.count > 1
+
+        guard animated else {
+            customTabBarContainer.isHidden = shouldHideTabBar
+            customTabBarContainer.alpha = shouldHideTabBar ? 0 : 1
+            return
+        }
+
+        if shouldHideTabBar {
+            // Hiding: animate alpha to 0, then hide
+            UIView.animate(withDuration: 0.3) {
+                self.customTabBarContainer.alpha = 0
+            } completion: { _ in
+                self.customTabBarContainer.isHidden = true
+            }
+        } else {
+            // Showing: unhide first with alpha 0, then animate to 1
+            customTabBarContainer.isHidden = false
+            customTabBarContainer.alpha = 0
+            customTabBarContainer.layoutIfNeeded()
+
+            UIView.animate(withDuration: 0.3) {
+                self.customTabBarContainer.alpha = 1
+            }
         }
     }
 }
