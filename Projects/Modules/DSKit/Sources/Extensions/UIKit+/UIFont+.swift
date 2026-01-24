@@ -7,11 +7,17 @@
 
 import UIKit
 
+import Core
+
 extension UIFont {
     /// NDGL 디자인 시스템에서 정의한 타이포그래피 스타일 가이드입니다.
     /// 모든 스타일은 Pretendard 폰트를 기본으로 하며, 행간(LineHeight)과 자간(Kern) 설정이 포함되어 있습니다.
     /// 각 case의 네이밍은 디자인 시스템의 네이밍을 사용하였습니다.
     public enum NDGL {
+        private static var scaleRatio: CGFloat {
+            max(1.adjusted, 1.adjustedH)
+        }
+        
         // MARK: - Titles
         
         /// Title/Lg/Bold: 32pt / Bold / 행간 140% / 자간 -2.5%
@@ -59,43 +65,26 @@ extension UIFont {
         
         /// 해당 스타일의 프리텐다드 폰트 객체를 반환합니다.
         private var font: UIFont {
+            let ratio = NDGL.scaleRatio
             switch self {
-            case .titleLB:
-                return DSKitFontFamily.Pretendard.bold.font(size: 32)
-            case .titleLSB:
-                return DSKitFontFamily.Pretendard.semiBold.font(size: 32)
-            case .titleMB:
-                return DSKitFontFamily.Pretendard.bold.font(size: 22)
-            case .titleMSB:
-                return DSKitFontFamily.Pretendard.semiBold.font(size: 22)
-            case .subTitleLSB:
-                return DSKitFontFamily.Pretendard.semiBold.font(size: 20)
-            case .subTitleLM:
-                return DSKitFontFamily.Pretendard.medium.font(size: 20)
-            case .subTitleMB:
-                return DSKitFontFamily.Pretendard.bold.font(size: 18)
-            case .subTitleMSB:
-                return DSKitFontFamily.Pretendard.semiBold.font(size: 18)
-            case .subTitleMM:
-                return DSKitFontFamily.Pretendard.medium.font(size: 18)
-            case .bodyLSB:
-                return DSKitFontFamily.Pretendard.semiBold.font(size: 16)
-            case .bodyLM:
-                return DSKitFontFamily.Pretendard.medium.font(size: 16)
-            case .bodyLR:
-                return DSKitFontFamily.Pretendard.regular.font(size: 16)
-            case .bodyMSB:
-                return DSKitFontFamily.Pretendard.semiBold.font(size: 14)
-            case .bodyMM:
-                return DSKitFontFamily.Pretendard.medium.font(size: 14)
-            case .bodyMR:
-                return DSKitFontFamily.Pretendard.regular.font(size: 14)
-            case .bodySSB:
-                return DSKitFontFamily.Pretendard.semiBold.font(size: 12)
-            case .bodySM:
-                return DSKitFontFamily.Pretendard.medium.font(size: 12)
-            case .bodySR:
-                return DSKitFontFamily.Pretendard.regular.font(size: 12)
+            case .titleLB:    return DSKitFontFamily.Pretendard.bold.font(size: 32 * ratio)
+            case .titleLSB:   return DSKitFontFamily.Pretendard.semiBold.font(size: 32 * ratio)
+            case .titleMB:    return DSKitFontFamily.Pretendard.bold.font(size: 22 * ratio)
+            case .titleMSB:   return DSKitFontFamily.Pretendard.semiBold.font(size: 22 * ratio)
+            case .subTitleLSB: return DSKitFontFamily.Pretendard.semiBold.font(size: 20 * ratio)
+            case .subTitleLM:  return DSKitFontFamily.Pretendard.medium.font(size: 20 * ratio)
+            case .subTitleMB:  return DSKitFontFamily.Pretendard.bold.font(size: 18 * ratio)
+            case .subTitleMSB: return DSKitFontFamily.Pretendard.semiBold.font(size: 18 * ratio)
+            case .subTitleMM:  return DSKitFontFamily.Pretendard.medium.font(size: 18 * ratio)
+            case .bodyLSB:    return DSKitFontFamily.Pretendard.semiBold.font(size: 16 * ratio)
+            case .bodyLM:     return DSKitFontFamily.Pretendard.medium.font(size: 16 * ratio)
+            case .bodyLR:     return DSKitFontFamily.Pretendard.regular.font(size: 16 * ratio)
+            case .bodyMSB:    return DSKitFontFamily.Pretendard.semiBold.font(size: 14 * ratio)
+            case .bodyMM:     return DSKitFontFamily.Pretendard.medium.font(size: 14 * ratio)
+            case .bodyMR:     return DSKitFontFamily.Pretendard.regular.font(size: 14 * ratio)
+            case .bodySSB:    return DSKitFontFamily.Pretendard.semiBold.font(size: 12 * ratio)
+            case .bodySM:     return DSKitFontFamily.Pretendard.medium.font(size: 12 * ratio)
+            case .bodySR:     return DSKitFontFamily.Pretendard.regular.font(size: 12 * ratio)
             }
         }
     }
