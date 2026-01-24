@@ -39,7 +39,7 @@ public final class TabBarViewController: UITabBarController, TabBarPresentable, 
 
     // MARK: - Lifecycle
 
-    public override func viewDidLoad() {
+    override public func viewDidLoad() {
         super.viewDidLoad()
         
         setupBaseTabBar()
