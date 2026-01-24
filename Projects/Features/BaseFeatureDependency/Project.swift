@@ -17,9 +17,7 @@ let project = Project.makeModule(
             dependencies: [
                 .core,
                 .domain,
-                .Modules.dsKit,
-                .SPM.RIBs,
-                .SPM.Kingfisher
+                .Modules.dsKit
             ],
             scripts: [.swiftLint],
             hasResources: false
