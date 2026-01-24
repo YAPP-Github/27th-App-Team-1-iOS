@@ -125,9 +125,9 @@ extension HomeInteractor: HomePresentableListener {
         guard section < categories.count else { return }
         let category = categories[section]
         guard let trips = tripsByCategory[category], index < trips.count else { return }
-        let trip = trips[index]
-        // TODO: 상세 화면으로 이동
-        print("Selected popular trip: \(trip.title)")
+        // TODO: 실제 API 연동 시 trip.id 사용
+        // 현재는 테스트를 위해 항상 id 1로 이동
+        router?.routeToFollowDetail(with: 1)
     }
 
     func didSelectRecommendation(at index: Int) {

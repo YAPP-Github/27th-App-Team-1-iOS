@@ -58,14 +58,8 @@ public final class FollowDetailViewController: UIViewController, FollowDetailPre
 
     // MARK: - UI Components (고정 버튼/로딩)
 
-    private let addToTripButton = UIButton(type: .system).then {
-        $0.setTitle("내 여행에 담기", for: .normal)
-        $0.setTitleColor(UIColor.NDGL.Text.Interactive.inverse, for: .normal)
-        $0.titleLabel?.font = DSKitFontFamily.Pretendard.semiBold.font(size: 16)
-        $0.backgroundColor = UIColor.NDGL.Bg.Interactive.primary
-        $0.layer.cornerRadius = 12
-    }
-
+    private let addToTripButton = BottomPlacedButton(title: "여행 따라가기")
+    
     private let loadingIndicator = UIActivityIndicatorView(style: .large).then {
         $0.hidesWhenStopped = true
     }
@@ -281,6 +275,19 @@ extension FollowDetailViewController {
 
     func updateBudget(_ budget: Int) {
         budgetView.configure(budget: budget)
+    }
+}
+
+// MARK: - FollowDetailViewControllable
+
+extension FollowDetailViewController {
+    public func present(_ viewController: ViewControllable) {
+        viewController.uiviewController.modalPresentationStyle = .fullScreen
+        present(viewController.uiviewController, animated: true)
+    }
+
+    public func dismiss(_ viewController: ViewControllable) {
+        viewController.uiviewController.dismiss(animated: true)
     }
 }
 

@@ -7,6 +7,7 @@
 //
 
 import Domain
+import Foundation
 import RIBs
 import RxSwift
 
@@ -128,8 +129,7 @@ extension FollowDetailInteractor: FollowDetailPresentableListener {
     }
 
     func didTapAddToTrip() {
-        // TODO: 내 여행에 담기 기능 구현
-        print("Add to trip tapped for travel: \(recommendationId)")
+        router?.routeToTripCalendar()
     }
 
     func didSelectDay(_ day: Int) {
@@ -146,5 +146,22 @@ extension FollowDetailInteractor: FollowDetailPresentableListener {
     func didSelectPlace(_ place: TravelPlace) {
         // TODO: 장소 상세 화면으로 이동
         print("Selected place: \(place.place.name)")
+    }
+}
+
+// MARK: - TripCalendarListener
+
+extension FollowDetailInteractor: TripCalendarListener {
+    func tripCalendarDidSelectRange(startDate: Date, endDate: Date) {
+        router?.detachTripCalendar()
+
+        // TODO: 실제 여행 저장 API 호출
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        print("Trip added: \(formatter.string(from: startDate)) ~ \(formatter.string(from: endDate))")
+    }
+
+    func tripCalendarDidCancel() {
+        router?.detachTripCalendar()
     }
 }

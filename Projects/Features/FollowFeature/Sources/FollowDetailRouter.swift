@@ -10,7 +10,7 @@ import RIBs
 
 // MARK: - FollowDetailInteractable
 
-protocol FollowDetailInteractable: Interactable {
+protocol FollowDetailInteractable: Interactable, TripCalendarListener {
     var router: FollowDetailRouting? { get set }
     var listener: FollowDetailListener? { get set }
 }
@@ -18,24 +18,50 @@ protocol FollowDetailInteractable: Interactable {
 // MARK: - FollowDetailViewControllable
 
 public protocol FollowDetailViewControllable: ViewControllable {
-    // ViewController에 요청할 화면 전환 메서드 정의
+    func present(_ viewController: ViewControllable)
+    func dismiss(_ viewController: ViewControllable)
 }
 
 // MARK: - FollowDetailRouting
 
 public protocol FollowDetailRouting: ViewableRouting {
-    // 자식 RIB으로 라우팅하는 메서드 정의
+    func routeToTripCalendar()
+    func detachTripCalendar()
 }
 
 // MARK: - FollowDetailRouter
 
 final class FollowDetailRouter: ViewableRouter<FollowDetailInteractable, FollowDetailViewControllable>, FollowDetailRouting {
 
-    override init(
+    private let tripCalendarBuilder: TripCalendarBuildable
+    private var tripCalendarRouter: TripCalendarRouting?
+
+    init(
         interactor: FollowDetailInteractable,
-        viewController: FollowDetailViewControllable
+        viewController: FollowDetailViewControllable,
+        tripCalendarBuilder: TripCalendarBuildable
     ) {
+        self.tripCalendarBuilder = tripCalendarBuilder
         super.init(interactor: interactor, viewController: viewController)
         interactor.router = self
+    }
+
+    // MARK: - FollowDetailRouting
+
+    func routeToTripCalendar() {
+        guard tripCalendarRouter == nil else { return }
+
+        let router = tripCalendarBuilder.build(withListener: interactor)
+        tripCalendarRouter = router
+        attachChild(router)
+        viewController.present(router.viewControllable)
+    }
+
+    func detachTripCalendar() {
+        guard let router = tripCalendarRouter else { return }
+
+        viewController.dismiss(router.viewControllable)
+        detachChild(router)
+        tripCalendarRouter = nil
     }
 }
