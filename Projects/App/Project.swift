@@ -23,7 +23,6 @@ let project = Project.makeModule(
                 .data,
                 .Modules.networks,
                 .Features.rootFeature,
-                .SPM.RIBs
             ],
             settings: .appSettings()
         )
