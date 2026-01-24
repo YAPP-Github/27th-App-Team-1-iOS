@@ -25,18 +25,32 @@ final class MediaInfoView: UIView {
     weak var delegate: MediaInfoViewDelegate?
     private var isExpanded: Bool = false
 
+    // 동적 높이를 위한 bottom constraint
+    private var collapsedBottomConstraint: Constraint?
+    private var expandedBottomConstraint: Constraint?
+
     // MARK: - UI Components (항상 보이는 영역)
 
     private let profileImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
         $0.backgroundColor = UIColor.NDGL.Bg.disabled
-        $0.layer.cornerRadius = 20
+        $0.layer.cornerRadius = 28
         $0.clipsToBounds = true
     }
 
-    private let youtuberNameLabel = UILabel()
+    // 여행 정보 (icVideo1 + 4px + "유튜버 · 국가 · 3박4일")
+    private let travelInfoStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 4
+        $0.alignment = .center
+    }
 
-    private let locationLabel = UILabel()
+    private let travelInfoIconView = UIImageView().then {
+        $0.image = DSKitAsset.Assets.icVideo1.image
+        $0.contentMode = .scaleAspectFit
+    }
+
+    private let travelInfoLabel = UILabel()
 
     private let titleLabel = UILabel().then {
         $0.numberOfLines = 2
@@ -44,7 +58,7 @@ final class MediaInfoView: UIView {
 
     private let toggleButton = UIButton(type: .system).then {
         $0.setImage(DSKitAsset.Assets.icChevronDown1.image, for: .normal)
-        $0.tintColor = UIColor.NDGL.Icon.tertiary
+        $0.tintColor = UIColor.NDGL.Icon.disabled
     }
 
     // MARK: - UI Components (펼쳤을 때만 보이는 영역)
@@ -61,9 +75,35 @@ final class MediaInfoView: UIView {
         $0.clipsToBounds = true
     }
 
-    private let budgetTitleLabel = UILabel()
+    // 예산 정보 (icPiggybank1 + 8px + "1인 기준 예산 얼마")
+    private let budgetStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 8
+        $0.alignment = .center
+    }
 
-    private let budgetValueLabel = UILabel()
+    private let budgetIconView = UIImageView().then {
+        $0.image = DSKitAsset.Assets.icPiggybank1.image
+        $0.contentMode = .scaleAspectFit
+    }
+
+    private let budgetLabel = UILabel()
+
+    private let separatorView = UIView().then {
+        $0.backgroundColor = UIColor.NDGL.Border.secondary
+    }
+
+    // 영상 요약 타이틀 (icBook1 + 8px + "영상 요약")
+    private let summaryTitleStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 8
+        $0.alignment = .center
+    }
+
+    private let summaryIconView = UIImageView().then {
+        $0.image = DSKitAsset.Assets.icBook1.image
+        $0.contentMode = .scaleAspectFit
+    }
 
     private let summaryTitleLabel = UILabel()
 
@@ -79,6 +119,7 @@ final class MediaInfoView: UIView {
         setupUI()
         setupConstraints()
         setupActions()
+        layer.cornerRadius = 20
     }
 
     required init?(coder: NSCoder) {
@@ -90,80 +131,105 @@ final class MediaInfoView: UIView {
     private func setupUI() {
         backgroundColor = UIColor.NDGL.Bg.Interactive.subtle02
 
-        [profileImageView, youtuberNameLabel, locationLabel, titleLabel, toggleButton, expandedContainerView].forEach {
+        // 여행 정보 스택뷰 구성
+        [travelInfoIconView, travelInfoLabel].forEach {
+            travelInfoStackView.addArrangedSubview($0)
+        }
+
+        // 예산 스택뷰 구성
+        [budgetIconView, budgetLabel].forEach {
+            budgetStackView.addArrangedSubview($0)
+        }
+
+        // 요약 타이틀 스택뷰 구성
+        [summaryIconView, summaryTitleLabel].forEach {
+            summaryTitleStackView.addArrangedSubview($0)
+        }
+
+        [profileImageView, travelInfoStackView, titleLabel, toggleButton, expandedContainerView].forEach {
             addSubview($0)
         }
 
-        [thumbnailImageView, budgetTitleLabel, budgetValueLabel, summaryTitleLabel, summaryLabel].forEach {
+        [thumbnailImageView, budgetStackView, separatorView, summaryTitleStackView, summaryLabel].forEach {
             expandedContainerView.addSubview($0)
         }
 
         // 타이포그래피 설정
-        budgetTitleLabel.setText(.bodyMM, text: "1인 기준 전체 예산 :", color: UIColor.NDGL.Text.secondary)
         summaryTitleLabel.setText(.bodyMSB, text: "영상 요약", color: UIColor.NDGL.Text.primary)
     }
 
     private func setupConstraints() {
         profileImageView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(16)
-            $0.leading.equalToSuperview().offset(16)
-            $0.size.equalTo(40)
+            $0.top.equalToSuperview().offset(8)
+            $0.leading.equalToSuperview().offset(24)
+            $0.size.equalTo(56)
+            // collapsed 상태의 bottom constraint
+            collapsedBottomConstraint = $0.bottom.equalToSuperview().offset(-8).constraint
         }
 
-        youtuberNameLabel.snp.makeConstraints {
-            $0.top.equalTo(profileImageView)
-            $0.leading.equalTo(profileImageView.snp.trailing).offset(12)
+        travelInfoIconView.snp.makeConstraints {
+            $0.size.equalTo(16)
         }
 
-        locationLabel.snp.makeConstraints {
-            $0.top.equalTo(youtuberNameLabel.snp.bottom).offset(2)
-            $0.leading.equalTo(youtuberNameLabel)
-        }
-
-        toggleButton.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(16)
-            $0.trailing.equalToSuperview().offset(-16)
-            $0.size.equalTo(44)
+        travelInfoStackView.snp.makeConstraints {
+            $0.top.equalTo(profileImageView.snp.top)
+            $0.leading.equalTo(profileImageView.snp.trailing).offset(8)
         }
 
         titleLabel.snp.makeConstraints {
-            $0.top.equalTo(profileImageView.snp.bottom).offset(12)
-            $0.leading.equalToSuperview().offset(16)
+            $0.bottom.equalTo(profileImageView.snp.bottom)
+            $0.leading.equalTo(travelInfoStackView)
             $0.trailing.equalTo(toggleButton.snp.leading).offset(-8)
         }
 
-        // expandedContainerView는 top만 연결, bottom은 연결하지 않음
-        expandedContainerView.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(16)
-            $0.leading.trailing.equalToSuperview()
+        toggleButton.snp.makeConstraints {
+            $0.centerY.equalTo(titleLabel)
+            $0.trailing.equalToSuperview().offset(-24)
+            $0.size.equalTo(28)
         }
+
+        expandedContainerView.snp.makeConstraints {
+            $0.top.equalTo(profileImageView.snp.bottom).offset(25)
+            $0.leading.trailing.equalToSuperview().inset(24)
+            // expanded 상태의 bottom constraint
+            expandedBottomConstraint = $0.bottom.equalToSuperview().offset(-16).constraint
+        }
+        // 초기 상태: collapsed
+        expandedBottomConstraint?.deactivate()
 
         thumbnailImageView.snp.makeConstraints {
             $0.top.equalToSuperview()
-            $0.leading.equalToSuperview().offset(16)
-            $0.trailing.equalToSuperview().offset(-16)
-            $0.height.equalTo(180)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(150)
         }
 
-        budgetTitleLabel.snp.makeConstraints {
-            $0.top.equalTo(thumbnailImageView.snp.bottom).offset(16)
-            $0.leading.equalToSuperview().offset(16)
+        budgetIconView.snp.makeConstraints {
+            $0.size.equalTo(20)
         }
 
-        budgetValueLabel.snp.makeConstraints {
-            $0.centerY.equalTo(budgetTitleLabel)
-            $0.leading.equalTo(budgetTitleLabel.snp.trailing).offset(4)
+        budgetStackView.snp.makeConstraints {
+            $0.top.equalTo(thumbnailImageView.snp.bottom).offset(24)
+            $0.leading.equalToSuperview().offset(12)
         }
 
-        summaryTitleLabel.snp.makeConstraints {
-            $0.top.equalTo(budgetTitleLabel.snp.bottom).offset(16)
-            $0.leading.equalToSuperview().offset(16)
+        separatorView.snp.makeConstraints {
+            $0.top.equalTo(budgetStackView.snp.bottom).offset(10)
+            $0.horizontalEdges.equalToSuperview().inset(12)
+            $0.height.equalTo(1)
+        }
+
+        summaryIconView.snp.makeConstraints {
+            $0.size.equalTo(20)
+        }
+
+        summaryTitleStackView.snp.makeConstraints {
+            $0.top.equalTo(separatorView.snp.bottom).offset(10)
+            $0.leading.equalTo(separatorView)
         }
 
         summaryLabel.snp.makeConstraints {
-            $0.top.equalTo(summaryTitleLabel.snp.bottom).offset(8)
-            $0.leading.equalToSuperview().offset(16)
-            $0.trailing.equalToSuperview().offset(-16)
+            $0.top.equalTo(summaryTitleStackView.snp.bottom).offset(8)
+            $0.horizontalEdges.equalTo(separatorView)
             $0.bottom.equalToSuperview().offset(-16)
         }
     }
@@ -184,24 +250,33 @@ final class MediaInfoView: UIView {
         expandedContainerView.isHidden = !isExpanded
         let image = isExpanded ? DSKitAsset.Assets.icChevronUp1.image : DSKitAsset.Assets.icChevronDown1.image
         toggleButton.setImage(image, for: .normal)
+
+        // Bottom constraint 토글
+        if isExpanded {
+            collapsedBottomConstraint?.deactivate()
+            expandedBottomConstraint?.activate()
+        } else {
+            expandedBottomConstraint?.deactivate()
+            collapsedBottomConstraint?.activate()
+        }
     }
 
     // MARK: - Configuration
 
     func configure(with detail: TravelDetail) {
-        youtuberNameLabel.setText(.bodySM, text: detail.youtube.youtuber, color: UIColor.NDGL.Text.secondary)
-        locationLabel.setText(
-            .bodySR,
-            text: "\(detail.country) · \(detail.nights)박\(detail.days)일",
-            color: UIColor.NDGL.Text.tertiary
-        )
-        titleLabel.setText(.bodyLSB, text: detail.youtube.title, color: UIColor.NDGL.Text.primary)
-        budgetValueLabel.setText(
-            .bodyMSB,
-            text: formatBudget(detail.budgetPerPerson),
-            color: UIColor.NDGL.Text.primary
-        )
-        summaryLabel.setText(.bodyMR, text: detail.youtube.summary, color: UIColor.NDGL.Text.secondary)
+        // 여행 정보 라벨 (유튜버 · 국가 · 3박4일)
+        let travelInfoText = "\(detail.youtube.youtuber) · \(detail.country) · \(detail.nights)박\(detail.days)일"
+        travelInfoLabel.setText(.bodyMSB, text: travelInfoText, color: UIColor.NDGL.Text.tertiary)
+
+        // 제목
+        titleLabel.setText(.subTitleLSB, text: detail.youtube.title, color: UIColor.NDGL.Text.primary)
+
+        // 예산 라벨 (1인 기준 예산 + 금액) - 파란색
+        let budgetText = "1인 기준 예산 \(formatBudget(detail.budgetPerPerson))"
+        budgetLabel.setText(.bodyLR, text: budgetText, color: DSKitAsset.Colors.primary500.color)
+
+        // 요약 라벨
+        summaryLabel.setText(.bodyMM, text: detail.youtube.summary, color: UIColor.NDGL.Text.secondary)
 
         // 프로필 이미지 로딩
         if let profileURLString = detail.youtube.profileImage,
@@ -239,11 +314,14 @@ final class MediaInfoView: UIView {
 
     // MARK: - Public Methods
 
-    func getCollapsedHeight() -> CGFloat {
-        120
-    }
-
-    func getExpandedHeight() -> CGFloat {
-        450
+    func calculateHeight() -> CGFloat {
+        setNeedsLayout()
+        layoutIfNeeded()
+        let targetSize = CGSize(width: bounds.width, height: UIView.layoutFittingCompressedSize.height)
+        return systemLayoutSizeFitting(
+            targetSize,
+            withHorizontalFittingPriority: .required,
+            verticalFittingPriority: .fittingSizeLevel
+        ).height
     }
 }

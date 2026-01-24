@@ -116,7 +116,6 @@ public final class FollowDetailViewController: UIViewController, FollowDetailPre
 
         mediaInfoView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
-            $0.height.equalTo(120)
         }
 
         dayCollectionView.snp.makeConstraints {
@@ -176,17 +175,6 @@ public final class FollowDetailViewController: UIViewController, FollowDetailPre
         listener?.didTapAddToTrip()
     }
 
-    // MARK: - Private Methods
-
-    private func updateMediaInfoViewHeight(_ height: CGFloat) {
-        mediaInfoView.snp.updateConstraints {
-            $0.height.equalTo(height)
-        }
-
-        UIView.animate(withDuration: 0.3) { [weak self] in
-            self?.view.layoutIfNeeded()
-        }
-    }
 }
 
 // MARK: - FollowDetailPresentable
@@ -225,8 +213,9 @@ extension FollowDetailViewController {
 
 extension FollowDetailViewController: MediaInfoViewDelegate {
     func mediaInfoViewDidToggleExpand(_ view: MediaInfoView, isExpanded: Bool) {
-        let newHeight = isExpanded ? view.getExpandedHeight() : view.getCollapsedHeight()
-        updateMediaInfoViewHeight(newHeight)
+        UIView.animate(withDuration: 0.3) { [weak self] in
+            self?.view.layoutIfNeeded()
+        }
     }
 }
 
