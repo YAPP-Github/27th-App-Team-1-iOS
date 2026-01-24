@@ -282,12 +282,11 @@ extension FollowDetailViewController {
 
 extension FollowDetailViewController {
     public func present(_ viewController: ViewControllable) {
-        viewController.uiviewController.modalPresentationStyle = .fullScreen
-        present(viewController.uiviewController, animated: true)
+        navigationController?.pushViewController(viewController.uiviewController, animated: true)
     }
 
     public func dismiss(_ viewController: ViewControllable) {
-        viewController.uiviewController.dismiss(animated: true)
+        navigationController?.popViewController(animated: true)
     }
 }
 

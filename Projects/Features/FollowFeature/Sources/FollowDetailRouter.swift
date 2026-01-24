@@ -60,7 +60,12 @@ final class FollowDetailRouter: ViewableRouter<FollowDetailInteractable, FollowD
     func detachTripCalendar() {
         guard let router = tripCalendarRouter else { return }
 
-        viewController.dismiss(router.viewControllable)
+        // TripCalendar VC가 아직 네비게이션 스택에 있는 경우에만 pop
+        if let navController = viewController.uiviewController.navigationController,
+           navController.viewControllers.contains(router.viewControllable.uiviewController) {
+            viewController.dismiss(router.viewControllable)
+        }
+
         detachChild(router)
         tripCalendarRouter = nil
     }

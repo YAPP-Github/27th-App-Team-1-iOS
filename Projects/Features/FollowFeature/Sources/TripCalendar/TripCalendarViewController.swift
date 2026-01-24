@@ -25,15 +25,6 @@ final class TripCalendarViewController: UIViewController, TripCalendarPresentabl
 
     // MARK: - UI Components
 
-    private let navigationBar = UIView()
-
-    private let backButton = UIButton(type: .system).then {
-        $0.setImage(DSKitAsset.Assets.icChevronLeft3.image, for: .normal)
-        $0.tintColor = UIColor.NDGL.Icon.primary
-    }
-
-    private let titleLabel = UILabel()
-
     private let calendarView = CalendarView()
 
     private let completeButton = BottomPlacedButton(title: "완료")
@@ -42,49 +33,39 @@ final class TripCalendarViewController: UIViewController, TripCalendarPresentabl
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupNavigation()
         setupUI()
         setupConstraints()
         setupActions()
         updateCompleteButtonState()
     }
 
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        if isMovingFromParent {
+            listener?.didTapBackButton()
+        }
+    }
+
     // MARK: - Setup
+
+    private func setupNavigation() {
+        title = "새로운 여행 만들기"
+    }
 
     private func setupUI() {
         view.backgroundColor = UIColor.NDGL.Bg.primary
 
-        [navigationBar, calendarView, completeButton].forEach {
+        [calendarView, completeButton].forEach {
             view.addSubview($0)
         }
-
-        [backButton, titleLabel].forEach {
-            navigationBar.addSubview($0)
-        }
-
-        titleLabel.setText(.subTitleMSB, text: "새로운 여행 만들기", color: UIColor.NDGL.Text.primary, alignment: .center)
 
         calendarView.delegate = self
     }
 
     private func setupConstraints() {
-        navigationBar.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide)
-            $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(44)
-        }
-
-        backButton.snp.makeConstraints {
-            $0.leading.equalToSuperview().offset(16)
-            $0.centerY.equalToSuperview()
-            $0.size.equalTo(24)
-        }
-
-        titleLabel.snp.makeConstraints {
-            $0.center.equalToSuperview()
-        }
-
         calendarView.snp.makeConstraints {
-            $0.top.equalTo(navigationBar.snp.bottom).offset(16)
+            $0.top.equalTo(view.safeAreaLayoutGuide).offset(16)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(350)
         }
@@ -97,15 +78,10 @@ final class TripCalendarViewController: UIViewController, TripCalendarPresentabl
     }
 
     private func setupActions() {
-        backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
         completeButton.addTarget(self, action: #selector(completeButtonTapped), for: .touchUpInside)
     }
 
     // MARK: - Actions
-
-    @objc private func backButtonTapped() {
-        listener?.didTapBackButton()
-    }
 
     @objc private func completeButtonTapped() {
         guard let start = selectedStartDate, let end = selectedEndDate else { return }
