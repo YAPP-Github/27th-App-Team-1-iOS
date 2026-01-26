@@ -13,8 +13,8 @@ import Then
 
 /// NDGL 디자인 시스템의 표준 버튼 컴포넌트입니다.
 ///
-/// 스타일(Primary, Secondary, Destructive)과 사이즈(Large, Medium, Small)를 조합하여 사용하며,
-/// 아이콘 배치 및 동적 타이틀 변경을 지원합니다.
+/// `UIButton.Configuration`을 기반으로 하며, 스타일(배경/테두리 타입)과 사이즈(높이/폰트)를 조합하여 사용합니다.
+/// 상태 변경(Normal, Highlighted, Disabled)에 따른 시각적 피드백이 자동 적용됩니다.
 ///
 /// ### Example
 /// ```swift
@@ -25,6 +25,9 @@ import Then
 ///     iconImage: DSKitAsset.Assets.icCheck.image,
 ///     iconAlignment: .leading
 /// )
+///
+/// /// // 타이틀 변경
+/// button.updateTitle("뒤로가기")
 /// ```
 public final class NDGLBtn: UIButton {
     private var title: String
@@ -45,7 +48,7 @@ public final class NDGLBtn: UIButton {
         style: NDGLBtnStyle,
         size: NDGLBtnSize,
         iconImage: UIImage? = nil,
-        iconAlignment: NSDirectionalRectEdge? = nil
+        iconAlignment: NSDirectionalRectEdge? = nil,
     ) {
         self.title = title
         self.style = style
@@ -113,6 +116,11 @@ private extension NDGLBtn {
                 attributes: AttributeContainer(fontAttributes)
             )
             
+            if self.style == .outline {
+                updatedConfiguration?.background.strokeWidth = 1.0
+                updatedConfiguration?.background.strokeColor = self.style.strokeColor
+            }
+            
             button.configuration = updatedConfiguration
         }
         
@@ -132,12 +140,14 @@ private extension NDGLBtn {
 
 /// NDGL 버튼의 시각적 스타일을 정의하는 열거형입니다.
 public enum NDGLBtnStyle {
-    /// 검정 배경에 흰색 텍스트 (주요 액션용)
+    /// 검정 배경에 흰색 텍스트
     case primary
-    /// 연회색 배경에 진회색 텍스트 (보조 액션용)
+    /// 연회색 배경에 진회색 텍스트
     case secondary
-    /// 연빨강 배경에 빨간색 텍스트 (위험/삭제 액션용)
+    /// 연빨강 배경에 빨간색 텍스트
     case destructive
+    /// 흰 배경에 검정 텍스트 및 회색 아웃라인
+    case outline
     
     /// 스타일별 전경색(텍스트 및 아이콘)
     var contentsColor: UIColor {
@@ -145,6 +155,7 @@ public enum NDGLBtnStyle {
         case .primary: DSKitAsset.Colors.white.color
         case .secondary: DSKitAsset.Colors.black700.color
         case .destructive: DSKitAsset.Colors.red500.color
+        case .outline: DSKitAsset.Colors.black600.color
         }
     }
     
@@ -154,7 +165,13 @@ public enum NDGLBtnStyle {
         case .primary: DSKitAsset.Colors.black900.color
         case .secondary: DSKitAsset.Colors.black50.color
         case .destructive: DSKitAsset.Colors.red50.color
+        case .outline: DSKitAsset.Colors.white.color
         }
+    }
+    
+    /// `outline` 스타일 시 적용되는 테두리 컬러
+    var strokeColor: UIColor {
+        DSKitAsset.Colors.black200.color
     }
 }
 
