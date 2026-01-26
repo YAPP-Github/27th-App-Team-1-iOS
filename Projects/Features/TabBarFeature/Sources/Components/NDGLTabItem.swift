@@ -34,7 +34,7 @@ final class NDGLTabItem: UIControl {
     
     func setup(title: String, image: UIImage) {
         iconView.image = image
-        titleLabel.setText(.bodyLM, text: title, color: .NDGL.Text.Interactive.inverse)
+        titleLabel.setText(.bodyLM, text: title, color: UIColor(hexCode: "#2C2C2C"))
         updateState(animation: false)
     }
 }
@@ -88,8 +88,8 @@ private extension NDGLTabItem {
             self.titleLabel.alpha = self.isTabSelected ? 1 : 0
             
             self.iconView.tintColor = self.isTabSelected
-            ? .NDGL.Icon.Interactive.inverse
-            : .NDGL.Icon.secondary
+            ? UIColor(hexCode: "#2C2C2C")
+            : UIColor(hexCode: "#2C2C2C")
             
             self.containerStackView.layoutIfNeeded()
             
