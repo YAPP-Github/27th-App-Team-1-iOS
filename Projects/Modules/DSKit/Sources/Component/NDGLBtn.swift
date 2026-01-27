@@ -31,6 +31,7 @@ import Then
 /// ```
 public final class NDGLBtn: UIButton {
     // MARK: - UI Components
+    
     private var title: String
     private let style: NDGLBtnStyle
     private let size: NDGLBtnSize
@@ -74,6 +75,8 @@ public final class NDGLBtn: UIButton {
         self.setNeedsUpdateConfiguration()
     }
 }
+
+// MARK: - Private Extension
 
 private extension NDGLBtn {
     func setUI() {

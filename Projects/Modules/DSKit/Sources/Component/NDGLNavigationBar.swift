@@ -41,6 +41,7 @@ import RxCocoa
 /// ```
 public final class NDGLNavigationBar: UIView {
     // MARK: - UI Components
+    
     private let titleLabel = UILabel()
     private let leadingButton = UIButton()
     private let leftSpacer = UIView()
@@ -53,17 +54,17 @@ public final class NDGLNavigationBar: UIView {
         
     /// 좌측 버튼 탭 이벤트
     public var leadingButtonDidTap: Observable<Void> {
-        return leadingButton.rx.tap.asObservable()
+        leadingButton.rx.tap.asObservable()
     }
     
     /// 우측 첫 번째 버튼 탭 이벤트
     public var trailingButtonDidTap: Observable<Void> {
-        return trailingButton.rx.tap.asObservable()
+        trailingButton.rx.tap.asObservable()
     }
     
     /// 우측 두 번째 버튼 탭 이벤트
     public var trailing2ButtonDidTap: Observable<Void> {
-        return trailing2Button.rx.tap.asObservable()
+        trailing2Button.rx.tap.asObservable()
     }
   
     // MARK: - Initializer
@@ -94,6 +95,8 @@ public final class NDGLNavigationBar: UIView {
     }
 }
 
+// MARK: - Private Extension
+
 private extension NDGLNavigationBar {
     func setStyle(
         _ style: NDGLNavigationBarStyle,
@@ -116,7 +119,7 @@ private extension NDGLNavigationBar {
         [(leadingButton, leading), (trailingButton, trailing), (trailing2Button, trailing2)]
             .forEach { button, image in
                 var config = UIButton.Configuration.plain()
-                config.image = image?.resize(targetSize: 28.adjustedH).withRenderingMode(.alwaysTemplate)
+                config.image = image?.withRenderingMode(.alwaysTemplate)
                 config.baseForegroundColor = normalColor
                 
                 button.configuration = config
