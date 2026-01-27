@@ -119,9 +119,8 @@ private extension NDGLNavigationBar {
         [(leadingButton, leading), (trailingButton, trailing), (trailing2Button, trailing2)]
             .forEach { button, image in
                 var config = UIButton.Configuration.plain()
-                config.image = image?.withRenderingMode(.alwaysTemplate)
+                config.image = image?.resize(targetSize: 28.adjustedH).withRenderingMode(.alwaysTemplate)
                 config.baseForegroundColor = normalColor
-                
                 button.configuration = config
                 button.isHidden = (image == nil)
             }
