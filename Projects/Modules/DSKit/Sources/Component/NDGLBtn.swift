@@ -81,7 +81,7 @@ public final class NDGLBtn: UIButton {
 private extension NDGLBtn {
     func setUI() {
         configuration = UIButton.Configuration.plain()
-        configuration?.background.cornerRadius = 8
+        configuration?.background.cornerRadius = 8.adjustedH
         
         if let icon = self.iconImage, let alignment = self.iconAlignment {
             let resizedIcon = icon.resize(targetSize: self.size.iconSize)
@@ -102,8 +102,8 @@ private extension NDGLBtn {
                 backgroundColor = DSKitAsset.Colors.black300.color
                 foregroundColor = DSKitAsset.Colors.black400.color
             case .highlighted:
-                backgroundColor = self.style.backgroundColor.withAlphaComponent(0.5)
-                foregroundColor = self.style.contentsColor.withAlphaComponent(0.5)
+                backgroundColor = self.style.backgroundColor.withAlphaComponent(0.9)
+                foregroundColor = self.style.contentsColor.withAlphaComponent(0.9)
             default:
                 backgroundColor = self.style.backgroundColor
                 foregroundColor = self.style.contentsColor
