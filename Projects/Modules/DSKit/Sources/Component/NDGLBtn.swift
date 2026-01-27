@@ -30,6 +30,7 @@ import Then
 /// button.updateTitle("뒤로가기")
 /// ```
 public final class NDGLBtn: UIButton {
+    // MARK: - UI Components
     private var title: String
     private let style: NDGLBtnStyle
     private let size: NDGLBtnSize
