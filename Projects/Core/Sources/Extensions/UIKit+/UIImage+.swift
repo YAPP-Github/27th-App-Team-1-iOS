@@ -9,24 +9,36 @@
 import UIKit
 
 public extension UIImage {
-    /// 이미지를 가로·세로 동일한 크기의 정사이즈(Square)로 리사이징합니다.
-        ///
-        /// 주로 디자인 시스템에서 아이콘의 규격(16x16, 20x20, 24x24 등)을 맞추기 위해 사용합니다.
-        /// 이 메서드는 원본의 비율을 무시하고 지정된 크기의 정사각형에 이미지를 채워 그리므로,
-        /// **정사이즈 비율의 원본 이미지**에 사용하는 것을 권장합니다.
-        ///
-        /// - Parameter targetSize: 변경하고자 하는 정사각형의 한 변의 길이 (width = height)
-        /// - Returns: 지정된 크기로 리사이징된 UIImage 객체
-        ///
-        /// ### Example
-        /// ```swift
-        /// let squareIcon = UIImage(named: "icon")?.resize(targetSize: 24)
-        /// ```
+    /// 이미지를 원본 비율을 유지하며 지정된 크기 내로 리사이징합니다.
+    ///
+    /// 가로와 세로 중 더 긴 변을 `targetSize`에 맞추고, 반대쪽 변은 원본 비율에 따라 자동으로 계산됩니다.
+    /// 이미지 찌그러짐(Distortion) 없이 디자인 시스템의 아이콘 규격(16, 20, 24pt 등)을 맞출 때 사용합니다.
+    ///
+    /// - Parameter targetSize: 리사이징될 이미지의 최대 변 길이 (가로 또는 세로)
+    /// - Returns: 원본 비율이 유지된 채 리사이징된 UIImage 객체
+    ///
+    /// ### 기능 설명
+    /// - 원본 비율을 계산하여 이미지가 잘리거나 왜곡되지 않도록 합니다.
+    /// - `UIGraphicsImageRenderer`를 사용하여 고해상도 디스플레이에서도 선명한 결과물을 생성합니다.
+    ///
+    /// ### Example
+    /// ```swift
+    /// // 가로가 긴 이미지(예: 100x50)를 20pt로 리사이징 시 -> 20x10 결과물 반환
+    /// let scaledIcon = UIImage(named: "wide_icon")?.resize(targetSize: 20)
+    /// ```
     func resize(targetSize: CGFloat) -> UIImage {
-        let size = CGSize(width: targetSize, height: targetSize)
-        let render = UIGraphicsImageRenderer(size: size)
-        return render.image { _ in
-            self.draw(in: CGRect(origin: .zero, size: size))
+        let widthRatio  = targetSize / self.size.width
+        let heightRatio = targetSize / self.size.height
+        
+        let scaleFactor = min(widthRatio, heightRatio)
+        
+        let scaledWidth  = self.size.width * scaleFactor
+        let scaledHeight = self.size.height * scaleFactor
+        let targetSize = CGSize(width: scaledWidth, height: scaledHeight)
+        
+        let renderer = UIGraphicsImageRenderer(size: targetSize)
+        return renderer.image { _ in
+            self.draw(in: CGRect(origin: .zero, size: targetSize))
         }
     }
 }
