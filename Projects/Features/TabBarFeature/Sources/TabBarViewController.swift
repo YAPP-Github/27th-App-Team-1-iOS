@@ -28,7 +28,6 @@ public final class TabBarViewController: UITabBarController, TabBarPresentable, 
 
     private let disposeBag = DisposeBag()
     private var tabViewControllers: [UIViewController] = []
-    private let tabTypes: [TabBarItemType] = [.information, .home, .myTrip]
 
     // MARK: - UI Components
 

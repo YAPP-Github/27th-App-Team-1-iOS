@@ -12,14 +12,14 @@ import Core
 import DSKit
 
 enum TabBarItemType: Int, CaseIterable {
-    case information = 0
+    case travelTool = 0
     case home
     case myTrip
     
     var title: String {
         switch self {
-        case .information:
-            return "정보"
+        case .travelTool:
+            return "여행 도구"
         case .home:
             return "홈"
         case .myTrip:
@@ -30,8 +30,8 @@ enum TabBarItemType: Int, CaseIterable {
     var image: UIImage {
         let asset: DSKitImages
         switch self {
-        case .information:
-            asset = DSKitAsset.Assets.icFileText
+        case .travelTool:
+            asset = DSKitAsset.Assets.icTool1
         case .home:
             asset = DSKitAsset.Assets.icHome3
         case .myTrip:
