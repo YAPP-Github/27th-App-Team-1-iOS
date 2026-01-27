@@ -105,15 +105,11 @@ private extension NDGLSearchBar {
                 string: placeholder,
                 attributes: placeHolderAttributes
             )
-            
-            var textAttributes = UIFont.NDGL.bodyLR.attributes
-            textAttributes[.foregroundColor] = DSKitAsset.Colors.black700.color
-            $0.attributedText = NSAttributedString(
-                string: "",
-                attributes: textAttributes
-            )
+
+            $0.font = UIFont.NDGL.bodyLR.font
+            $0.textColor = DSKitAsset.Colors.black700.color
             $0.tintColor = DSKitAsset.Colors.black400.color
-            
+        
             $0.autocapitalizationType = .none
             $0.autocorrectionType = .no
             $0.spellCheckingType = .no
@@ -123,7 +119,7 @@ private extension NDGLSearchBar {
         let normalColor = DSKitAsset.Colors.black600.color
         [(leadingButton, leading), (trailingButton, trailing)].forEach { button, image in
             var config = UIButton.Configuration.plain()
-            config.image = image.withRenderingMode(.alwaysTemplate)
+            config.image = image.resize(targetSize: 28.adjustedH).withRenderingMode(.alwaysTemplate)
             config.baseForegroundColor = normalColor
             button.configuration = config
         }
@@ -171,19 +167,4 @@ private extension NDGLSearchBar {
             $0.centerY.equalToSuperview()
         }
     }
-}
-
-#Preview {
-    let searchBar = NDGLSearchBar(
-        "검색어를 입력해주세요",
-        UIImage(systemName: "chevron.left") ?? UIImage(),
-        UIImage(systemName: "magnifyingglass") ?? UIImage()
-    )
-    
-    // 프리뷰 화면에서 가로로 꽉 차게 보이도록 설정
-    searchBar.snp.makeConstraints {
-        $0.width.equalTo(375) // 일반적인 아이폰 너비
-    }
-    
-    return searchBar
 }
