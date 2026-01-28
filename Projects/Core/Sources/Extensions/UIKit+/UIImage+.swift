@@ -27,6 +27,10 @@ public extension UIImage {
     /// let scaledIcon = UIImage(named: "wide_icon")?.resize(targetSize: 20)
     /// ```
     func resize(targetSize: CGFloat) -> UIImage {
+        guard self.size.width > 0, self.size.height > 0, targetSize > 0 else {
+            return self
+        }
+        
         let widthRatio  = targetSize / self.size.width
         let heightRatio = targetSize / self.size.height
         

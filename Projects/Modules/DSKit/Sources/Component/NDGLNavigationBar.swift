@@ -8,14 +8,14 @@
 
 import UIKit
 
-import RxSwift
 import RxCocoa
+import RxSwift
 
 /// NDGL 프로젝트에서 공통으로 사용하는 커스텀 내비게이션 바입니다.
 ///
 /// 좌측 버튼(1개), 중앙 타이틀, 우측 버튼(최대 2개)으로 구성되며,
 /// 아이콘 유무에 따라 자동으로 레이아웃 여백을 조절합니다.
-/// /// ### Example
+///  ### Example
 /// ```swift
 /// // 1. 기본 스타일 (뒤로가기 버튼 + 중앙 타이틀)
 /// let naviBar = NDGLNavigationBar(

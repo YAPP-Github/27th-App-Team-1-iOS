@@ -92,7 +92,8 @@ private extension NDGLBtn {
     }
     
     func setAppearance() {
-        let buttonStateHandler: UIButton.ConfigurationUpdateHandler = { button in
+        let buttonStateHandler: UIButton.ConfigurationUpdateHandler = { [weak self] button in
+            guard let self else { return }
             var updatedConfiguration = button.configuration
             let foregroundColor: UIColor
             let backgroundColor: UIColor
@@ -134,7 +135,7 @@ private extension NDGLBtn {
     func setLayout() {
         if let height = self.size.height {
             self.snp.makeConstraints {
-                $0.height.equalTo(height.adjusted).priority(.high)
+                $0.height.equalTo(height).priority(.high)
             }
         }
     }
