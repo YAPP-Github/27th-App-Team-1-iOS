@@ -69,7 +69,8 @@ public final class NDGLBtn: UIButton {
     }
     
     /// 버튼의 타이틀 텍스트를 변경합니다.
-    /// - Parameter newTitle: 새로 적용할 텍스트 문자열
+    /// Updates the button's title and refreshes its visual configuration.
+    /// - Parameter newTitle: The new title text to display on the button.
     public func updateTitle(_ newTitle: String) {
         self.title = newTitle
         self.setNeedsUpdateConfiguration()
@@ -79,6 +80,9 @@ public final class NDGLBtn: UIButton {
 // MARK: - Private Extension
 
 private extension NDGLBtn {
+    /// Configures the button's base appearance and optional icon.
+    /// 
+    /// Initializes a plain `UIButton.Configuration`, sets the background corner radius using the size's adjusted height, and when `iconImage` and `iconAlignment` are provided, resizes the icon to the current size, applies template rendering, and sets the image placement and padding.
     func setUI() {
         configuration = UIButton.Configuration.plain()
         configuration?.background.cornerRadius = 8.adjustedH
@@ -91,6 +95,13 @@ private extension NDGLBtn {
         }
     }
     
+    /// Configures the button's dynamic appearance handler and assigns it to `configurationUpdateHandler`.
+    /// 
+    /// Updates the button's configuration on state changes to apply style- and size-based visuals:
+    /// - Chooses foreground and background colors for disabled, highlighted, and default states.
+    /// - Applies the selected background color and base foreground color to the configuration.
+    /// - Sets an attributed title using the size's font and the resolved foreground color.
+    /// - When the style is `.outline`, applies a 1.0 stroke width and the style's stroke color to the background.
     func setAppearance() {
         let buttonStateHandler: UIButton.ConfigurationUpdateHandler = { [weak self] button in
             guard let self else { return }
@@ -132,6 +143,9 @@ private extension NDGLBtn {
         self.configurationUpdateHandler = buttonStateHandler
     }
     
+    /// Adds a height constraint to the button when the configured size specifies a fixed height.
+    /// 
+    /// If `size.height` is non-nil, installs a SnapKit constraint setting the button's height to that value with high priority.
     func setLayout() {
         if let height = self.size.height {
             self.snp.makeConstraints {

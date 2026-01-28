@@ -91,6 +91,17 @@ public final class NDGLSearchBar: UIView {
 // MARK: - Private Extension
 
 private extension NDGLSearchBar {
+    /// Configures the visual styling and input behavior of the search bar's subviews.
+    /// 
+    /// Applies appearance to the search container (background color and corner radius), configures
+    /// the text field's placeholder, font, colors, input behaviors (no autocapitalization, no
+    /// autocorrection, no spell checking) and return key, sets up the images and tint for the
+    /// leading and trailing buttons, and configures the container stack view's axis, spacing,
+    /// and alignment.
+    /// - Parameters:
+    ///   - placeholder: The placeholder text displayed in the search text field.
+    ///   - leading: The image used for the leading (left) button.
+    ///   - trailing: The image used for the trailing (right) button.
     func setStyle(_ placeholder: String, _ leading: UIImage, _ trailing: UIImage) {
         searchContainerView.do {
             $0.backgroundColor = DSKitAsset.Colors.black100.color
@@ -131,12 +142,21 @@ private extension NDGLSearchBar {
         }
     }
     
+    /// Assembles and installs the search bar's view hierarchy.
+    /// 
+    /// Adds the text field and trailing button into the search container, places the leading button and search container into the horizontal stack view, and adds that stack view to the search bar.
     func setUI() {
         searchContainerView.addSubviews(textField, trailingButton)
         containerStackView.addArrangedSubviews(leadingButton, searchContainerView)
         addSubview(containerStackView)
     }
     
+    /// Configures Auto Layout constraints for the search bar and its subviews.
+    /// 
+    /// - Description:
+    ///   Sets the overall height of the search bar, pins the container stack view to the bar's edges,
+    ///   fixes sizes for the leading and trailing buttons and the search container, and positions the
+    ///   text field within the search container with the specified insets and spacing.
     func setLayout() {
         self.snp.makeConstraints {
             $0.height.equalTo(48.adjustedH)

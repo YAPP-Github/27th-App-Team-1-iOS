@@ -25,7 +25,10 @@ public extension UIImage {
     /// ```swift
     /// // 가로가 긴 이미지(예: 100x50)를 20pt로 리사이징 시 -> 20x10 결과물 반환
     /// let scaledIcon = UIImage(named: "wide_icon")?.resize(targetSize: 20)
-    /// ```
+    /// Resizes the image to fit within a square bounding box of the given side length while preserving aspect ratio.
+    /// - Parameters:
+    ///   - targetSize: The side length of the square bounding box to fit the image into. Must be greater than zero.
+    /// - Returns: A new `UIImage` scaled so both width and height are less than or equal to `targetSize`, preserving the original aspect ratio. If the image's dimensions or `targetSize` are invalid (<= 0), the original image is returned.
     func resize(targetSize: CGFloat) -> UIImage {
         guard self.size.width > 0, self.size.height > 0, targetSize > 0 else {
             return self

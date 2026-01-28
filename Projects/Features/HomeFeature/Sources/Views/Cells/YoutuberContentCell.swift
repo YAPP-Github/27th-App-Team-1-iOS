@@ -88,7 +88,10 @@ final class YoutuberContentCell: UICollectionViewCell {
         }
     }
 
-    // MARK: - Configuration
+    /// Configures the cell using a PopularTrip model, updating visibility, labels, and the thumbnail.
+    /// - Parameter trip: The PopularTrip used to populate the cell. If `trip.id` is less than 0 the cell is hidden.
+    /// 
+    /// After configuration the title and info labels are set, the current thumbnail URL is recorded and a thumbnail image load is attempted. If no valid thumbnail URL is provided or the most recent image load fails, the thumbnail view's background is set to `systemGray5`. Image load results are applied only when they correspond to the most recently requested thumbnail URL.
 
     func configure(with trip: PopularTrip) {
         // placeholder trip인 경우 숨김 처리

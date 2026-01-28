@@ -81,7 +81,11 @@ final class CategoryCell: UICollectionViewCell {
         }
     }
 
-    // MARK: - Configuration
+    /// Configure the cell's content and visual state for a category.
+    /// - Parameters:
+    ///   - title: The text to display in the cell's title label.
+    ///   - isSelected: `true` to apply the selected appearance (background, border, and icon tint), `false` to apply the default appearance.
+    ///   - isFirstItem: `true` if this cell represents the first item; the icon will be hidden in that case.
 
     func configure(title: String, isSelected: Bool, isFirstItem: Bool) {
         titleLabel.setText(.bodyMSB, text: title, color: isSelected ? UIColor(hexCode: "#757575") :   UIColor(hexCode: "#757575"))

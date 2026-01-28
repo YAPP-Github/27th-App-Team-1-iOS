@@ -104,7 +104,10 @@ final class RecommendContentCell: UICollectionViewCell {
         }
     }
 
-    // MARK: - Configuration
+    /// Configure the cell's UI using the provided recommendation.
+    /// 
+    /// Sets the title, author, and duration labels, stores the recommendation's thumbnail URL, and begins loading the thumbnail image into the cell's thumbnailImageView. If the recommendation has no valid thumbnail URL or the image load fails, the thumbnailImageView's background color is set to `systemGray5`. Loaded images are applied only if the thumbnail URL still matches the cell's stored `currentThumbnailURL`.
+    /// - Parameter recommendation: The recommendation whose title, author, duration, and thumbnail URL populate the cell.
 
     func configure(with recommendation: Recommendation) {
         titleLabel.setText(.bodyMSB, text: recommendation.title, color: UIColor(hexCode: "#2C2C2C"))

@@ -98,6 +98,15 @@ public final class NDGLNavigationBar: UIView {
 // MARK: - Private Extension
 
 private extension NDGLNavigationBar {
+    /// Configure the navigation bar's appearance: title text, button images and visibility, spacers, background color, and stack layout.
+    /// 
+    /// When a title is provided, the center title label is updated with the component's bodyLM style and centered alignment. Each of the three icon parameters sets the corresponding button's image (resized to 28pt and rendered as a template) and hides that button if the image is `nil`. The left spacer is hidden when a leading icon is provided; the right spacer is hidden when either trailing icon is provided. The view's background color is set from `style`, and the container stack is configured for horizontal axis, 4pt spacing, and center alignment.
+    /// - Parameters:
+    ///   - style: The visual style used to derive the background color.
+    ///   - title: The optional center title text; if `nil`, the title label is unchanged.
+    ///   - leading: The optional leading button image; if `nil`, the leading button is hidden.
+    ///   - trailing: The optional first trailing button image; if `nil`, that trailing button is hidden.
+    ///   - trailing2: The optional second trailing button image; if `nil`, that trailing button is hidden.
     func setStyle(
         _ style: NDGLNavigationBarStyle,
         _ title: String?,
@@ -137,6 +146,8 @@ private extension NDGLNavigationBar {
         }
     }
 
+    /// Assembles the navigation bar's arranged subviews in their visual order and adds the container stack view to the view hierarchy.
+    /// Adds leadingButton, leftSpacer, titleLabel, rightSpacer, trailingButton, and trailing2Button as arranged subviews of `containerStackView`, then adds `containerStackView` to the view.
     func setUI() {
         containerStackView.addArrangedSubviews(
             leadingButton,
@@ -150,6 +161,13 @@ private extension NDGLNavigationBar {
         addSubview(containerStackView)
     }
     
+    /// Applies the view layout constraints for the navigation bar's subviews.
+    /// 
+    /// - Sets fixed square sizes for `leadingButton`, `trailingButton`, and `trailing2Button`.
+    /// - Sets fixed sizes for `leftSpacer` and `rightSpacer`.
+    /// - Constrains `titleLabel` to a minimum width.
+    /// - Pins `containerStackView` to the view with horizontal insets of 24 and vertical insets of 4.
+    /// - Constrains the navigation bar's height.
     func setLayout() {
         [leadingButton, trailingButton, trailing2Button].forEach {
             $0.snp.makeConstraints { $0.size.equalTo(40.adjustedH) }

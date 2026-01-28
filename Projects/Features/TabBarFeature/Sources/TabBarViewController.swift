@@ -84,6 +84,9 @@ private extension TabBarViewController {
         }
     }
     
+    /// Configures the visual appearance of the custom tab bar, its stack view, and the selection indicator.
+    /// 
+    /// Applies platform-appropriate visual effects (modern glass effect on iOS 26+ or blur on earlier versions), sets corner radii, clipping, background transparency, and basic stack view layout (axis, distribution, spacing).
     func setStyle() {
         customTabBarContainer.do {
             if #available(iOS 26.0, *) {

@@ -31,6 +31,10 @@ final class MyTravelView: UIView {
 
     required init?(coder: NSCoder) { fatalError() }
 
+    /// Configures the view's visual appearance and installs its subviews.
+    /// 
+    /// Sets the background color, corner radius, border width, and border color, then adds
+    /// `messageLabel`, `subMessageLabel`, and `imageView` to the view hierarchy.
     private func setupUI() {
         backgroundColor = UIColor(hexCode: "#2C2C2C")
         layer.cornerRadius = 4
