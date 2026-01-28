@@ -41,11 +41,17 @@ public final class TabBarViewController: UITabBarController, TabBarPresentable, 
 
     override public func viewDidLoad() {
         super.viewDidLoad()
-        
+
         setupBaseTabBar()
         setStyle()
         setUI()
         setLayout()
+    }
+
+    override public func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        // 시스템 탭바가 다시 나타나지 않도록 확실하게 숨김
+        tabBar.isHidden = true
     }
     
     public func setViewControllers(_ viewControllers: [ViewControllable]) {
@@ -75,11 +81,20 @@ public final class TabBarViewController: UITabBarController, TabBarPresentable, 
     func switchToTab(at index: Int) {
         guard index < tabItems.count else { return }
 
-        // 탭바 보이게 설정
-        customTabBarContainer.isHidden = false
-        customTabBarContainer.alpha = 1
+        // 모든 탭의 네비게이션 스택을 루트로 pop
+        viewControllers?.forEach { viewController in
+            if let navController = viewController as? UINavigationController {
+                navController.popToRootViewController(animated: false)
+            }
+        }
 
         updateSelection(at: index)
+
+        // 탭 전환이 완료된 후 탭바를 확실하게 보이게 설정
+        DispatchQueue.main.async {
+            self.customTabBarContainer.isHidden = false
+            self.customTabBarContainer.alpha = 1
+        }
     }
 }
 

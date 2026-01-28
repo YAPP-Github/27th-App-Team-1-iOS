@@ -68,7 +68,6 @@ public final class FollowDetailViewController: UIViewController, FollowDetailPre
 
     public init() {
         super.init(nibName: nil, bundle: nil)
-        hidesBottomBarWhenPushed = true
     }
 
     required init?(coder: NSCoder) {
