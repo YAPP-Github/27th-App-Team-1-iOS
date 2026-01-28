@@ -14,7 +14,6 @@ import RxSwift
 // MARK: - TabBarListener
 
 public protocol TabBarListener: AnyObject {
-    // 부모 RIB에 전달할 이벤트 정의
 }
 
 // MARK: - TabBarPresentable
@@ -51,16 +50,13 @@ final class TabBarInteractor: PresentableInteractor<TabBarPresentable>, TabBarIn
 // MARK: - TabBarPresentableListener
 
 extension TabBarInteractor: TabBarPresentableListener {
-    // ViewController에서 Interactor로 전달하는 이벤트 처리
 }
 
 // MARK: - HomeListener
 
 extension TabBarInteractor: HomeListener {
-    func homeDidAddTrip(title: String, startDate: Date, endDate: Date) {
-        // Travel 탭(index 2)으로 이동
-        presenter.switchToTab(at: 2)
 
-        // TODO: TravelInteractor에 새 여행 추가 알림
+    func homeDidAddTrip(title: String, startDate: Date, endDate: Date) {
+        presenter.switchToTab(at: 2)
     }
 }

@@ -16,18 +16,17 @@ import Then
 // MARK: - TabBarPresentableListener
 
 protocol TabBarPresentableListener: AnyObject {
-    // ViewController에서 Interactor로 전달할 이벤트 정의
 }
 
 // MARK: - TabBarViewController
 
 public final class TabBarViewController: UITabBarController, TabBarPresentable, TabBarViewControllable {
+
     // MARK: - Properties
 
     weak var listener: TabBarPresentableListener?
 
     private let disposeBag = DisposeBag()
-    private var tabViewControllers: [UIViewController] = []
     private let tabTypes: [TabBarItemType] = [.information, .home, .myTrip]
 
     // MARK: - UI Components
@@ -39,21 +38,20 @@ public final class TabBarViewController: UITabBarController, TabBarPresentable, 
 
     // MARK: - Lifecycle
 
-    override public func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
-
-        setupBaseTabBar()
-        setStyle()
-        setUI()
-        setLayout()
+        setupStyle()
+        setupUI()
+        setupConstraints()
     }
 
-    override public func viewWillLayoutSubviews() {
+    public override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        // 시스템 탭바가 다시 나타나지 않도록 확실하게 숨김
         tabBar.isHidden = true
     }
-    
+
+    // MARK: - TabBarViewControllable
+
     public func setViewControllers(_ viewControllers: [ViewControllable]) {
         guard viewControllers.count >= 2,
               let homeVC = viewControllers[0].uiviewController as? UIViewController,
@@ -63,25 +61,19 @@ public final class TabBarViewController: UITabBarController, TabBarPresentable, 
 
         let infoDummy = UIViewController().then { $0.view.backgroundColor = .yellow }
 
-        // Wrap each VC in a NavigationController for push navigation
         let infoNav = UINavigationController(rootViewController: infoDummy)
         let homeNav = UINavigationController(rootViewController: homeVC)
         let travelNav = UINavigationController(rootViewController: travelVC)
 
-        // Set delegate to handle tab bar visibility
         [infoNav, homeNav, travelNav].forEach { $0.delegate = self }
 
-        let finalControllers = [infoNav, homeNav, travelNav]
-
-        super.setViewControllers(finalControllers, animated: false)
-
+        super.setViewControllers([infoNav, homeNav, travelNav], animated: false)
         setupTabItems()
     }
 
     func switchToTab(at index: Int) {
         guard index < tabItems.count else { return }
 
-        // 모든 탭의 네비게이션 스택을 루트로 pop
         viewControllers?.forEach { viewController in
             if let navController = viewController as? UINavigationController {
                 navController.popToRootViewController(animated: false)
@@ -90,7 +82,6 @@ public final class TabBarViewController: UITabBarController, TabBarPresentable, 
 
         updateSelection(at: index)
 
-        // 탭 전환이 완료된 후 탭바를 확실하게 보이게 설정
         DispatchQueue.main.async {
             self.customTabBarContainer.isHidden = false
             self.customTabBarContainer.alpha = 1
@@ -98,15 +89,74 @@ public final class TabBarViewController: UITabBarController, TabBarPresentable, 
     }
 }
 
+// MARK: - Setup
+
 private extension TabBarViewController {
-    func setupBaseTabBar() {
-        self.tabBar.isHidden = true
+
+    func setupStyle() {
+        customTabBarContainer.do {
+            if #available(iOS 26.0, *) {
+                let glass = UIGlassEffect(style: .regular)
+                glass.isInteractive = true
+                glass.tintColor = .white.withAlphaComponent(0.1)
+                $0.effect = glass
+            } else {
+                $0.effect = UIBlurEffect(style: .extraLight)
+            }
+            $0.layer.cornerRadius = 34.adjustedH
+            $0.clipsToBounds = true
+            $0.backgroundColor = .clear
+        }
+
+        tabStackView.do {
+            $0.axis = .horizontal
+            $0.distribution = .fill
+            $0.spacing = 4
+        }
+
+        indicatorView.do {
+            if #available(iOS 26.0, *) {
+                let glass = UIGlassEffect(style: .regular)
+                glass.isInteractive = true
+                glass.tintColor = UIColor.NDGL.Text.primary
+                $0.effect = glass
+            } else {
+                $0.effect = UIBlurEffect(style: .dark)
+            }
+            $0.layer.cornerRadius = 28.adjustedH
+            $0.clipsToBounds = true
+            $0.backgroundColor = .clear
+        }
     }
-    
+
+    func setupUI() {
+        view.addSubview(customTabBarContainer)
+        customTabBarContainer.contentView.addSubviews(indicatorView, tabStackView)
+    }
+
+    func setupConstraints() {
+        customTabBarContainer.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.bottom.equalTo(view.safeAreaLayoutGuide)
+            $0.width.equalTo(328.adjusted)
+            $0.height.equalTo(68.adjustedH)
+        }
+
+        tabStackView.snp.makeConstraints {
+            $0.directionalHorizontalEdges.equalToSuperview().inset(12)
+            $0.directionalVerticalEdges.equalToSuperview().inset(6)
+        }
+
+        indicatorView.snp.makeConstraints {
+            $0.center.equalToSuperview()
+            $0.size.equalTo(56.adjusted)
+        }
+    }
+
     func setupTabItems() {
         tabItems.forEach { $0.removeFromSuperview() }
         tabItems.removeAll()
-        
+
         TabBarItemType.allCases.forEach { tabType in
             let item = NDGLTabItem().then {
                 $0.setup(title: tabType.title, image: tabType.image)
@@ -121,92 +171,35 @@ private extension TabBarViewController {
             self.updateSelection(at: 1, animated: false)
         }
     }
-    
-    func setStyle() {
-        customTabBarContainer.do {
-            if #available(iOS 26.0, *) {
-                let glass = UIGlassEffect(style: .regular)
-                glass.isInteractive = true
-                glass.tintColor = .white.withAlphaComponent(0.1)
-                $0.effect = glass
-            } else {
-                $0.effect = UIBlurEffect(style: .extraLight)
-            }
-            $0.layer.cornerRadius = 34.adjustedH
-            $0.clipsToBounds = true
-            $0.backgroundColor = .clear
-        }
-        
-        tabStackView.do {
-            $0.axis = .horizontal
-            $0.distribution = .fill
-            $0.spacing = 4
-        }
-        
-        indicatorView.do {
-            if #available(iOS 26.0, *) {
-                let glass = UIGlassEffect(style: .regular)
-                glass.isInteractive = true
-                glass.tintColor = UIColor.NDGL.Text.primary
-                $0.effect = glass
-            } else {
-                $0.effect = UIBlurEffect(style: .dark)
-            }
-            
-            $0.layer.cornerRadius = 28.adjustedH
-            $0.clipsToBounds = true
-            $0.backgroundColor = .clear
-        }
-    }
-    
-    func setUI() {
-        view.addSubview(customTabBarContainer)
-        customTabBarContainer.contentView.addSubviews(indicatorView, tabStackView)
-    }
-    
-    func setLayout() {
-        customTabBarContainer.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.bottom.equalTo(view.safeAreaLayoutGuide)
-            $0.width.equalTo(328.adjusted)
-            $0.height.equalTo(68.adjustedH)
-        }
-        
-        tabStackView.snp.makeConstraints {
-            $0.directionalHorizontalEdges.equalToSuperview().inset(12)
-            $0.directionalVerticalEdges.equalToSuperview().inset(6)
-        }
-        
-        indicatorView.snp.makeConstraints {
-            $0.center.equalToSuperview()
-            $0.size.equalTo(56.adjusted)
-        }
-    }
-    
+}
+
+// MARK: - Actions
+
+private extension TabBarViewController {
+
     @objc func tabTapped(_ sender: NDGLTabItem) {
         updateSelection(at: sender.tag)
     }
-    
+
     func updateSelection(at index: Int, animated: Bool = true) {
-        self.selectedIndex = index
+        selectedIndex = index
         let targetItem = tabItems[index]
-        
+
         tabItems.enumerated().forEach { tabIndex, item in
             item.isTabSelected = (tabIndex == index)
         }
 
         let duration = animated ? 0.4 : 0.0
-        
+
         UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.5) {
             self.indicatorView.snp.remakeConstraints {
                 $0.center.equalTo(targetItem)
                 $0.width.equalTo(targetItem.snp.width)
                 $0.height.equalTo(56.adjustedH)
             }
-            
             self.customTabBarContainer.contentView.layoutIfNeeded()
         }
-        
+
         if animated {
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
         }
@@ -216,12 +209,12 @@ private extension TabBarViewController {
 // MARK: - UINavigationControllerDelegate
 
 extension TabBarViewController: UINavigationControllerDelegate {
+
     public func navigationController(
         _ navigationController: UINavigationController,
         willShow viewController: UIViewController,
         animated: Bool
     ) {
-        // Hide custom tab bar when pushing (more than 1 VC in stack)
         let shouldHideTabBar = navigationController.viewControllers.count > 1
 
         guard animated else {
@@ -231,14 +224,12 @@ extension TabBarViewController: UINavigationControllerDelegate {
         }
 
         if shouldHideTabBar {
-            // Hiding: animate alpha to 0, then hide
             UIView.animate(withDuration: 0.3) {
                 self.customTabBarContainer.alpha = 0
             } completion: { _ in
                 self.customTabBarContainer.isHidden = true
             }
         } else {
-            // Showing: unhide first with alpha 0, then animate to 1
             customTabBarContainer.isHidden = false
             customTabBarContainer.alpha = 0
             customTabBarContainer.layoutIfNeeded()

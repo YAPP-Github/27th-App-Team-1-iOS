@@ -13,7 +13,6 @@ import RxSwift
 // MARK: - TravelListener
 
 public protocol TravelListener: AnyObject {
-    // 부모 RIB에 전달할 이벤트 정의
 }
 
 // MARK: - TravelPresentable
@@ -114,13 +113,12 @@ final class TravelInteractor: PresentableInteractor<TravelPresentable>, TravelIn
 // MARK: - TravelPresentableListener
 
 extension TravelInteractor: TravelPresentableListener {
+
     func didTapTrip(_ trip: UpcomingTrip) {
         // TODO: Navigate to trip detail
-        print("Tapped trip: \(trip.title)")
     }
 
     func didTapMenuButton() {
         // TODO: Show menu
-        print("Menu button tapped")
     }
 }

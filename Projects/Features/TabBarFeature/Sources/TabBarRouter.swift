@@ -59,6 +59,8 @@ final class TabBarRouter: ViewableRouter<TabBarInteractable, TabBarViewControlla
     // MARK: - TabBarRouting
 
     func attachTabs() {
+        guard homeRouter == nil, travelRouter == nil else { return }
+
         let homeRouter = homeBuilder.build(withListener: interactor)
         self.homeRouter = homeRouter
         attachChild(homeRouter)
@@ -67,7 +69,6 @@ final class TabBarRouter: ViewableRouter<TabBarInteractable, TabBarViewControlla
         self.travelRouter = travelRouter
         attachChild(travelRouter)
 
-        // Home과 Travel VC 전달
         viewController.setViewControllers([
             homeRouter.viewControllable,
             travelRouter.viewControllable

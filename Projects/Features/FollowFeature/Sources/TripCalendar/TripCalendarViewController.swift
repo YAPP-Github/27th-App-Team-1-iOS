@@ -6,12 +6,13 @@
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
+import UIKit
+
 import Core
 import DSKit
 import RIBs
 import SnapKit
 import Then
-import UIKit
 
 // MARK: - TripCalendarViewController
 
@@ -20,6 +21,7 @@ final class TripCalendarViewController: UIViewController, TripCalendarPresentabl
     // MARK: - Properties
 
     weak var listener: TripCalendarPresentableListener?
+
     private var selectedStartDate: Date?
     private var selectedEndDate: Date?
 
@@ -33,9 +35,9 @@ final class TripCalendarViewController: UIViewController, TripCalendarPresentabl
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupNavigation()
         setupUI()
         setupConstraints()
+        setupDelegates()
         setupActions()
         updateCompleteButtonState()
     }
@@ -49,18 +51,13 @@ final class TripCalendarViewController: UIViewController, TripCalendarPresentabl
 
     // MARK: - Setup
 
-    private func setupNavigation() {
-        title = "새로운 여행 만들기"
-    }
-
     private func setupUI() {
+        title = "새로운 여행 만들기"
         view.backgroundColor = UIColor.NDGL.Bg.primary
 
         [calendarView, completeButton].forEach {
             view.addSubview($0)
         }
-
-        calendarView.delegate = self
     }
 
     private func setupConstraints() {
@@ -77,6 +74,10 @@ final class TripCalendarViewController: UIViewController, TripCalendarPresentabl
         }
     }
 
+    private func setupDelegates() {
+        calendarView.delegate = self
+    }
+
     private func setupActions() {
         completeButton.addTarget(self, action: #selector(completeButtonTapped), for: .touchUpInside)
     }
@@ -87,8 +88,6 @@ final class TripCalendarViewController: UIViewController, TripCalendarPresentabl
         guard let start = selectedStartDate, let end = selectedEndDate else { return }
         listener?.didTapCompleteButton(startDate: start, endDate: end)
     }
-
-    // MARK: - Private Methods
 
     private func updateCompleteButtonState() {
         let isEnabled = selectedStartDate != nil && selectedEndDate != nil
@@ -106,6 +105,7 @@ final class TripCalendarViewController: UIViewController, TripCalendarPresentabl
 // MARK: - CalendarViewDelegate
 
 extension TripCalendarViewController: CalendarViewDelegate {
+
     func calendarView(_ view: CalendarView, didSelectRange startDate: Date, endDate: Date) {
         selectedStartDate = startDate
         selectedEndDate = endDate

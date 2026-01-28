@@ -6,23 +6,25 @@
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
+import UIKit
+
 import Core
 import DSKit
 import RIBs
 import RxSwift
 import SnapKit
 import Then
-import UIKit
 
 // MARK: - TravelViewController
 
-public final class TravelViewController: UIViewController, TravelPresentable, TravelViewControllable {
+final class TravelViewController: UIViewController, TravelPresentable, TravelViewControllable {
 
     // MARK: - Properties
 
     weak var listener: TravelPresentableListener?
 
     private let disposeBag = DisposeBag()
+    private var trips: [UpcomingTrip] = []
 
     // MARK: - UI Components
 
@@ -56,21 +58,17 @@ public final class TravelViewController: UIViewController, TravelPresentable, Tr
         $0.hidesWhenStopped = true
     }
 
-    // MARK: - Data
-
-    private var trips: [UpcomingTrip] = []
-
     // MARK: - Lifecycle
 
-    public override func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         setupConstraints()
-        setupCollectionView()
+        setupDelegates()
         setupActions()
     }
 
-    public override func viewWillAppear(_ animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
     }
@@ -113,7 +111,7 @@ public final class TravelViewController: UIViewController, TravelPresentable, Tr
         }
     }
 
-    private func setupCollectionView() {
+    private func setupDelegates() {
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(UpcomingTripCell.self, forCellWithReuseIdentifier: UpcomingTripCell.identifier)
@@ -133,6 +131,7 @@ public final class TravelViewController: UIViewController, TravelPresentable, Tr
 // MARK: - TravelPresentable
 
 extension TravelViewController {
+
     func showLoading() {
         loadingIndicator.startAnimating()
     }
@@ -151,11 +150,12 @@ extension TravelViewController {
 // MARK: - UICollectionViewDataSource
 
 extension TravelViewController: UICollectionViewDataSource {
-    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return trips.count
     }
 
-    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: UpcomingTripCell.identifier,
             for: indexPath
@@ -171,7 +171,8 @@ extension TravelViewController: UICollectionViewDataSource {
 // MARK: - UICollectionViewDelegate
 
 extension TravelViewController: UICollectionViewDelegate {
-    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let trip = trips[indexPath.item]
         listener?.didTapTrip(trip)
     }
@@ -180,7 +181,8 @@ extension TravelViewController: UICollectionViewDelegate {
 // MARK: - UICollectionViewDelegateFlowLayout
 
 extension TravelViewController: UICollectionViewDelegateFlowLayout {
-    public func collectionView(
+
+    func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath

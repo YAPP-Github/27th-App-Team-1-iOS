@@ -11,7 +11,6 @@ import RIBs
 // MARK: - TravelDependency
 
 public protocol TravelDependency: Dependency {
-    // 부모 RIB로부터 주입받을 의존성 정의
 }
 
 // MARK: - TravelComponent
