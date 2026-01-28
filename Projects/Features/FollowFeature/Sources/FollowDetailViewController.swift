@@ -6,8 +6,6 @@
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
-import UIKit
-
 import Core
 import Domain
 import DSKit
@@ -15,6 +13,7 @@ import RIBs
 import RxSwift
 import SnapKit
 import Then
+import UIKit
 
 // MARK: - FollowDetailViewController
 

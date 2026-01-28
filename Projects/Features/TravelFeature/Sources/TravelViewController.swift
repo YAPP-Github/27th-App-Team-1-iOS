@@ -6,14 +6,13 @@
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
-import UIKit
-
 import Core
 import DSKit
 import RIBs
 import RxSwift
 import SnapKit
 import Then
+import UIKit
 
 // MARK: - TravelViewController
 
@@ -159,7 +158,8 @@ extension TravelViewController: UICollectionViewDataSource {
         guard let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: UpcomingTripCell.identifier,
             for: indexPath
-        ) as? UpcomingTripCell else {
+        ) as? UpcomingTripCell,
+              indexPath.item < trips.count else {
             return UICollectionViewCell()
         }
 
@@ -173,6 +173,7 @@ extension TravelViewController: UICollectionViewDataSource {
 extension TravelViewController: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard indexPath.item < trips.count else { return }
         let trip = trips[indexPath.item]
         listener?.didTapTrip(trip)
     }

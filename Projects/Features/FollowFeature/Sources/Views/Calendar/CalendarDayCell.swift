@@ -102,18 +102,15 @@ final class CalendarDayCell: UICollectionViewCell {
 
         dayLabel.text = "\(day)"
 
-        // Reset
         backgroundCircleView.isHidden = true
         backgroundCircleView.layer.borderWidth = 0
         rangeBackgroundView.isHidden = true
 
-        // Determine text color
         var textColor: UIColor
 
         if !isCurrentMonth {
             textColor = UIColor.NDGL.Text.disabled
         } else if isPastDate {
-            // Past dates - dimmed but Sunday still shows red tint
             if isSunday {
                 textColor = DSKitAsset.Colors.red300.color
             } else {
@@ -125,16 +122,14 @@ final class CalendarDayCell: UICollectionViewCell {
             textColor = UIColor.NDGL.Text.primary
         }
 
-        // Apply selection state
         switch selectionState {
         case .startDate, .endDate:
-            backgroundCircleView.backgroundColor = UIColor(hexCode: "#38A169") // green500
+            backgroundCircleView.backgroundColor = UIColor(hexCode: "#38A169")
             backgroundCircleView.isHidden = false
             textColor = UIColor.NDGL.Text.Interactive.inverse
 
         case .inRange:
             rangeBackgroundView.isHidden = false
-            // Keep original text color
 
         case .none:
             break

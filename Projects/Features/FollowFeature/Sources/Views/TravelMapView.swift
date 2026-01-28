@@ -10,9 +10,9 @@ import Core
 import Domain
 import DSKit
 import MapKit
-import UIKit
 import SnapKit
 import Then
+import UIKit
 
 final class TravelMapView: UIView {
 

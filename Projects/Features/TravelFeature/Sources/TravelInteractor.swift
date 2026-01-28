@@ -64,7 +64,6 @@ final class TravelInteractor: PresentableInteractor<TravelPresentable>, TravelIn
     private func loadTrips() {
         presenter.showLoading()
 
-        // Mock data
         let mockTrips = [
             UpcomingTrip(
                 id: 1,

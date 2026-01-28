@@ -240,17 +240,14 @@ final class CalendarView: UIView {
 
         let firstWeekday = calendar.component(.weekday, from: firstDayOfMonth)
 
-        // Add empty cells for days before the first day of the month
         for _ in 1..<firstWeekday {
             days.append(nil)
         }
 
-        // Add days of the month
         for day in range {
             days.append(day)
         }
 
-        // Fill remaining cells to complete the grid (6 rows x 7 columns = 42)
         while days.count < 42 {
             days.append(nil)
         }
@@ -337,10 +334,9 @@ extension CalendarView: UICollectionViewDataSource {
             selectionState: selectionState
         )
 
-        // Configure range background AFTER configure (to not be reset)
         if let day = day, let date = dateFor(day: day) {
-            let isStart = selectedStartDate != nil && isSameDay(date, selectedStartDate!)
-            let isEnd = selectedEndDate != nil && isSameDay(date, selectedEndDate!)
+            let isStart = selectedStartDate.map { isSameDay(date, $0) } ?? false
+            let isEnd = selectedEndDate.map { isSameDay(date, $0) } ?? false
             let inRange = isInRange(date)
 
             if isStart && selectedEndDate != nil {
@@ -369,17 +365,13 @@ extension CalendarView: UICollectionViewDelegate {
         }
 
         if selectedStartDate == nil {
-            // First selection - set as start date
             selectedStartDate = date
             selectedEndDate = nil
-        } else if selectedEndDate == nil {
-            // Second selection
-            if date < selectedStartDate! {
-                // If selected date is before start, swap
+        } else if let startDate = selectedStartDate, selectedEndDate == nil {
+            if date < startDate {
                 selectedEndDate = selectedStartDate
                 selectedStartDate = date
-            } else if isSameDay(date, selectedStartDate!) {
-                // Tapped same date - clear selection
+            } else if isSameDay(date, startDate) {
                 selectedStartDate = nil
                 selectedEndDate = nil
                 delegate?.calendarViewDidClearSelection(self)
@@ -387,14 +379,12 @@ extension CalendarView: UICollectionViewDelegate {
                 selectedEndDate = date
             }
         } else {
-            // Both dates selected - start new selection
             selectedStartDate = date
             selectedEndDate = nil
         }
 
         collectionView.reloadData()
 
-        // Notify delegate if range is complete
         if let start = selectedStartDate, let end = selectedEndDate {
             delegate?.calendarView(self, didSelectRange: start, endDate: end)
         } else {
@@ -416,16 +406,14 @@ extension CalendarView: UICollectionViewDelegateFlowLayout {
 
 extension CalendarView: UIPickerViewDataSource {
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 2 // Year, Month
+        2
     }
 
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         if component == 0 {
-            // Year: current year ~ 2099
             let currentYear = calendar.component(.year, from: Date())
             return 2099 - currentYear + 1
         } else {
-            // Month: 1 ~ 12
             return 12
         }
     }

@@ -111,13 +111,10 @@ final class UpcomingTripCell: UICollectionViewCell {
         let dDayText = dDay > 0 ? "D-\(dDay)" : (dDay == 0 ? "D-Day" : "D+\(abs(dDay))")
         dDayLabel.setText(.bodySSB, text: dDayText, color: .white)
 
-        // Title
         titleLabel.setText(.bodyMSB, text: trip.title, color: UIColor.NDGL.Text.primary)
 
-        // Date range
         dateLabel.setText(.bodySR, text: trip.dateRangeString, color: UIColor.NDGL.Text.tertiary)
 
-        // Thumbnail
         if let urlString = trip.thumbnailURL, let url = URL(string: urlString) {
             thumbnailImageView.kf.setImage(
                 with: url,
