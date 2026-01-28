@@ -53,11 +53,12 @@ public final class TabBarViewController: UITabBarController, TabBarPresentable, 
     // MARK: - TabBarViewControllable
 
     public func setViewControllers(_ viewControllers: [ViewControllable]) {
-        guard viewControllers.count >= 2,
-              let homeVC = viewControllers[0].uiviewController as? UIViewController,
-              let travelVC = viewControllers[1].uiviewController as? UIViewController else {
+        guard viewControllers.count >= 2 else {
             return
         }
+
+        let homeVC = viewControllers[0].uiviewController
+        let travelVC = viewControllers[1].uiviewController
 
         let infoDummy = UIViewController().then { $0.view.backgroundColor = .yellow }
 
