@@ -23,7 +23,7 @@ final class CalendarDayCell: UICollectionViewCell {
     }
 
     private let rangeBackgroundView = UIView().then {
-        $0.backgroundColor = UIColor(hexCode: "#C6F6D5") // green200
+        $0.backgroundColor = UIColor(hexCode: "#C6F6D5")
         $0.isHidden = true
     }
 

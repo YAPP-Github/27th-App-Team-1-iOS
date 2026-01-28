@@ -114,10 +114,8 @@ final class TravelInteractor: PresentableInteractor<TravelPresentable>, TravelIn
 extension TravelInteractor: TravelPresentableListener {
 
     func didTapTrip(_ trip: UpcomingTrip) {
-        // TODO: Navigate to trip detail
     }
 
     func didTapMenuButton() {
-        // TODO: Show menu
     }
 }

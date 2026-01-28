@@ -57,7 +57,7 @@ final class YoutuberContentCollectionView: UICollectionView {
             // Group - 세로로 3개씩 묶음
             let groupSize = NSCollectionLayoutSize(
                 widthDimension: .absolute(sectionWidth),
-                heightDimension: .absolute(88 * 3 + 12 * 2) // 3 items + 2 spacings
+                heightDimension: .absolute(88 * 3 + 12 * 2)
             )
             let group = NSCollectionLayoutGroup.vertical(
                 layoutSize: groupSize,
@@ -65,7 +65,6 @@ final class YoutuberContentCollectionView: UICollectionView {
             )
             group.interItemSpacing = .fixed(12)
 
-            // Section
             let section = NSCollectionLayoutSection(group: group)
             section.orthogonalScrollingBehavior = .groupPaging
 
