@@ -21,7 +21,7 @@ import Then
 /// ### Example
 /// ```swift
 /// let searchBar = NDGLSearchBar(
-///     "검색어를 입력해주세요",
+///     placeholder: "검색어를 입력해주세요",
 ///     DSKitAsset.Assets.icBack.image,
 ///     DSKitAsset.Assets.icSearch.image
 /// )
@@ -72,7 +72,7 @@ public final class NDGLSearchBar: UIView {
     ///   - leadingIcon: 좌측 영역에 표시될 이미지
     ///   - trailingIcon: 검색 필드 우측 내부에 표시될 이미지
     public init(
-        _ placeholder: String,
+        placeholder: String,
         _ leadingIcon: UIImage,
         _ trailingIcon: UIImage
     ) {
