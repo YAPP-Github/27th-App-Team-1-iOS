@@ -41,7 +41,7 @@ final class HomeViewController: UIViewController, HomePresentable, HomeViewContr
     private let myTravelView = MyTravelView()
 
     private let followGuideLabel = UILabel().then {
-        $0.setText(.subTitleLSB, text: "인기 여행 따라가기", color: .NDGL.Text.primary)
+        $0.setText(.subTitleLSB, text: "인기 여행 따라가기", color: UIColor(hexCode: "#111111"))
     }
 
     private let categoryCollectionView = CategoryCollectionView()
@@ -50,23 +50,23 @@ final class HomeViewController: UIViewController, HomePresentable, HomeViewContr
 
     private let showOtherTravelButton = UIButton().then {
         $0.setTitle("여행 따라가기 더보기", for: .normal)
-        $0.setTitleColor(UIColor.NDGL.Text.secondary, for: .normal)
+        $0.setTitleColor(UIColor(hexCode: "#2C2C2C"), for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 14, weight: .medium)
-        $0.backgroundColor = UIColor.NDGL.Bg.primary
+        $0.backgroundColor = UIColor(hexCode: "#FFFFFF")
         $0.layer.cornerRadius = 8
         $0.layer.borderWidth = 1.0
         $0.layer.borderColor = UIColor(hexCode: "#D9D9D9").cgColor
     }
 
     private let recommendContentGuideLabel = UILabel().then {
-        $0.setText(.subTitleLSB, text: "OOO님께 추천하는\n따라가기 여행 콘텐츠에요!", color: .NDGL.Text.primary)
+        $0.setText(.subTitleLSB, text: "OOO님께 추천하는\n따라가기 여행 콘텐츠에요!", color: UIColor(hexCode: "#111111"))
         $0.numberOfLines = 2
     }
 
     private let recommendContentCollectionView = RecommendContentCollectionView()
 
     private let addFloatingButton = UIButton().then {
-        $0.backgroundColor = UIColor.NDGL.Bg.Interactive.primary
+        $0.backgroundColor = UIColor(hexCode: "#28A745")
         $0.layer.cornerRadius = 28
         $0.setImage(DSKitAsset.Assets.icPlus2.image, for: .normal)
         $0.tintColor = .white

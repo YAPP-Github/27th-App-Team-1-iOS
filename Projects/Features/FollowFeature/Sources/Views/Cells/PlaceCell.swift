@@ -22,7 +22,7 @@ final class PlaceCell: UICollectionViewCell {
 
     // 순서 뷰 (셀 바깥 왼쪽)
     private let sequenceView = UIView().then {
-        $0.backgroundColor = UIColor.NDGL.Bg.Interactive.primary
+        $0.backgroundColor = UIColor(hexCode: "#28A745")
         $0.layer.cornerRadius = 12
     }
 
@@ -30,16 +30,16 @@ final class PlaceCell: UICollectionViewCell {
 
     // 메인 컨테이너 (보더 있는 영역)
     private let containerView = UIView().then {
-        $0.backgroundColor = UIColor.NDGL.Bg.primary
+        $0.backgroundColor = UIColor(hexCode: "#FFFFFF")
         $0.layer.cornerRadius = 12
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = UIColor.NDGL.Border.subtle.cgColor
+        $0.layer.borderColor = UIColor(hexCode: "#F5F5F5").cgColor
         $0.clipsToBounds = true
     }
 
     // 카테고리 태그
     private let categoryTagView = UIView().then {
-        $0.backgroundColor = UIColor.NDGL.Bg.Interactive.subtle02
+        $0.backgroundColor = UIColor(hexCode: "#F5F5F5")
         $0.layer.cornerRadius = 4
     }
 
@@ -61,7 +61,7 @@ final class PlaceCell: UICollectionViewCell {
     // 썸네일
     private let thumbnailImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
-        $0.backgroundColor = UIColor.NDGL.Bg.Interactive.subtle02
+        $0.backgroundColor = UIColor(hexCode: "#F5F5F5")
         $0.layer.cornerRadius = 8
         $0.clipsToBounds = true
     }
@@ -74,7 +74,7 @@ final class PlaceCell: UICollectionViewCell {
     private let chevronImageView = UIImageView().then {
         $0.image = DSKitAsset.Assets.icChevronRight3.image
         $0.contentMode = .scaleAspectFit
-        $0.tintColor = UIColor.NDGL.Icon.disabled
+        $0.tintColor = UIColor(hexCode: "#757575")
     }
 
     // MARK: - Initialization
@@ -200,19 +200,19 @@ final class PlaceCell: UICollectionViewCell {
     // MARK: - Configuration
 
     func configure(with place: TravelPlace, isLast: Bool = false) {
-        sequenceLabel.setText(.bodySSB, text: "\(place.sequence)", color: UIColor.NDGL.Text.Interactive.inverse)
+        sequenceLabel.setText(.bodySSB, text: "\(place.sequence)", color: UIColor(hexCode: "#FFFFFF"))
 
         // 카테고리 (기본값: 교통수단)
-        categoryLabel.setText(.bodySR, text: "교통수단", color: UIColor.NDGL.Text.secondary)
+        categoryLabel.setText(.bodySR, text: "교통수단", color: UIColor(hexCode: "#2C2C2C"))
 
         // 체류 시간
-        durationLabel.setText(.bodySR, text: "\(place.estimatedDuration)분 체류 예상", color: UIColor.NDGL.Text.tertiary)
+        durationLabel.setText(.bodySR, text: "\(place.estimatedDuration)분 체류 예상", color: UIColor(hexCode: "#444444"))
 
         // 장소명
-        placeNameLabel.setText(.bodyLSB, text: place.place.name, color: UIColor.NDGL.Text.primary)
+        placeNameLabel.setText(.bodyLSB, text: place.place.name, color: UIColor(hexCode: "#111111"))
 
         // 팁
-        tipLabel.setText(.bodySR, text: place.travelerTip, color: UIColor.NDGL.Text.tertiary)
+        tipLabel.setText(.bodySR, text: place.travelerTip, color: UIColor(hexCode: "#444444"))
 
         // 썸네일 이미지 로딩
         if let thumbnailURLString = place.place.thumbnail,
@@ -236,7 +236,7 @@ final class PlaceCell: UICollectionViewCell {
         } else {
             travelTimeContainerView.isHidden = false
             // TODO: 실제 이동 시간 데이터로 교체
-            travelTimeLabel.setText(.bodySR, text: "약 30분 • 28.8km", color: UIColor.NDGL.Text.tertiary)
+            travelTimeLabel.setText(.bodySR, text: "약 30분 • 28.8km", color: UIColor(hexCode: "#444444"))
         }
     }
 }

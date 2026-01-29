@@ -28,12 +28,12 @@ final class TravelViewController: UIViewController, TravelPresentable, TravelVie
     // MARK: - UI Components
 
     private let titleLabel = UILabel().then {
-        $0.setText(.subTitleLSB, text: "다가오는 여행", color: .NDGL.Text.primary)
+        $0.setText(.subTitleLSB, text: "다가오는 여행", color: UIColor(hexCode: "#111111"))
     }
 
     private let menuButton = UIButton(type: .system).then {
         $0.setImage(UIImage(systemName: "line.3.horizontal"), for: .normal)
-        $0.tintColor = UIColor.NDGL.Icon.primary
+        $0.tintColor = UIColor(hexCode: "#111111")
     }
 
     private let collectionView: UICollectionView = {
@@ -49,7 +49,7 @@ final class TravelViewController: UIViewController, TravelPresentable, TravelVie
     }()
 
     private let emptyStateLabel = UILabel().then {
-        $0.setText(.bodyMR, text: "아직 등록된 여행이 없어요", color: .NDGL.Text.tertiary)
+        $0.setText(.bodyMR, text: "아직 등록된 여행이 없어요", color: UIColor(hexCode: "#444444"))
         $0.isHidden = true
     }
 
@@ -75,7 +75,7 @@ final class TravelViewController: UIViewController, TravelPresentable, TravelVie
     // MARK: - Setup
 
     private func setupUI() {
-        view.backgroundColor = UIColor.NDGL.Bg.primary
+        view.backgroundColor = UIColor(hexCode: "#FFFFFF")
 
         [titleLabel, menuButton, collectionView, emptyStateLabel, loadingIndicator].forEach {
             view.addSubview($0)

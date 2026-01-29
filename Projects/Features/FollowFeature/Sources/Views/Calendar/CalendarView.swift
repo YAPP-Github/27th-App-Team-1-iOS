@@ -33,18 +33,18 @@ final class CalendarView: UIView {
     // MARK: - UI Components
 
     private let monthYearButton = UIButton(type: .system).then {
-        $0.setTitleColor(UIColor.NDGL.Text.primary, for: .normal)
+        $0.setTitleColor(UIColor(hexCode: "#111111"), for: .normal)
         $0.titleLabel?.font = DSKitFontFamily.Pretendard.semiBold.font(size: 18)
     }
 
     private let previousMonthButton = UIButton(type: .system).then {
         $0.setImage(DSKitAsset.Assets.icChevronLeft3.image, for: .normal)
-        $0.tintColor = UIColor.NDGL.Icon.primary
+        $0.tintColor = UIColor(hexCode: "#111111")
     }
 
     private let nextMonthButton = UIButton(type: .system).then {
         $0.setImage(DSKitAsset.Assets.icChevronRight3.image, for: .normal)
-        $0.tintColor = UIColor.NDGL.Icon.primary
+        $0.tintColor = UIColor(hexCode: "#111111")
     }
 
     private let weekdayStackView = UIStackView().then {
@@ -83,7 +83,7 @@ final class CalendarView: UIView {
     // MARK: - Setup
 
     private func setupUI() {
-        backgroundColor = UIColor.NDGL.Bg.primary
+        backgroundColor = UIColor(hexCode: "#FFFFFF")
 
         [monthYearButton, previousMonthButton, nextMonthButton, weekdayStackView, collectionView].forEach {
             addSubview($0)
@@ -133,7 +133,7 @@ final class CalendarView: UIView {
 
         for (index, weekday) in weekdays.enumerated() {
             let label = UILabel()
-            let color = index == 0 ? DSKitAsset.Colors.red500.color : UIColor.NDGL.Text.secondary
+            let color = index == 0 ? DSKitAsset.Colors.red500.color : UIColor(hexCode: "#2C2C2C")
             label.setText(.bodySR, text: weekday, color: color, alignment: .center)
             weekdayStackView.addArrangedSubview(label)
         }

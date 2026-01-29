@@ -42,7 +42,7 @@ final class RecommendContentCell: UICollectionViewCell {
 
     private let playIcon = UIImageView().then {
         $0.image = UIImage(systemName: "play.rectangle.fill")
-        $0.tintColor = UIColor.NDGL.Text.tertiary
+        $0.tintColor = UIColor(hexCode: "#444444")
         $0.contentMode = .scaleAspectFit
     }
 
@@ -107,9 +107,9 @@ final class RecommendContentCell: UICollectionViewCell {
     // MARK: - Configuration
 
     func configure(with recommendation: Recommendation) {
-        titleLabel.setText(.bodyMSB, text: recommendation.title, color: UIColor.NDGL.Text.primary)
-        authorLabel.setText(.bodySR, text: recommendation.authorName, color: UIColor.NDGL.Text.tertiary)
-        durationLabel.setText(.bodySR, text: " · \(recommendation.duration)", color: UIColor.NDGL.Text.tertiary)
+        titleLabel.setText(.bodyMSB, text: recommendation.title, color: UIColor(hexCode: "#111111"))
+        authorLabel.setText(.bodySR, text: recommendation.authorName, color: UIColor(hexCode: "#444444"))
+        durationLabel.setText(.bodySR, text: " · \(recommendation.duration)", color: UIColor(hexCode: "#444444"))
 
         // URL 저장 및 이미지 로딩 (교차 검증)
         let thumbnailURL = recommendation.thumbnailURL

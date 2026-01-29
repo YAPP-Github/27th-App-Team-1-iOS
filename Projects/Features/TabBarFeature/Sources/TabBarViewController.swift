@@ -119,7 +119,7 @@ private extension TabBarViewController {
             if #available(iOS 26.0, *) {
                 let glass = UIGlassEffect(style: .regular)
                 glass.isInteractive = true
-                glass.tintColor = UIColor.NDGL.Text.primary
+                glass.tintColor = UIColor(hexCode: "#111111")
                 $0.effect = glass
             } else {
                 $0.effect = UIBlurEffect(style: .dark)

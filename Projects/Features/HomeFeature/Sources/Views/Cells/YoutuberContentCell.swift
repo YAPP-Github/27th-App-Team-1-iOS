@@ -98,8 +98,8 @@ final class YoutuberContentCell: UICollectionViewCell {
         }
         contentView.isHidden = false
 
-        titleLabel.setText(.bodyMSB, text: trip.title, color: UIColor.NDGL.Text.primary)
-        infoLabel.setText(.bodySM, text: "\(trip.authorName) · \(trip.destination) · \(trip.duration)", color: UIColor.NDGL.Text.tertiary)
+        titleLabel.setText(.bodyMSB, text: trip.title, color: UIColor(hexCode: "#111111"))
+        infoLabel.setText(.bodySM, text: "\(trip.authorName) · \(trip.destination) · \(trip.duration)", color: UIColor(hexCode: "#444444"))
 
         // URL 저장 및 이미지 로딩 (교차 검증)
         let thumbnailURL = trip.thumbnailURL

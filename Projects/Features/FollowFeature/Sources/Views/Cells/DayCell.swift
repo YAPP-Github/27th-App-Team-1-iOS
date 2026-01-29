@@ -21,8 +21,8 @@ final class DayCell: UICollectionViewCell {
     private let containerView = UIView().then {
         $0.layer.cornerRadius = 15
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = UIColor.NDGL.Border.secondary.cgColor
-        $0.backgroundColor = UIColor.NDGL.Bg.primary
+        $0.layer.borderColor = UIColor(hexCode: "#D9D9D9").cgColor
+        $0.backgroundColor = UIColor(hexCode: "#FFFFFF")
     }
 
     private let dayLabel = UILabel()
@@ -73,16 +73,16 @@ final class DayCell: UICollectionViewCell {
 
     private func updateSelectionState() {
         if isSelected {
-            containerView.backgroundColor = UIColor.init(hexCode: "#2C2C2C")
+            containerView.backgroundColor = UIColor(hexCode: "#2C2C2C")
             containerView.layer.borderWidth = 0
             dayLabel.font = DSKitFontFamily.Pretendard.medium.font(size: 14)
-            dayLabel.textColor = UIColor.NDGL.Text.Interactive.inverse
+            dayLabel.textColor = UIColor(hexCode: "#FFFFFF")
         } else {
-            containerView.backgroundColor = UIColor.NDGL.Bg.primary
+            containerView.backgroundColor = UIColor(hexCode: "#FFFFFF")
             containerView.layer.borderWidth = 1
-            containerView.layer.borderColor = UIColor.NDGL.Border.secondary.cgColor
+            containerView.layer.borderColor = UIColor(hexCode: "#D9D9D9").cgColor
             dayLabel.font = DSKitFontFamily.Pretendard.medium.font(size: 14)
-            dayLabel.textColor = UIColor.NDGL.Text.disabled
+            dayLabel.textColor = UIColor(hexCode: "#757575")
         }
     }
 }

@@ -15,10 +15,10 @@ import Then
 final class MyTravelView: UIView {
 
     private let messageLabel = UILabel().then {
-        $0.setText(.bodyLSB, text: "아직 등록된 여행지가 없어요", color: UIColor.NDGL.Text.primary)
+        $0.setText(.bodyLSB, text: "아직 등록된 여행지가 없어요", color: UIColor(hexCode: "#111111"))
     }
     private let subMessageLabel = UILabel().then {
-        $0.setText(.bodyMM, text: "새 여행 일정을 만들어 보세요!", color: UIColor.NDGL.Text.disabled)
+        $0.setText(.bodyMM, text: "새 여행 일정을 만들어 보세요!", color: UIColor(hexCode: "#757575"))
     }
     
     private let imageView = UIImageView(image: DSKitAsset.Assets.icAirplane1.image)
@@ -32,7 +32,7 @@ final class MyTravelView: UIView {
     required init?(coder: NSCoder) { fatalError() }
 
     private func setupUI() {
-        backgroundColor = UIColor.NDGL.Bg.primary
+        backgroundColor = UIColor(hexCode: "#FFFFFF")
         layer.cornerRadius = 4
         layer.borderWidth = 1.0
         layer.borderColor = UIColor.init(hexCode: "#F1F1F1").cgColor

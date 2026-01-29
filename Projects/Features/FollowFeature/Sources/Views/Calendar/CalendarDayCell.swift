@@ -109,24 +109,24 @@ final class CalendarDayCell: UICollectionViewCell {
         var textColor: UIColor
 
         if !isCurrentMonth {
-            textColor = UIColor.NDGL.Text.disabled
+            textColor = UIColor(hexCode: "#757575")
         } else if isPastDate {
             if isSunday {
                 textColor = DSKitAsset.Colors.red300.color
             } else {
-                textColor = UIColor.NDGL.Text.disabled
+                textColor = UIColor(hexCode: "#757575")
             }
         } else if isSunday {
             textColor = DSKitAsset.Colors.red500.color
         } else {
-            textColor = UIColor.NDGL.Text.primary
+            textColor = UIColor(hexCode: "#111111")
         }
 
         switch selectionState {
         case .startDate, .endDate:
             backgroundCircleView.backgroundColor = UIColor(hexCode: "#38A169")
             backgroundCircleView.isHidden = false
-            textColor = UIColor.NDGL.Text.Interactive.inverse
+            textColor = UIColor(hexCode: "#FFFFFF")
 
         case .inRange:
             rangeBackgroundView.isHidden = false

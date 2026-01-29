@@ -43,7 +43,7 @@ public final class BottomPlacedButton: UIButton {
         contentStackView.isUserInteractionEnabled = false
 
         iconImageView.contentMode = .scaleAspectFit
-        iconImageView.tintColor = UIColor.NDGL.Text.Interactive.inverse
+        iconImageView.tintColor = UIColor(hexCode: "#FFFFFF")
         iconImageView.isUserInteractionEnabled = false
 
         titleTextLabel.isUserInteractionEnabled = false
@@ -69,7 +69,7 @@ public final class BottomPlacedButton: UIButton {
         titleTextLabel.setText(
             .subTitleMSB,
             text: title,
-            color: UIColor.NDGL.Text.Interactive.inverse
+            color: UIColor(hexCode: "#FFFFFF")
         )
 
         if let icon = icon {

@@ -138,12 +138,12 @@ extension TravelMapView: MKMapViewDelegate {
     private func createCircleView(sequence: Int) -> UIView {
         let size: CGFloat = 30
         let view = UIView(frame: CGRect(x: 0, y: 0, width: size, height: size))
-        view.backgroundColor = UIColor.NDGL.Bg.Interactive.primary
+        view.backgroundColor = UIColor(hexCode: "#28A745")
         view.layer.cornerRadius = size / 2
 
         let label = UILabel(frame: view.bounds)
         label.text = "\(sequence)"
-        label.textColor = UIColor.NDGL.Text.Interactive.inverse
+        label.textColor = UIColor(hexCode: "#FFFFFF")
         label.font = DSKitFontFamily.Pretendard.bold.font(size: 14)
         label.textAlignment = .center
         view.addSubview(label)

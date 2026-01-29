@@ -33,7 +33,7 @@ final class MediaInfoView: UIView {
 
     private let profileImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
-        $0.backgroundColor = UIColor.NDGL.Bg.disabled
+        $0.backgroundColor = UIColor(hexCode: "#B3B3B3")
         $0.layer.cornerRadius = 28
         $0.clipsToBounds = true
     }
@@ -59,7 +59,7 @@ final class MediaInfoView: UIView {
 
     private let toggleButton = UIButton(type: .system).then {
         $0.setImage(DSKitAsset.Assets.icChevronDown3.image, for: .normal)
-        $0.tintColor = UIColor.NDGL.Icon.disabled
+        $0.tintColor = UIColor(hexCode: "#757575")
     }
 
     // MARK: - UI Components (펼쳤을 때만 보이는 영역)
@@ -71,7 +71,7 @@ final class MediaInfoView: UIView {
 
     private let thumbnailImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
-        $0.backgroundColor = UIColor.NDGL.Bg.Interactive.subtle02
+        $0.backgroundColor = UIColor(hexCode: "#F5F5F5")
         $0.layer.cornerRadius = 8
         $0.clipsToBounds = true
     }
@@ -91,7 +91,7 @@ final class MediaInfoView: UIView {
     private let budgetLabel = UILabel()
 
     private let separatorView = UIView().then {
-        $0.backgroundColor = UIColor.NDGL.Border.secondary
+        $0.backgroundColor = UIColor(hexCode: "#D9D9D9")
     }
 
     // 영상 요약 타이틀 (icBook1 + 8px + "영상 요약")
@@ -130,7 +130,7 @@ final class MediaInfoView: UIView {
     // MARK: - Setup
 
     private func setupUI() {
-        backgroundColor = UIColor.NDGL.Bg.Interactive.subtle02
+        backgroundColor = UIColor(hexCode: "#F5F5F5")
 
         // 여행 정보 스택뷰 구성
         [travelInfoIconView, travelInfoLabel].forEach {
@@ -156,7 +156,7 @@ final class MediaInfoView: UIView {
         }
 
         // 타이포그래피 설정
-        summaryTitleLabel.setText(.bodyMSB, text: "영상 요약", color: UIColor.NDGL.Text.primary)
+        summaryTitleLabel.setText(.bodyMSB, text: "영상 요약", color: UIColor(hexCode: "#111111"))
     }
 
     private func setupConstraints() {
@@ -271,17 +271,17 @@ final class MediaInfoView: UIView {
     func configure(with detail: TravelDetail) {
         // 여행 정보 라벨 (유튜버 · 국가 · 3박4일)
         let travelInfoText = "\(detail.youtube.youtuber) · \(detail.country) · \(detail.nights)박\(detail.days)일"
-        travelInfoLabel.setText(.bodyMSB, text: travelInfoText, color: UIColor.NDGL.Text.disabled)
+        travelInfoLabel.setText(.bodyMSB, text: travelInfoText, color: UIColor(hexCode: "#757575"))
 
         // 제목
-        titleLabel.setText(.subTitleLSB, text: detail.youtube.title, color: UIColor.NDGL.Text.primary)
+        titleLabel.setText(.subTitleLSB, text: detail.youtube.title, color: UIColor(hexCode: "#111111"))
 
         // 예산 라벨 (1인 기준 예산 + 금액) - 파란색
         let budgetText = "1인 기준 예산 \(formatBudget(detail.budgetPerPerson))"
         budgetLabel.setText(.bodyLR, text: budgetText, color: DSKitAsset.Colors.primary500.color)
 
         // 요약 라벨
-        summaryLabel.setText(.bodyMM, text: detail.youtube.summary, color: UIColor.NDGL.Text.secondary)
+        summaryLabel.setText(.bodyMM, text: detail.youtube.summary, color: UIColor(hexCode: "#2C2C2C"))
 
         // 프로필 이미지 로딩
         if let profileURLString = detail.youtube.profileImage,

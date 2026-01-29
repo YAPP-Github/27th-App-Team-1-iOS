@@ -18,7 +18,7 @@ final class BudgetView: UIView {
 
     private let iconImageView = UIImageView().then {
         $0.image = DSKitAsset.Assets.icPiggybank1.image
-        $0.tintColor = UIColor.NDGL.Icon.secondary
+        $0.tintColor = UIColor(hexCode: "#2C2C2C")
         $0.contentMode = .scaleAspectFit
     }
 
@@ -41,16 +41,16 @@ final class BudgetView: UIView {
     // MARK: - Setup
 
     private func setupUI() {
-        backgroundColor = UIColor.NDGL.Bg.primary
+        backgroundColor = UIColor(hexCode: "#FFFFFF")
         layer.cornerRadius = 8
         layer.borderWidth = 1
-        layer.borderColor = UIColor.NDGL.Border.secondary.cgColor
+        layer.borderColor = UIColor(hexCode: "#D9D9D9").cgColor
 
         [iconImageView, titleLabel, budgetLabel].forEach {
             addSubview($0)
         }
 
-        titleLabel.setText(.bodyMM, text: "1인 기준 여행 예산 :", color: UIColor.NDGL.Text.secondary)
+        titleLabel.setText(.bodyMM, text: "1인 기준 여행 예산 :", color: UIColor(hexCode: "#2C2C2C"))
     }
 
     private func setupConstraints() {
@@ -77,6 +77,6 @@ final class BudgetView: UIView {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
         let formattedNumber = formatter.string(from: NSNumber(value: budget)) ?? "\(budget)"
-        budgetLabel.setText(.bodyMSB, text: "\(formattedNumber)원", color: UIColor.NDGL.Text.primary)
+        budgetLabel.setText(.bodyMSB, text: "\(formattedNumber)원", color: UIColor(hexCode: "#111111"))
     }
 }

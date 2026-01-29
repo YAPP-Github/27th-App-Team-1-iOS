@@ -50,7 +50,7 @@ final class FollowDetailViewController: UIViewController, FollowDetailPresentabl
     // MARK: - UI Components (Sticky Header)
 
     private let stickyHeaderView = UIView().then {
-        $0.backgroundColor = UIColor.NDGL.Bg.primary
+        $0.backgroundColor = UIColor(hexCode: "#FFFFFF")
         $0.isHidden = true
     }
 
@@ -94,7 +94,7 @@ final class FollowDetailViewController: UIViewController, FollowDetailPresentabl
     // MARK: - Setup
 
     private func setupUI() {
-        view.backgroundColor = UIColor.NDGL.Bg.primary
+        view.backgroundColor = UIColor(hexCode: "#FFFFFF")
 
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)

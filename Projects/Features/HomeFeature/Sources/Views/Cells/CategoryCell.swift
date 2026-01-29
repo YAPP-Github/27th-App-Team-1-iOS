@@ -84,7 +84,7 @@ final class CategoryCell: UICollectionViewCell {
     // MARK: - Configuration
 
     func configure(title: String, isSelected: Bool, isFirstItem: Bool) {
-        titleLabel.setText(.bodyMSB, text: title, color: isSelected ? UIColor.NDGL.Text.Interactive.inverse :   UIColor(hexCode: "#757575"))
+        titleLabel.setText(.bodyMSB, text: title, color: isSelected ? UIColor(hexCode: "#FFFFFF") : UIColor(hexCode: "#757575"))
         iconImageView.isHidden = isFirstItem
 
         if isSelected {
@@ -92,9 +92,9 @@ final class CategoryCell: UICollectionViewCell {
             containerView.layer.borderColor = UIColor.clear.cgColor
             iconImageView.tintColor = .white
         } else {
-            containerView.backgroundColor = UIColor.NDGL.Bg.primary
-            containerView.layer.borderColor = UIColor.NDGL.Border.secondary.cgColor
-            iconImageView.tintColor = UIColor.NDGL.Text.secondary
+            containerView.backgroundColor = UIColor(hexCode: "#FFFFFF")
+            containerView.layer.borderColor = UIColor(hexCode: "#D9D9D9").cgColor
+            iconImageView.tintColor = UIColor(hexCode: "#2C2C2C")
         }
     }
 }

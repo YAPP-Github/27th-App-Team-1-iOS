@@ -52,7 +52,7 @@ final class TripCalendarViewController: UIViewController, TripCalendarPresentabl
 
     private func setupUI() {
         title = "새로운 여행 만들기"
-        view.backgroundColor = UIColor.NDGL.Bg.primary
+        view.backgroundColor = UIColor(hexCode: "#FFFFFF")
 
         [calendarView, completeButton].forEach {
             view.addSubview($0)
@@ -95,7 +95,7 @@ final class TripCalendarViewController: UIViewController, TripCalendarPresentabl
             completeButton.backgroundColor = UIColor(hexCode: "#111111")
             completeButton.isEnabled = true
         } else {
-            completeButton.backgroundColor = UIColor.NDGL.Bg.disabled
+            completeButton.backgroundColor = UIColor(hexCode: "#B3B3B3")
             completeButton.isEnabled = false
         }
     }

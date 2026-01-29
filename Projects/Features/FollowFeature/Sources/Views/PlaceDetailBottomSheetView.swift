@@ -24,7 +24,7 @@ final class PlaceDetailBottomSheetView: UIView {
 
     private let chevronButton = UIButton(type: .system).then {
         $0.setImage(DSKitAsset.Assets.icChevronRight3.image, for: .normal)
-        $0.tintColor = UIColor.NDGL.Icon.primary
+        $0.tintColor = UIColor(hexCode: "#111111")
     }
 
     // 카테고리 + 체류시간
@@ -42,7 +42,7 @@ final class PlaceDetailBottomSheetView: UIView {
 
     private let categoryChevronImageView = UIImageView().then {
         $0.image = DSKitAsset.Assets.icChevronRight3.image
-        $0.tintColor = UIColor.NDGL.Icon.disabled
+        $0.tintColor = UIColor(hexCode: "#757575")
         $0.contentMode = .scaleAspectFit
     }
 
@@ -58,7 +58,7 @@ final class PlaceDetailBottomSheetView: UIView {
 
     private let timeIconImageView = UIImageView().then {
         $0.image = DSKitAsset.Assets.icClock1.image
-        $0.tintColor = UIColor.NDGL.Icon.secondary
+        $0.tintColor = UIColor(hexCode: "#2C2C2C")
         $0.contentMode = .scaleAspectFit
     }
 
@@ -73,7 +73,7 @@ final class PlaceDetailBottomSheetView: UIView {
 
     private let costIconImageView = UIImageView().then {
         $0.image = DSKitAsset.Assets.icCard1.image
-        $0.tintColor = UIColor.NDGL.Icon.secondary
+        $0.tintColor = UIColor(hexCode: "#2C2C2C")
         $0.contentMode = .scaleAspectFit
     }
 
@@ -81,10 +81,10 @@ final class PlaceDetailBottomSheetView: UIView {
 
     // 길찾기 버튼
     private let findRouteButton = UIButton(type: .system).then {
-        $0.backgroundColor = UIColor.NDGL.Bg.primary
+        $0.backgroundColor = UIColor(hexCode: "#FFFFFF")
         $0.layer.cornerRadius = 8
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = UIColor.NDGL.Border.secondary.cgColor
+        $0.layer.borderColor = UIColor(hexCode: "#D9D9D9").cgColor
     }
 
     private let findRouteStackView = UIStackView().then {
@@ -98,7 +98,7 @@ final class PlaceDetailBottomSheetView: UIView {
 
     private let findRouteIconImageView = UIImageView().then {
         $0.image = DSKitAsset.Assets.icMap1.image
-        $0.tintColor = UIColor.NDGL.Icon.primary
+        $0.tintColor = UIColor(hexCode: "#111111")
         $0.contentMode = .scaleAspectFit
     }
 
@@ -146,8 +146,8 @@ final class PlaceDetailBottomSheetView: UIView {
         }
 
         // 기본 텍스트 설정
-        dotLabel.setText(.bodySR, text: "•", color: UIColor.NDGL.Text.tertiary)
-        findRouteLabel.setText(.bodyMSB, text: "길찾기", color: UIColor.NDGL.Text.primary)
+        dotLabel.setText(.bodySR, text: "•", color: UIColor(hexCode: "#444444"))
+        findRouteLabel.setText(.bodyMSB, text: "길찾기", color: UIColor(hexCode: "#111111"))
     }
 
     private func setupConstraints() {
@@ -216,7 +216,7 @@ final class PlaceDetailBottomSheetView: UIView {
 
     func configure(with place: TravelPlace) {
         // 타이틀
-        titleLabel.setText(.subTitleLSB, text: place.place.name, color: UIColor.NDGL.Text.primary)
+        titleLabel.setText(.subTitleLSB, text: place.place.name, color: UIColor(hexCode: "#111111"))
 
         // 카테고리 (기본값: 관광명소)
         categoryLabel.setText(.bodySR, text: "🏔 관광명소", color: DSKitAsset.Colors.primary500.color)
@@ -232,16 +232,16 @@ final class PlaceDetailBottomSheetView: UIView {
         } else {
             durationText = "\(minutes)분 체류 예상"
         }
-        durationLabel.setText(.bodySR, text: durationText, color: UIColor.NDGL.Text.tertiary)
+        durationLabel.setText(.bodySR, text: durationText, color: UIColor(hexCode: "#444444"))
 
         // 영업시간
         let openingHours = place.place.regularOpeningHours ?? "-"
-        openingHoursLabel.setText(.bodySR, text: "영업시간 \(openingHours)", color: UIColor.NDGL.Text.secondary)
+        openingHoursLabel.setText(.bodySR, text: "영업시간 \(openingHours)", color: UIColor(hexCode: "#2C2C2C"))
 
         // 시간 추가 (기본값)
-        timeLabel.setText(.bodySR, text: "시간 추가", color: UIColor.NDGL.Text.tertiary)
+        timeLabel.setText(.bodySR, text: "시간 추가", color: UIColor(hexCode: "#444444"))
 
         // 비용 추가 (기본값)
-        costLabel.setText(.bodySR, text: "비용 추가", color: UIColor.NDGL.Text.tertiary)
+        costLabel.setText(.bodySR, text: "비용 추가", color: UIColor(hexCode: "#444444"))
     }
 }
