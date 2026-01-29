@@ -133,7 +133,7 @@ final class CalendarView: UIView {
 
         for (index, weekday) in weekdays.enumerated() {
             let label = UILabel()
-            let color = index == 0 ? DSKitAsset.Colors.red500.color : UIColor(hexCode: "#2C2C2C")
+            let color = index == 0 ? UIColor(hexCode: "#FB2C36") : UIColor(hexCode: "#2C2C2C")
             label.setText(.bodySR, text: weekday, color: color, alignment: .center)
             weekdayStackView.addArrangedSubview(label)
         }

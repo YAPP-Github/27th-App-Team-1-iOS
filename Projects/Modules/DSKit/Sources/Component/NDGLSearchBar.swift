@@ -93,30 +93,30 @@ public final class NDGLSearchBar: UIView {
 private extension NDGLSearchBar {
     func setStyle(_ placeholder: String, _ leading: UIImage, _ trailing: UIImage) {
         searchContainerView.do {
-            $0.backgroundColor = DSKitAsset.Colors.black100.color
+            $0.backgroundColor = UIColor(hexCode: "#E6E6E6")
             $0.layer.cornerRadius = 22.adjustedH
             $0.clipsToBounds = true
         }
-        
+
         textField.do {
             var placeHolderAttributes = UIFont.NDGL.bodyLR.attributes
-            placeHolderAttributes[.foregroundColor] = DSKitAsset.Colors.black400.color
+            placeHolderAttributes[.foregroundColor] = UIColor(hexCode: "#757575")
             $0.attributedPlaceholder = NSAttributedString(
                 string: placeholder,
                 attributes: placeHolderAttributes
             )
 
             $0.font = UIFont.NDGL.bodyLR.font
-            $0.textColor = DSKitAsset.Colors.black700.color
-            $0.tintColor = DSKitAsset.Colors.black400.color
-        
+            $0.textColor = UIColor(hexCode: "#2C2C2C")
+            $0.tintColor = UIColor(hexCode: "#757575")
+
             $0.autocapitalizationType = .none
             $0.autocorrectionType = .no
             $0.spellCheckingType = .no
             $0.returnKeyType = .search
         }
-        
-        let normalColor = DSKitAsset.Colors.black600.color
+
+        let normalColor = UIColor(hexCode: "#383838")
         [(leadingButton, leading), (trailingButton, trailing)].forEach { button, image in
             var config = UIButton.Configuration.plain()
             config.image = image.resize(targetSize: 28.adjustedH).withRenderingMode(.alwaysTemplate)

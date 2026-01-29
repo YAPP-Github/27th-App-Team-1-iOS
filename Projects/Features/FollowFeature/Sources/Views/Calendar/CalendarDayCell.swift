@@ -112,12 +112,12 @@ final class CalendarDayCell: UICollectionViewCell {
             textColor = UIColor(hexCode: "#757575")
         } else if isPastDate {
             if isSunday {
-                textColor = DSKitAsset.Colors.red300.color
+                textColor = UIColor(hexCode: "#FFA2A2")
             } else {
                 textColor = UIColor(hexCode: "#757575")
             }
         } else if isSunday {
-            textColor = DSKitAsset.Colors.red500.color
+            textColor = UIColor(hexCode: "#FB2C36")
         } else {
             textColor = UIColor(hexCode: "#111111")
         }

@@ -109,12 +109,12 @@ private extension NDGLNavigationBar {
             titleLabel.setText(
                 .bodyLM,
                 text: title,
-                color: DSKitAsset.Colors.black700.color,
+                color: UIColor(hexCode: "#2C2C2C"),
                 alignment: .center
             )
         }
-        
-        let normalColor = DSKitAsset.Colors.black600.color
+
+        let normalColor = UIColor(hexCode: "#383838")
         
         [(leadingButton, leading), (trailingButton, trailing), (trailing2Button, trailing2)]
             .forEach { button, image in
@@ -188,9 +188,9 @@ public enum NDGLNavigationBarStyle {
     var backgroundColor: UIColor {
         switch self {
         case .white:
-            return DSKitAsset.Colors.white.color
+            return UIColor(hexCode: "#FFFFFF")
         case .gray:
-            return DSKitAsset.Colors.black50.color
+            return UIColor(hexCode: "#F5F5F5")
         }
     }
 }

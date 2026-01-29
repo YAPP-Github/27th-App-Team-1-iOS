@@ -278,7 +278,7 @@ final class MediaInfoView: UIView {
 
         // 예산 라벨 (1인 기준 예산 + 금액) - 파란색
         let budgetText = "1인 기준 예산 \(formatBudget(detail.budgetPerPerson))"
-        budgetLabel.setText(.bodyLR, text: budgetText, color: DSKitAsset.Colors.primary500.color)
+        budgetLabel.setText(.bodyLR, text: budgetText, color: UIColor(hexCode: "#28A745"))
 
         // 요약 라벨
         summaryLabel.setText(.bodyMM, text: detail.youtube.summary, color: UIColor(hexCode: "#2C2C2C"))

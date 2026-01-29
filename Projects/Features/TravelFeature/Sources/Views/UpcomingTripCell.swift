@@ -26,7 +26,7 @@ final class UpcomingTripCell: UICollectionViewCell {
     }
 
     private let dDayBadge = UIView().then {
-        $0.backgroundColor = DSKitAsset.Colors.primary500.color
+        $0.backgroundColor = UIColor(hexCode: "#757575")
         $0.layer.cornerRadius = 10
     }
 

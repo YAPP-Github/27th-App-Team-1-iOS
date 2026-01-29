@@ -219,7 +219,7 @@ final class PlaceDetailBottomSheetView: UIView {
         titleLabel.setText(.subTitleLSB, text: place.place.name, color: UIColor(hexCode: "#111111"))
 
         // 카테고리 (기본값: 관광명소)
-        categoryLabel.setText(.bodySR, text: "🏔 관광명소", color: DSKitAsset.Colors.primary500.color)
+        categoryLabel.setText(.bodySR, text: "🏔 관광명소", color: UIColor(hexCode: "#757575"))
 
         // 체류 예상 시간
         let hours = place.estimatedDuration / 60
