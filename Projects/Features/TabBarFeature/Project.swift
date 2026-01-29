@@ -15,7 +15,8 @@ let project = Project.makeModule(
         .makeFrameworkTarget(
             name: "TabBarFeature",
             dependencies: [
-                .Features.Home.feature
+                .Features.Home.feature,
+                .Features.Travel.feature
             ],
             scripts: [.swiftLint],
             isStatic: true,

@@ -42,7 +42,7 @@ final class RecommendContentCell: UICollectionViewCell {
 
     private let playIcon = UIImageView().then {
         $0.image = UIImage(systemName: "play.rectangle.fill")
-        $0.tintColor = UIColor(hexCode: "#2C2C2C")
+        $0.tintColor = UIColor(hexCode: "#444444")
         $0.contentMode = .scaleAspectFit
     }
 

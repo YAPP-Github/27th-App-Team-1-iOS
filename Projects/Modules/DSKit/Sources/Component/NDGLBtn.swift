@@ -100,8 +100,8 @@ private extension NDGLBtn {
                                     
             switch button.state {
             case .disabled:
-                backgroundColor = DSKitAsset.Colors.black300.color
-                foregroundColor = DSKitAsset.Colors.black400.color
+                backgroundColor = UIColor(hexCode: "#B3B3B3")
+                foregroundColor = UIColor(hexCode: "#757575")
             case .highlighted:
                 backgroundColor = self.style.backgroundColor.withAlphaComponent(0.9)
                 foregroundColor = self.style.contentsColor.withAlphaComponent(0.9)
@@ -157,26 +157,26 @@ public enum NDGLBtnStyle {
     /// 스타일별 전경색(텍스트 및 아이콘)
     var contentsColor: UIColor {
         switch self {
-        case .primary: DSKitAsset.Colors.white.color
-        case .secondary: DSKitAsset.Colors.black700.color
-        case .destructive: DSKitAsset.Colors.red500.color
-        case .outline: DSKitAsset.Colors.black600.color
+        case .primary: UIColor(hexCode: "#FFFFFF")
+        case .secondary: UIColor(hexCode: "#2C2C2C")
+        case .destructive: UIColor(hexCode: "#FB2C36")
+        case .outline: UIColor(hexCode: "#383838")
         }
     }
-    
+
     /// 스타일별 배경색
     var backgroundColor: UIColor {
         switch self {
-        case .primary: DSKitAsset.Colors.black900.color
-        case .secondary: DSKitAsset.Colors.black50.color
-        case .destructive: DSKitAsset.Colors.red50.color
-        case .outline: DSKitAsset.Colors.white.color
+        case .primary: UIColor(hexCode: "#111111")
+        case .secondary: UIColor(hexCode: "#F5F5F5")
+        case .destructive: UIColor(hexCode: "#FEF2F2")
+        case .outline: UIColor(hexCode: "#FFFFFF")
         }
     }
-    
+
     /// `outline` 스타일 시 적용되는 테두리 컬러
     var strokeColor: UIColor {
-        DSKitAsset.Colors.black200.color
+        UIColor(hexCode: "#D9D9D9")
     }
 }
 

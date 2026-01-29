@@ -39,7 +39,7 @@ public struct PopularTrip: Hashable {
 
 public enum TripCategory: String, CaseIterable, Hashable {
     case all = "전체"
-    case vietnam = "베니트남"
+    case vietnam = "베트남"
     case europe = "유럽"
     case hongkong = "홍콩/마카오"
     case singapore = "싱가포르"

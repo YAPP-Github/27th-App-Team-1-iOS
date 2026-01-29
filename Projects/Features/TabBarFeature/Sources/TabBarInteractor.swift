@@ -6,19 +6,22 @@
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
+import Foundation
+import HomeFeature
 import RIBs
 import RxSwift
 
 // MARK: - TabBarListener
 
 public protocol TabBarListener: AnyObject {
-    // 부모 RIB에 전달할 이벤트 정의
 }
 
 // MARK: - TabBarPresentable
 
 protocol TabBarPresentable: Presentable {
     var listener: TabBarPresentableListener? { get set }
+
+    func switchToTab(at index: Int)
 }
 
 // MARK: - TabBarInteractor
@@ -47,5 +50,13 @@ final class TabBarInteractor: PresentableInteractor<TabBarPresentable>, TabBarIn
 // MARK: - TabBarPresentableListener
 
 extension TabBarInteractor: TabBarPresentableListener {
-    // ViewController에서 Interactor로 전달하는 이벤트 처리
+}
+
+// MARK: - HomeListener
+
+extension TabBarInteractor: HomeListener {
+
+    func homeDidAddTrip(title: String, startDate: Date, endDate: Date) {
+        presenter.switchToTab(at: 2)
+    }
 }

@@ -6,7 +6,9 @@
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
+import Data
 import Domain
+import FollowFeature
 import RIBs
 
 // MARK: - HomeDependency
@@ -17,10 +19,15 @@ public protocol HomeDependency: Dependency {
 
 // MARK: - HomeComponent
 
-final class HomeComponent: Component<HomeDependency> {
+final class HomeComponent: Component<HomeDependency>, FollowDetailDependency {
     var travelRepository: TravelRepositoryProtocol {
         // TODO: 실제 API 연동 시 실제 Repository로 교체
         MockTravelRepository()
+    }
+
+    var followRepository: FollowRepositoryProtocol {
+        let service = makeFollowService()
+        return makeFollowRepository(service: service)
     }
 }
 
@@ -47,9 +54,12 @@ public final class HomeBuilder: Builder<HomeDependency>, HomeBuildable {
         )
         interactor.listener = listener
 
+        let followDetailBuilder = FollowDetailBuilder(dependency: component)
+
         let router = HomeRouter(
             interactor: interactor,
-            viewController: viewController
+            viewController: viewController,
+            followDetailBuilder: followDetailBuilder
         )
 
         return router

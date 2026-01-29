@@ -7,13 +7,15 @@
 //
 
 import Domain
+import FollowFeature
+import Foundation
 import RIBs
 import RxSwift
 
 // MARK: - HomeListener
 
 public protocol HomeListener: AnyObject {
-    // 부모 RIB에 전달할 이벤트 정의
+    func homeDidAddTrip(title: String, startDate: Date, endDate: Date)
 }
 
 // MARK: - HomePresentable
@@ -79,9 +81,11 @@ final class HomeInteractor: PresentableInteractor<HomePresentable>, HomeInteract
     // MARK: - Private Methods
 
     private func loadHomeData() {
-        presenter.showLoading()
+        Task {
+            await MainActor.run {
+                presenter.showLoading()
+            }
 
-        Task { @MainActor in
             async let myTripsResult = repository.fetchMyTrips()
             async let tripsByCategoryResult = repository.fetchAllPopularTrips()
             async let recommendationsResult = repository.fetchRecommendations()
@@ -92,14 +96,15 @@ final class HomeInteractor: PresentableInteractor<HomePresentable>, HomeInteract
                 recommendationsResult
             )
 
-            self.myTrips = myTripsData
-            self.tripsByCategory = tripsByCategoryData
-            self.recommendations = recommendationsData
-
-            presenter.hideLoading()
-            presenter.updateMyTrips(myTripsData)
-            presenter.updatePopularTrips(tripsByCategoryData, categories: categories)
-            presenter.updateRecommendations(recommendationsData)
+            await MainActor.run {
+                self.myTrips = myTripsData
+                self.tripsByCategory = tripsByCategoryData
+                self.recommendations = recommendationsData
+                presenter.hideLoading()
+                presenter.updateMyTrips(myTripsData)
+                presenter.updatePopularTrips(tripsByCategoryData, categories: categories)
+                presenter.updateRecommendations(recommendationsData)
+            }
         }
     }
 }
@@ -124,16 +129,16 @@ extension HomeInteractor: HomePresentableListener {
         guard section < categories.count else { return }
         let category = categories[section]
         guard let trips = tripsByCategory[category], index < trips.count else { return }
-        let trip = trips[index]
-        // TODO: 상세 화면으로 이동
-        print("Selected popular trip: \(trip.title)")
+        // TODO: 실제 API 연동 시 trip.id 사용
+        // 현재는 테스트를 위해 항상 id 1로 이동
+        router?.routeToFollowDetail(with: 1)
     }
 
     func didSelectRecommendation(at index: Int) {
         guard index < recommendations.count else { return }
-        let recommendation = recommendations[index]
-        // TODO: 상세 화면으로 이동
-        print("Selected recommendation: \(recommendation.title)")
+        // TODO: 실제 API 연동 시 recommendation.id 사용
+        // 현재는 테스트를 위해 항상 id 1로 이동
+        router?.routeToFollowDetail(with: 1)
     }
 
     func didTapShowMoreTrips() {
@@ -148,5 +153,19 @@ extension HomeInteractor: HomePresentableListener {
 
     func didTapRefresh() {
         loadHomeData()
+    }
+}
+
+// MARK: - FollowDetailListener
+
+extension HomeInteractor: FollowDetailListener {
+    func followDetailDidTapClose() {
+        router?.detachFollowDetail()
+    }
+
+    func followDetailDidAddTrip(title: String, startDate: Date, endDate: Date) {
+        router?.detachFollowDetail()
+        // TabBar에 알려서 Travel 탭으로 이동
+        listener?.homeDidAddTrip(title: title, startDate: startDate, endDate: endDate)
     }
 }
