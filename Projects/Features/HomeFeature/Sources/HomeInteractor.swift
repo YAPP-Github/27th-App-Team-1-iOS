@@ -81,9 +81,11 @@ final class HomeInteractor: PresentableInteractor<HomePresentable>, HomeInteract
     // MARK: - Private Methods
 
     private func loadHomeData() {
-        presenter.showLoading()
+        Task {
+            await MainActor.run {
+                presenter.showLoading()
+            }
 
-        Task { @MainActor in
             async let myTripsResult = repository.fetchMyTrips()
             async let tripsByCategoryResult = repository.fetchAllPopularTrips()
             async let recommendationsResult = repository.fetchRecommendations()
@@ -94,14 +96,15 @@ final class HomeInteractor: PresentableInteractor<HomePresentable>, HomeInteract
                 recommendationsResult
             )
 
-            self.myTrips = myTripsData
-            self.tripsByCategory = tripsByCategoryData
-            self.recommendations = recommendationsData
-
-            presenter.hideLoading()
-            presenter.updateMyTrips(myTripsData)
-            presenter.updatePopularTrips(tripsByCategoryData, categories: categories)
-            presenter.updateRecommendations(recommendationsData)
+            await MainActor.run {
+                self.myTrips = myTripsData
+                self.tripsByCategory = tripsByCategoryData
+                self.recommendations = recommendationsData
+                presenter.hideLoading()
+                presenter.updateMyTrips(myTripsData)
+                presenter.updatePopularTrips(tripsByCategoryData, categories: categories)
+                presenter.updateRecommendations(recommendationsData)
+            }
         }
     }
 }

@@ -80,43 +80,55 @@ final class FollowDetailInteractor: PresentableInteractor<FollowDetailPresentabl
     // MARK: - Private Methods
 
     private func loadTravelDetail() {
-        Task { @MainActor in
-            presenter.showLoading()
+        Task {
+            await MainActor.run {
+                presenter.showLoading()
+            }
 
-            // 여행 상세 정보 로드
             guard let detail = await repository.fetchTravelDetail(id: recommendationId) else {
-                presenter.hideLoading()
+                await MainActor.run {
+                    presenter.hideLoading()
+                }
                 return
             }
 
-            self.travelDetail = detail
-            presenter.updateTravelDetail(detail)
+            let places = await repository.fetchPlaces(travelId: recommendationId, day: 1)
 
-            // 1일차 장소 로드
-            await loadPlaces(for: 1)
-            presenter.hideLoading()
+            await MainActor.run {
+                self.travelDetail = detail
+                self.placesByDay[1] = places
+                presenter.updateTravelDetail(detail)
+                presenter.updatePlaces(places)
+                updateBudgetForDay(1)
+                presenter.hideLoading()
+            }
         }
     }
 
-    @MainActor
-    private func loadPlaces(for day: Int) async {
-        // 캐시된 데이터가 있으면 사용
+    private func loadPlaces(for day: Int) {
         if let cachedPlaces = placesByDay[day] {
             presenter.updatePlaces(cachedPlaces)
             updateBudgetForDay(day)
             return
         }
 
-        let places = await repository.fetchPlaces(travelId: recommendationId, day: day)
-        placesByDay[day] = places
+        Task {
+            await MainActor.run {
+                presenter.showLoading()
+            }
 
-        presenter.updatePlaces(places)
-        updateBudgetForDay(day)
+            let places = await repository.fetchPlaces(travelId: recommendationId, day: day)
+
+            await MainActor.run {
+                self.placesByDay[day] = places
+                presenter.updatePlaces(places)
+                updateBudgetForDay(day)
+                presenter.hideLoading()
+            }
+        }
     }
 
-    @MainActor
     private func updateBudgetForDay(_ day: Int) {
-        // 일차별 예산 계산 (전체 예산을 일수로 나눔 - Mock)
         guard let detail = travelDetail else { return }
         let dailyBudget = detail.budgetPerPerson / detail.days
         presenter.updateBudget(dailyBudget)
@@ -137,12 +149,7 @@ extension FollowDetailInteractor: FollowDetailPresentableListener {
     func didSelectDay(_ day: Int) {
         guard day != currentDay else { return }
         currentDay = day
-
-        Task { @MainActor in
-            presenter.showLoading()
-            await loadPlaces(for: day)
-            presenter.hideLoading()
-        }
+        loadPlaces(for: day)
     }
 
     func didSelectPlace(_ place: TravelPlace) {
