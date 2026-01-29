@@ -107,9 +107,9 @@ final class RecommendContentCell: UICollectionViewCell {
     // MARK: - Configuration
 
     func configure(with recommendation: Recommendation) {
-        titleLabel.setText(.bodyMSB, text: recommendation.title, color: UIColor(hexCode: "#111111"))
-        authorLabel.setText(.bodySR, text: recommendation.authorName, color: UIColor(hexCode: "#444444"))
-        durationLabel.setText(.bodySR, text: " · \(recommendation.duration)", color: UIColor(hexCode: "#444444"))
+        titleLabel.setText(.bodyMSB, text: recommendation.title, color: UIColor(hexCode: "#2C2C2C"))
+        authorLabel.setText(.bodySR, text: recommendation.authorName, color: UIColor(hexCode: "#2C2C2C"))
+        durationLabel.setText(.bodySR, text: " · \(recommendation.duration)", color: UIColor(hexCode: "#2C2C2C"))
 
         // URL 저장 및 이미지 로딩 (교차 검증)
         let thumbnailURL = recommendation.thumbnailURL

@@ -19,6 +19,7 @@ let project = Project.makeModule(
                 .SPM.Moya,
                 .SPM.RIBs,
                 .SPM.RxSwift,
+                .SPM.RxCocoa,
                 .SPM.SnapKit,
                 .SPM.Then
             ],
