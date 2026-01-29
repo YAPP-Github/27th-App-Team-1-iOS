@@ -64,7 +64,7 @@ extension UIFont {
         case bodySR
         
         /// 해당 스타일의 프리텐다드 폰트 객체를 반환합니다.
-        private var font: UIFont {
+        public var font: UIFont {
             let ratio = NDGL.scaleRatio
             switch self {
             case .titleLB:    return DSKitFontFamily.Pretendard.bold.font(size: 32 * ratio)
