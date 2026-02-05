@@ -32,7 +32,6 @@ final class FollowDetailViewController: UIViewController, FollowDetailPresentabl
 
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = true
-        $0.contentInset.bottom = 100
     }
 
     private let contentView = UIView()
@@ -57,6 +56,15 @@ final class FollowDetailViewController: UIViewController, FollowDetailPresentabl
     private let stickyDayCollectionView = DayCollectionView()
 
     // MARK: - UI Components (Fixed)
+
+    private let bottomContainerView = UIView().then {
+        $0.backgroundColor = UIColor(hexCode: "#FFFFFF")
+        $0.layer.shadowColor = UIColor(hexCode: "#000000").cgColor
+        $0.layer.shadowOpacity = 0.06
+        $0.layer.shadowOffset = CGSize(width: 0, height: -10)
+        $0.layer.shadowRadius = 10
+        $0.layer.cornerRadius = 20
+    }
 
     private let addToTripButton = BottomPlacedButton(title: "여행 따라가기")
 
@@ -105,7 +113,8 @@ final class FollowDetailViewController: UIViewController, FollowDetailPresentabl
         view.addSubview(stickyHeaderView)
         stickyHeaderView.addSubview(stickyDayCollectionView)
 
-        view.addSubview(addToTripButton)
+        view.addSubview(bottomContainerView)
+        bottomContainerView.addSubview(addToTripButton)
         view.addSubview(loadingIndicator)
     }
 
@@ -114,9 +123,15 @@ final class FollowDetailViewController: UIViewController, FollowDetailPresentabl
             $0.center.equalToSuperview()
         }
 
+        bottomContainerView.snp.makeConstraints {
+            $0.leading.trailing.bottom.equalToSuperview()
+            $0.height.equalTo(126.adjustedH)
+        }
+
         scrollView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
-            $0.leading.trailing.bottom.equalToSuperview()
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(bottomContainerView.snp.top)
         }
 
         contentView.snp.makeConstraints {
@@ -137,22 +152,22 @@ final class FollowDetailViewController: UIViewController, FollowDetailPresentabl
 
         budgetView.snp.makeConstraints {
             $0.top.equalTo(dayCollectionView.snp.bottom).offset(16)
-            $0.leading.equalToSuperview().offset(16)
-            $0.trailing.equalToSuperview().offset(-16)
+            $0.leading.equalToSuperview().offset(24)
+            $0.trailing.equalToSuperview().offset(-24)
             $0.height.equalTo(44)
         }
 
         mapView.snp.makeConstraints {
             $0.top.equalTo(budgetView.snp.bottom).offset(16)
-            $0.leading.equalToSuperview().offset(16)
-            $0.trailing.equalToSuperview().offset(-16)
+            $0.leading.equalToSuperview().offset(24)
+            $0.trailing.equalToSuperview().offset(-24)
             $0.height.equalTo(200)
         }
 
         placeListCollectionView.snp.makeConstraints {
             $0.top.equalTo(mapView.snp.bottom).offset(16)
-            $0.leading.equalToSuperview().offset(16)
-            $0.trailing.equalToSuperview().offset(-16)
+            $0.leading.equalToSuperview().offset(24)
+            $0.trailing.equalToSuperview().offset(-24)
             $0.bottom.equalToSuperview().offset(-16)
             $0.height.greaterThanOrEqualTo(400)
         }
@@ -171,9 +186,9 @@ final class FollowDetailViewController: UIViewController, FollowDetailPresentabl
         }
 
         addToTripButton.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(20)
             $0.leading.equalToSuperview().offset(16)
             $0.trailing.equalToSuperview().offset(-16)
-            $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-16)
             $0.height.equalTo(52)
         }
     }
