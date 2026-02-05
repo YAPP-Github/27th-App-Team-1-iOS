@@ -25,7 +25,7 @@ public protocol FollowDetailViewControllable: ViewControllable {
 // MARK: - FollowDetailRouting
 
 public protocol FollowDetailRouting: ViewableRouting {
-    func routeToTripCalendar()
+    func routeToTripCalendar(templateTotalDays: Int)
     func detachTripCalendar()
 }
 
@@ -48,10 +48,10 @@ final class FollowDetailRouter: ViewableRouter<FollowDetailInteractable, FollowD
 
     // MARK: - FollowDetailRouting
 
-    func routeToTripCalendar() {
+    func routeToTripCalendar(templateTotalDays: Int) {
         guard tripCalendarRouter == nil else { return }
 
-        let router = tripCalendarBuilder.build(withListener: interactor)
+        let router = tripCalendarBuilder.build(withListener: interactor, templateTotalDays: templateTotalDays)
         tripCalendarRouter = router
         attachChild(router)
         viewController.present(router.viewControllable)

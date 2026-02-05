@@ -143,7 +143,8 @@ extension FollowDetailInteractor: FollowDetailPresentableListener {
     }
 
     func didTapAddToTrip() {
-        router?.routeToTripCalendar()
+        let totalDays = travelDetail?.days ?? 1
+        router?.routeToTripCalendar(templateTotalDays: totalDays)
     }
 
     func didSelectDay(_ day: Int) {
