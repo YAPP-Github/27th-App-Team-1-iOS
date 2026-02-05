@@ -1,5 +1,5 @@
 //
-//  MockFollowDetailRepository.swift
+//  MockFollowDetailService.swift
 //  FollowFeature
 //
 //  Created by kimnahun on 2026-01-23.
@@ -9,13 +9,13 @@
 import Domain
 import Foundation
 
-final class MockFollowDetailRepository: FollowRepositoryProtocol {
+final class MockFollowDetailService: FollowServiceProtocol {
 
-    func fetchTravelDetail(id: Int) async -> TravelDetail? {
+    func fetchTravelDetail(id: Int) async -> Result<TravelDetail, FollowError> {
         // 네트워크 지연 시뮬레이션
         try? await Task.sleep(nanoseconds: 100_000_000)
 
-        return TravelDetail(
+        return .success(TravelDetail(
             travelId: "TRAVEL_001",
             country: "태국",
             city: "방콕",
@@ -30,17 +30,17 @@ final class MockFollowDetailRepository: FollowRepositoryProtocol {
                 link: "https://www.youtube.com/watch?v=F2utz6L76D0",
                 summary: "빠니보틀은 주말을 이용해 직장인들도 충분히 다녀올 수 있는 '금요일 퇴근 후 방콕 여행'의 가능성을 보여주며"
             )
-        )
+        ))
     }
 
-    func fetchPlaces(travelId: Int, day: Int) async -> [TravelPlace] {
+    func fetchPlaces(travelId: Int, day: Int) async -> Result<[TravelPlace], FollowError> {
         // 네트워크 지연 시뮬레이션
         try? await Task.sleep(nanoseconds: 300_000_000)
 
         // 일차별로 다른 Mock 데이터 반환
         switch day {
         case 1:
-            return [
+            return .success([
                 TravelPlace(
                     id: 1,
                     day: 1,
@@ -136,9 +136,9 @@ final class MockFollowDetailRepository: FollowRepositoryProtocol {
                         googleMapsUri: "https://maps.google.com/?cid=567890"
                     )
                 )
-            ]
+            ])
         case 2:
-            return [
+            return .success([
                 TravelPlace(
                     id: 6,
                     day: 2,
@@ -177,9 +177,9 @@ final class MockFollowDetailRepository: FollowRepositoryProtocol {
                         googleMapsUri: "https://maps.google.com/?cid=789012"
                     )
                 )
-            ]
+            ])
         case 3:
-            return [
+            return .success([
                 TravelPlace(
                     id: 8,
                     day: 3,
@@ -199,9 +199,9 @@ final class MockFollowDetailRepository: FollowRepositoryProtocol {
                         googleMapsUri: "https://maps.google.com/?cid=890123"
                     )
                 )
-            ]
+            ])
         default:
-            return []
+            return .success([])
         }
     }
 }

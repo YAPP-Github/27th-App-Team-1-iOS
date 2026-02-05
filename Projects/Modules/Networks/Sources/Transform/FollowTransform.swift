@@ -1,6 +1,6 @@
 //
 //  FollowTransform.swift
-//  Data
+//  Networks
 //
 //  Created by kimnahun on 2026-01-23.
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
@@ -8,7 +8,6 @@
 
 import Domain
 import Foundation
-import Networks
 
 // MARK: - ContentCard Response to TravelDetail
 

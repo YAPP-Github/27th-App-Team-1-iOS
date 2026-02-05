@@ -1,13 +1,13 @@
 //
-//  AuthRepositoryProtocol.swift
+//  AuthServiceProtocol.swift
 //  Domain
 //
-//  Created by kimnahun on 1/21/26.
+//  Created by NDGL on 2026-02-06.
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
 import Foundation
 
-public protocol AuthRepositoryProtocol: Sendable {
+public protocol AuthServiceProtocol: Sendable {
     func signup(info: SignupInfo) async -> Result<SignupResult, SignupError>
 }

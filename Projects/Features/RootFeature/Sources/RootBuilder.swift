@@ -6,20 +6,22 @@
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
+import Domain
 import RIBs
-
 import TabBarFeature
 
 // MARK: - RootDependency
 
 public protocol RootDependency: Dependency {
-    // Root는 최상위 RIB이므로 외부 의존성이 없음
+    var tokenProvider: TokenProviding { get }
 }
 
 // MARK: - RootComponent
 
 final class RootComponent: Component<RootDependency>, TabBarDependency {
-    // TabBar RIB에 전달할 의존성
+    var tokenProvider: TokenProviding {
+        dependency.tokenProvider
+    }
 }
 
 // MARK: - RootBuildable

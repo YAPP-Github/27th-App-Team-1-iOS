@@ -10,13 +10,6 @@ import Domain
 import Foundation
 import Moya
 
-public protocol FollowServiceProtocol: Sendable {
-    /// 여행 템플릿 상세 조회
-    func getContentCard(id: Int) async -> NetworkResult<FollowContentCardResponse, FollowError>
-    /// 여행 템플릿 일정 조회
-    func getItinerary(id: Int, day: Int?) async -> NetworkResult<FollowItineraryResponse, FollowError>
-}
-
 public final class FollowService: FollowServiceProtocol, @unchecked Sendable {
     private let provider: MoyaProvider<FollowAPI>
 
@@ -24,11 +17,35 @@ public final class FollowService: FollowServiceProtocol, @unchecked Sendable {
         self.provider = provider
     }
 
-    public func getContentCard(id: Int) async -> NetworkResult<FollowContentCardResponse, FollowError> {
-        await provider.request(.getContentCard(id: id), errorMapper: FollowError.init)
+    public func fetchTravelDetail(id: Int) async -> Result<TravelDetail, FollowError> {
+        let result: NetworkResult<FollowContentCardResponse, FollowError> = await provider.request(
+            .getContentCard(id: id),
+            errorMapper: FollowError.init
+        )
+
+        switch result {
+        case .success(let response):
+            return .success(response.toDomain())
+        case .failure(let error):
+            return .failure(error)
+        case .networkFailure(let error):
+            return .failure(.networkError(message: error.message))
+        }
     }
 
-    public func getItinerary(id: Int, day: Int?) async -> NetworkResult<FollowItineraryResponse, FollowError> {
-        await provider.request(.getItinerary(id: id, day: day), errorMapper: FollowError.init)
+    public func fetchPlaces(travelId: Int, day: Int) async -> Result<[TravelPlace], FollowError> {
+        let result: NetworkResult<FollowItineraryResponse, FollowError> = await provider.request(
+            .getItinerary(id: travelId, day: day),
+            errorMapper: FollowError.init
+        )
+
+        switch result {
+        case .success(let response):
+            return .success(response.toDomain())
+        case .failure(let error):
+            return .failure(error)
+        case .networkFailure(let error):
+            return .failure(.networkError(message: error.message))
+        }
     }
 }

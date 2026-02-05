@@ -1,5 +1,5 @@
 //
-//  MockTravelRepository.swift
+//  MockHomeService.swift
 //  HomeFeature
 //
 //  Created by kimnahun on 2026-01-21.
@@ -9,7 +9,7 @@
 import Domain
 import Foundation
 
-final class MockTravelRepository: TravelRepositoryProtocol {
+final class MockHomeService: HomeServiceProtocol {
 
     private let mockImageURLs = [
         "https://picsum.photos/400/300?random=1",
@@ -29,10 +29,10 @@ final class MockTravelRepository: TravelRepositoryProtocol {
         "https://picsum.photos/400/300?random=15"
     ]
 
-    func fetchMyTrips() async -> [MyTrip] {
+    func fetchMyTrips() async -> Result<[MyTrip], HomeError> {
         try? await Task.sleep(nanoseconds: 300_000_000)
 
-        return [
+        return .success([
             MyTrip(
                 id: 1,
                 title: "도쿄 여행",
@@ -49,23 +49,26 @@ final class MockTravelRepository: TravelRepositoryProtocol {
                 endDate: Calendar.current.date(byAdding: .day, value: 37, to: Date()) ?? Date(),
                 thumbnailURL: mockImageURLs[1]
             )
-        ]
+        ])
     }
 
-    func fetchPopularTrips(category: TripCategory) async -> [PopularTrip] {
-        let allTrips = await fetchAllPopularTrips()
+    func fetchPopularTrips(category: TripCategory) async -> Result<[PopularTrip], HomeError> {
+        let allTripsResult = await fetchAllPopularTrips()
+        guard case .success(let allTrips) = allTripsResult else {
+            return .success([])
+        }
 
         if category == .all {
-            return allTrips.values.flatMap { $0 }
+            return .success(allTrips.values.flatMap { $0 })
         } else {
-            return allTrips[category] ?? []
+            return .success(allTrips[category] ?? [])
         }
     }
 
-    func fetchAllPopularTrips() async -> [TripCategory: [PopularTrip]] {
+    func fetchAllPopularTrips() async -> Result<[TripCategory: [PopularTrip]], HomeError> {
         try? await Task.sleep(nanoseconds: 300_000_000)
 
-        return [
+        return .success([
             .all: [
                 PopularTrip(id: 100, title: "곽준빈의 신혼여행", authorName: "곽튜브", destination: "파리", duration: "2박3일", thumbnailURL: mockImageURLs[0], category: .all),
                 PopularTrip(id: 101, title: "6박7일 스위스 여행", authorName: "찰스엔터", destination: "스위스", duration: "5박6일", thumbnailURL: mockImageURLs[1], category: .all),
@@ -96,13 +99,13 @@ final class MockTravelRepository: TravelRepositoryProtocol {
                 PopularTrip(id: 14, title: "도쿄 쇼핑 여행", authorName: "쇼핑퀸", destination: "도쿄", duration: "4박5일", thumbnailURL: mockImageURLs[1], category: .japan),
                 PopularTrip(id: 15, title: "교토 전통 문화", authorName: "문화탐방", destination: "교토", duration: "3박4일", thumbnailURL: mockImageURLs[2], category: .japan)
             ]
-        ]
+        ])
     }
 
-    func fetchRecommendations() async -> [Recommendation] {
+    func fetchRecommendations() async -> Result<[Recommendation], HomeError> {
         try? await Task.sleep(nanoseconds: 300_000_000)
 
-        return [
+        return .success([
             Recommendation(
                 id: 1,
                 title: "인플루언서 A의 발리 여행기",
@@ -127,6 +130,6 @@ final class MockTravelRepository: TravelRepositoryProtocol {
                 duration: "4박 5일",
                 thumbnailURL: mockImageURLs[2]
             )
-        ]
+        ])
     }
 }

@@ -1,0 +1,29 @@
+//
+//  TravelDTO.swift
+//  Networks
+//
+//  Created by NDGL on 2026-02-06.
+//  Copyright © 2026 NDGL-iOS. All rights reserved.
+//
+
+import Foundation
+
+// MARK: - Request
+
+public struct CreateUserTravelRequest: Encodable, Sendable {
+    public let templateId: Int
+    public let startDate: String
+    public let endDate: String
+
+    public init(templateId: Int, startDate: String, endDate: String) {
+        self.templateId = templateId
+        self.startDate = startDate
+        self.endDate = endDate
+    }
+}
+
+// MARK: - Response
+
+public struct CreateUserTravelResponse: Decodable, Sendable {
+    public let userTravelId: Int
+}

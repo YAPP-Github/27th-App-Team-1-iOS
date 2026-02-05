@@ -51,7 +51,7 @@ final class HomeInteractor: PresentableInteractor<HomePresentable>, HomeInteract
     weak var router: HomeRouting?
     weak var listener: HomeListener?
 
-    private let repository: TravelRepositoryProtocol
+    private let homeService: HomeServiceProtocol
     private let disposeBag = DisposeBag()
 
     // MARK: - Data (Source of Truth)
@@ -62,8 +62,8 @@ final class HomeInteractor: PresentableInteractor<HomePresentable>, HomeInteract
     private var tripsByCategory: [TripCategory: [PopularTrip]] = [:]
     private var recommendations: [Recommendation] = []
 
-    init(presenter: HomePresentable, repository: TravelRepositoryProtocol) {
-        self.repository = repository
+    init(presenter: HomePresentable, homeService: HomeServiceProtocol) {
+        self.homeService = homeService
         super.init(presenter: presenter)
         presenter.listener = self
     }
@@ -86,14 +86,14 @@ final class HomeInteractor: PresentableInteractor<HomePresentable>, HomeInteract
                 presenter.showLoading()
             }
 
-            async let myTripsResult = repository.fetchMyTrips()
-            async let tripsByCategoryResult = repository.fetchAllPopularTrips()
-            async let recommendationsResult = repository.fetchRecommendations()
+            async let myTripsResult = homeService.fetchMyTrips()
+            async let tripsByCategoryResult = homeService.fetchAllPopularTrips()
+            async let recommendationsResult = homeService.fetchRecommendations()
 
             let (myTripsData, tripsByCategoryData, recommendationsData) = await (
-                myTripsResult,
-                tripsByCategoryResult,
-                recommendationsResult
+                (try? myTripsResult.get()) ?? [],
+                (try? tripsByCategoryResult.get()) ?? [:],
+                (try? recommendationsResult.get()) ?? []
             )
 
             await MainActor.run {

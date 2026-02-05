@@ -6,21 +6,23 @@
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
-import RIBs
-
+import Domain
 import HomeFeature
+import RIBs
 import TravelFeature
 
 // MARK: - TabBarDependency
 
 public protocol TabBarDependency: Dependency {
-    // 부모 RIB로부터 주입받을 의존성 정의
+    var tokenProvider: TokenProviding { get }
 }
 
 // MARK: - TabBarComponent
 
 final class TabBarComponent: Component<TabBarDependency>, HomeDependency, TravelDependency {
-    // Home, Travel RIB에 전달할 의존성
+    var tokenProvider: TokenProviding {
+        dependency.tokenProvider
+    }
 }
 
 // MARK: - TabBarBuildable
