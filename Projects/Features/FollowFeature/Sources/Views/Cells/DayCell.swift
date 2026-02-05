@@ -75,13 +75,13 @@ final class DayCell: UICollectionViewCell {
         if isSelected {
             containerView.backgroundColor = UIColor(hexCode: "#2C2C2C")
             containerView.layer.borderWidth = 0
-            dayLabel.font = DSKitFontFamily.Pretendard.medium.font(size: 14)
+            dayLabel.font = UIFont.NDGL.bodyMM.font
             dayLabel.textColor = UIColor(hexCode: "#FFFFFF")
         } else {
             containerView.backgroundColor = UIColor(hexCode: "#FFFFFF")
             containerView.layer.borderWidth = 1
             containerView.layer.borderColor = UIColor(hexCode: "#D9D9D9").cgColor
-            dayLabel.font = DSKitFontFamily.Pretendard.medium.font(size: 14)
+            dayLabel.font = UIFont.NDGL.bodyMM.font
             dayLabel.textColor = UIColor(hexCode: "#757575")
         }
     }

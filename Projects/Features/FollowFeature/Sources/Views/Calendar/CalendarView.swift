@@ -35,7 +35,7 @@ final class CalendarView: UIView {
 
     private let monthYearButton = UIButton(type: .system).then {
         $0.setTitleColor(UIColor(hexCode: "#111111"), for: .normal)
-        $0.titleLabel?.font = DSKitFontFamily.Pretendard.semiBold.font(size: 18)
+        $0.titleLabel?.font = UIFont.NDGL.subTitleMSB.font
     }
 
     private let previousMonthButton = UIButton(type: .system).then {
