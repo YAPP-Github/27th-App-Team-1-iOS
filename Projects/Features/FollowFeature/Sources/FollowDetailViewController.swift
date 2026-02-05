@@ -243,8 +243,8 @@ extension FollowDetailViewController {
         mapView.configure(with: places)
         placeListCollectionView.applySnapshot(places: places)
 
-        let cellHeight: CGFloat = 135
-        let spacing: CGFloat = 8
+        let cellHeight: CGFloat = 129
+        let spacing: CGFloat = 13
         let height = CGFloat(places.count) * cellHeight + CGFloat(max(0, places.count - 1)) * spacing
         placeListCollectionView.snp.updateConstraints {
             $0.height.greaterThanOrEqualTo(max(400, height))

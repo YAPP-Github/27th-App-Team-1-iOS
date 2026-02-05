@@ -20,30 +20,22 @@ final class PlaceCell: UICollectionViewCell {
 
     // MARK: - UI Components
 
-    // 순서 뷰 (셀 바깥 왼쪽)
+    // 순서 뷰 (셀 왼쪽)
     private let sequenceView = UIView().then {
         $0.backgroundColor = UIColor(hexCode: "#28A745")
-        $0.layer.cornerRadius = 12
+        $0.layer.cornerRadius = 10
     }
 
     private let sequenceLabel = UILabel()
 
-    // 메인 컨테이너 (보더 있는 영역)
+    // 메인 컨테이너
     private let containerView = UIView().then {
         $0.backgroundColor = UIColor(hexCode: "#FFFFFF")
         $0.layer.cornerRadius = 12
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = UIColor(hexCode: "#F5F5F5").cgColor
+        $0.layer.borderColor = UIColor(hexCode: "#EEF2FF").cgColor
         $0.clipsToBounds = true
     }
-
-    // 카테고리 태그
-    private let categoryTagView = UIView().then {
-        $0.backgroundColor = UIColor(hexCode: "#F5F5F5")
-        $0.layer.cornerRadius = 4
-    }
-
-    private let categoryLabel = UILabel()
 
     // 체류 시간
     private let durationLabel = UILabel()
@@ -51,11 +43,7 @@ final class PlaceCell: UICollectionViewCell {
     // 장소명
     private let placeNameLabel = UILabel().then {
         $0.numberOfLines = 1
-    }
-
-    // 팁/설명
-    private let tipLabel = UILabel().then {
-        $0.numberOfLines = 2
+        $0.lineBreakMode = .byTruncatingTail
     }
 
     // 썸네일
@@ -107,11 +95,9 @@ final class PlaceCell: UICollectionViewCell {
         contentView.addSubview(containerView)
 
         // 컨테이너 내부 요소들
-        [categoryTagView, durationLabel, placeNameLabel, tipLabel, thumbnailImageView].forEach {
+        [durationLabel, placeNameLabel, thumbnailImageView].forEach {
             containerView.addSubview($0)
         }
-
-        categoryTagView.addSubview(categoryLabel)
 
         // 이동 시간 정보
         contentView.addSubview(travelTimeContainerView)
@@ -121,68 +107,54 @@ final class PlaceCell: UICollectionViewCell {
     }
 
     private func setupConstraints() {
-        // 순서 뷰 (왼쪽 바깥)
+        // 메인 컨테이너
+        containerView.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(7.5)
+            $0.trailing.equalToSuperview()
+            $0.height.equalTo(84)
+        }
+
+        // 순서 뷰 (왼쪽, centerY를 container에 맞춤)
         sequenceView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(12)
             $0.leading.equalToSuperview()
-            $0.size.equalTo(24)
+            $0.centerY.equalTo(containerView)
+            $0.size.equalTo(20)
         }
 
         sequenceLabel.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
 
-        // 메인 컨테이너
+        // 컨테이너 leading은 순서뷰 trailing에서 띄움
         containerView.snp.makeConstraints {
-            $0.top.equalToSuperview()
             $0.leading.equalTo(sequenceView.snp.trailing).offset(8)
-            $0.trailing.equalToSuperview()
-            $0.height.equalTo(99)
-        }
-
-        // 카테고리 태그
-        categoryTagView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(12)
-            $0.leading.equalToSuperview().offset(12)
-            $0.height.equalTo(20)
-        }
-
-        categoryLabel.snp.makeConstraints {
-            $0.edges.equalToSuperview().inset(UIEdgeInsets(top: 2, left: 6, bottom: 2, right: 6))
         }
 
         // 체류 시간
         durationLabel.snp.makeConstraints {
-            $0.centerY.equalTo(categoryTagView)
-            $0.leading.equalTo(categoryTagView.snp.trailing).offset(8)
+            $0.top.equalToSuperview().offset(16.5)
+            $0.leading.equalToSuperview().offset(16)
         }
 
         // 장소명
         placeNameLabel.snp.makeConstraints {
-            $0.top.equalTo(categoryTagView.snp.bottom).offset(8)
-            $0.leading.equalToSuperview().offset(12)
+            $0.top.equalTo(durationLabel.snp.bottom).offset(11)
+            $0.leading.equalToSuperview().offset(16)
             $0.trailing.equalTo(thumbnailImageView.snp.leading).offset(-12)
-        }
-
-        // 팁
-        tipLabel.snp.makeConstraints {
-            $0.top.equalTo(placeNameLabel.snp.bottom).offset(4)
-            $0.leading.equalTo(placeNameLabel)
-            $0.trailing.equalTo(placeNameLabel)
         }
 
         // 썸네일
         thumbnailImageView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(12)
-            $0.trailing.equalToSuperview().offset(-12)
+            $0.trailing.equalToSuperview().offset(-16)
             $0.size.equalTo(56)
         }
 
         // 이동 시간 컨테이너
         travelTimeContainerView.snp.makeConstraints {
-            $0.top.equalTo(containerView.snp.bottom).offset(8)
-            $0.leading.equalTo(containerView).offset(12)
-            $0.trailing.equalTo(containerView).offset(-12)
+            $0.top.equalTo(containerView.snp.bottom).offset(17.5)
+            $0.leading.equalTo(containerView).offset(16)
+            $0.trailing.equalTo(containerView).offset(-16)
             $0.height.equalTo(20)
         }
 
@@ -199,20 +171,48 @@ final class PlaceCell: UICollectionViewCell {
 
     // MARK: - Configuration
 
-    func configure(with place: TravelPlace, isLast: Bool = false) {
-        sequenceLabel.setText(.bodySSB, text: "\(place.sequence)", color: UIColor(hexCode: "#FFFFFF"))
+    private func formatTravelTime(place: TravelPlace) -> String {
+        var components: [String] = []
 
-        // 카테고리 (기본값: 교통수단)
-        categoryLabel.setText(.bodySR, text: "교통수단", color: UIColor(hexCode: "#2C2C2C"))
+        // 시간 정보
+        if let transport = place.transportation.first, let timeMin = transport.timeMin {
+            components.append("약 \(timeMin)분")
+        }
+
+        // 거리 정보
+        if let distance = place.distanceKm {
+            components.append(String(format: "%.1fkm", distance))
+        }
+
+        return components.isEmpty ? "" : components.joined(separator: " • ")
+    }
+
+    private func formatDuration(_ minutes: Int) -> String {
+        let hours = minutes / 60
+        let mins = minutes % 60
+
+        if hours > 0 && mins > 0 {
+            return "\(hours)시간 \(mins)분 체류 예상"
+        } else if hours > 0 {
+            return "\(hours)시간 체류 예상"
+        } else {
+            return "\(mins)분 체류 예상"
+        }
+    }
+
+    func configure(with place: TravelPlace, isLast: Bool = false) {
+        // 순서
+        sequenceLabel.setText(.bodySSB, text: "\(place.sequence - 1)", color: UIColor(hexCode: "#FFFFFF"))
 
         // 체류 시간
-        durationLabel.setText(.bodySR, text: "\(place.estimatedDuration)분 체류 예상", color: UIColor(hexCode: "#444444"))
+        if let duration = place.estimatedDuration {
+            durationLabel.setText(.bodySR, text: formatDuration(duration), color: UIColor(hexCode: "#757575"))
+        } else {
+            durationLabel.setText(.bodySR, text: "", color: UIColor(hexCode: "#757575"))
+        }
 
         // 장소명
         placeNameLabel.setText(.bodyLSB, text: place.place.name, color: UIColor(hexCode: "#111111"))
-
-        // 팁
-        tipLabel.setText(.bodySR, text: place.travelerTip, color: UIColor(hexCode: "#444444"))
 
         // 썸네일 이미지 로딩
         if let thumbnailURLString = place.place.thumbnail,
@@ -230,13 +230,9 @@ final class PlaceCell: UICollectionViewCell {
             thumbnailImageView.isHidden = true
         }
 
-        // 이동 시간 정보 (마지막 아이템이면 숨김)
-        if isLast {
-            travelTimeContainerView.isHidden = true
-        } else {
-            travelTimeContainerView.isHidden = false
-            // TODO: 실제 이동 시간 데이터로 교체
-            travelTimeLabel.setText(.bodySR, text: "약 30분 • 28.8km", color: UIColor(hexCode: "#444444"))
-        }
+        // 이동 시간 정보 (항상 표시, > 버튼도 항상 표시)
+        travelTimeContainerView.isHidden = false
+        let travelTimeText = formatTravelTime(place: place)
+        travelTimeLabel.setText(.bodySR, text: travelTimeText, color: UIColor(hexCode: "#757575"))
     }
 }

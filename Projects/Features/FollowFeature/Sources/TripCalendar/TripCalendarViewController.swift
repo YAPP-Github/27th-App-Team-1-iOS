@@ -51,7 +51,7 @@ final class TripCalendarViewController: UIViewController, TripCalendarPresentabl
     // MARK: - Setup
 
     private func setupUI() {
-        title = "새로운 여행 만들기"
+        title = "여행 따라가기"
         view.backgroundColor = UIColor(hexCode: "#FFFFFF")
 
         [calendarView, completeButton].forEach {

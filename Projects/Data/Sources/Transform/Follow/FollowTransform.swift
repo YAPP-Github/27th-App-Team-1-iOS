@@ -53,9 +53,21 @@ extension FollowPlaceResponse {
             id: id,
             day: day,
             sequence: sequence,
-            travelerTip: travelerTip ?? "",
+            distanceKm: distanceKm,
+            transportation: transportation?.map { $0.toDomain() } ?? [],
+            youtubeTips: youtubeTips ?? [],
+            planB: planB?.map { $0.toDomain() } ?? [],
             estimatedDuration: estimatedDuration,
             place: place.toDomain()
+        )
+    }
+}
+
+extension TransportationResponse {
+    func toDomain() -> Transportation {
+        Transportation(
+            mode: mode,
+            timeMin: timeMin
         )
     }
 }
@@ -68,7 +80,8 @@ extension PlaceResponse {
             latitude: latitude,
             longitude: longitude,
             name: name,
-            regularOpeningHours: regularOpeningHours
+            regularOpeningHours: regularOpeningHours,
+            googleMapsUri: googleMapsUri
         )
     }
 }

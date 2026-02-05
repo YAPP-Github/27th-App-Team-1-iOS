@@ -222,15 +222,19 @@ final class PlaceDetailBottomSheetView: UIView {
         categoryLabel.setText(.bodySR, text: "🏔 관광명소", color: UIColor(hexCode: "#757575"))
 
         // 체류 예상 시간
-        let hours = place.estimatedDuration / 60
-        let minutes = place.estimatedDuration % 60
         let durationText: String
-        if hours > 0 && minutes > 0 {
-            durationText = "\(hours)시간 \(minutes)분 체류 예상"
-        } else if hours > 0 {
-            durationText = "\(hours)시간 체류 예상"
+        if let duration = place.estimatedDuration {
+            let hours = duration / 60
+            let minutes = duration % 60
+            if hours > 0 && minutes > 0 {
+                durationText = "\(hours)시간 \(minutes)분 체류 예상"
+            } else if hours > 0 {
+                durationText = "\(hours)시간 체류 예상"
+            } else {
+                durationText = "\(minutes)분 체류 예상"
+            }
         } else {
-            durationText = "\(minutes)분 체류 예상"
+            durationText = ""
         }
         durationLabel.setText(.bodySR, text: durationText, color: UIColor(hexCode: "#444444"))
 
