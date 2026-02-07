@@ -144,7 +144,7 @@ extension TravelMapView: MKMapViewDelegate {
         let label = UILabel(frame: view.bounds)
         label.text = "\(sequence)"
         label.textColor = UIColor(hexCode: "#FFFFFF")
-        label.font = DSKitFontFamily.Pretendard.bold.font(size: 14)
+        label.font = UIFont.NDGL.bodyMSB.font
         label.textAlignment = .center
         view.addSubview(label)
 

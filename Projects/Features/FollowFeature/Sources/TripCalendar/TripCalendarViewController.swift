@@ -51,7 +51,7 @@ final class TripCalendarViewController: UIViewController, TripCalendarPresentabl
     // MARK: - Setup
 
     private func setupUI() {
-        title = "새로운 여행 만들기"
+        title = "여행 따라가기"
         view.backgroundColor = UIColor(hexCode: "#FFFFFF")
 
         [calendarView, completeButton].forEach {
@@ -63,7 +63,6 @@ final class TripCalendarViewController: UIViewController, TripCalendarPresentabl
         calendarView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(16)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(350)
         }
 
         completeButton.snp.makeConstraints {
@@ -98,6 +97,12 @@ final class TripCalendarViewController: UIViewController, TripCalendarPresentabl
             completeButton.backgroundColor = UIColor(hexCode: "#B3B3B3")
             completeButton.isEnabled = false
         }
+    }
+
+    // MARK: - Public Methods
+
+    func setTemplateTotalDays(_ days: Int) {
+        calendarView.setTemplateTotalDays(days)
     }
 }
 

@@ -26,7 +26,7 @@ final class PlaceListCollectionView: UICollectionView {
     init() {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = 8
+        layout.minimumLineSpacing = 13
 
         super.init(frame: .zero, collectionViewLayout: layout)
         setupCollectionView()
@@ -90,6 +90,6 @@ extension PlaceListCollectionView: UICollectionViewDelegate {
 
 extension PlaceListCollectionView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.bounds.width, height: 135)
+        return CGSize(width: collectionView.bounds.width, height: 129)
     }
 }

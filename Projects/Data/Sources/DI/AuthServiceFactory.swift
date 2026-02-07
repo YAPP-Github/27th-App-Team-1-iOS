@@ -1,5 +1,5 @@
 //
-//  AuthRepositoryFactory.swift
+//  AuthServiceFactory.swift
 //  Data
 //
 //  Created by kimnahun on 1/21/26.
@@ -12,8 +12,4 @@ import Networks
 
 public func makeAuthService() -> AuthServiceProtocol {
     AuthService()
-}
-
-public func makeAuthRepository(authService: AuthServiceProtocol) -> AuthRepositoryProtocol {
-    AuthRepository(authService: authService)
 }

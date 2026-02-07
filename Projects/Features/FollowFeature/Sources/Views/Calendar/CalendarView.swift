@@ -26,6 +26,7 @@ final class CalendarView: UIView {
     private var currentDate = Date()
     private var selectedStartDate: Date?
     private var selectedEndDate: Date?
+    private var templateTotalDays: Int = 0
 
     private let calendar = Calendar.current
     private var days: [Int?] = []
@@ -34,7 +35,7 @@ final class CalendarView: UIView {
 
     private let monthYearButton = UIButton(type: .system).then {
         $0.setTitleColor(UIColor(hexCode: "#111111"), for: .normal)
-        $0.titleLabel?.font = DSKitFontFamily.Pretendard.semiBold.font(size: 18)
+        $0.titleLabel?.font = UIFont.NDGL.subTitleMSB.font
     }
 
     private let previousMonthButton = UIButton(type: .system).then {
@@ -65,6 +66,11 @@ final class CalendarView: UIView {
         return cv
     }()
 
+    private let warningLabel = UILabel().then {
+        $0.numberOfLines = 0
+        $0.isHidden = true
+    }
+
     // MARK: - Initialization
 
     override init(frame: CGRect) {
@@ -85,9 +91,15 @@ final class CalendarView: UIView {
     private func setupUI() {
         backgroundColor = UIColor(hexCode: "#FFFFFF")
 
-        [monthYearButton, previousMonthButton, nextMonthButton, weekdayStackView, collectionView].forEach {
+        [monthYearButton, previousMonthButton, nextMonthButton, weekdayStackView, collectionView, warningLabel].forEach {
             addSubview($0)
         }
+
+        warningLabel.setText(
+            .bodySR,
+            text: "* 선택한 여행 기간이 따라가기 일정보다 짧아요.\n기간을 넘는 일정은 저장되지 않습니다.",
+            color: DSKitAsset.Colors.red500.color
+        )
     }
 
     private func setupConstraints() {
@@ -118,7 +130,14 @@ final class CalendarView: UIView {
         collectionView.snp.makeConstraints {
             $0.top.equalTo(weekdayStackView.snp.bottom).offset(8)
             $0.leading.trailing.equalToSuperview().inset(16)
-            $0.bottom.equalToSuperview()
+            $0.height.equalTo(264)  // 6 rows * 44 height
+        }
+
+        warningLabel.snp.makeConstraints {
+            $0.top.equalTo(collectionView.snp.bottom).offset(24)
+            $0.leading.equalToSuperview().offset(24)
+            $0.trailing.equalToSuperview().offset(-36)
+            $0.bottom.lessThanOrEqualToSuperview()
         }
     }
 
@@ -218,7 +237,16 @@ final class CalendarView: UIView {
     private func updateCalendar() {
         updateMonthYearLabel()
         generateDays()
+        updateCollectionViewHeight()
         collectionView.reloadData()
+    }
+
+    private func updateCollectionViewHeight() {
+        let numberOfRows = days.count / 7
+        let height = CGFloat(numberOfRows) * 44
+        collectionView.snp.updateConstraints {
+            $0.height.equalTo(height)
+        }
     }
 
     private func updateMonthYearLabel() {
@@ -240,16 +268,22 @@ final class CalendarView: UIView {
 
         let firstWeekday = calendar.component(.weekday, from: firstDayOfMonth)
 
+        // 첫째 날 이전 빈 칸
         for _ in 1..<firstWeekday {
             days.append(nil)
         }
 
+        // 실제 날짜
         for day in range {
             days.append(day)
         }
 
-        while days.count < 42 {
-            days.append(nil)
+        // 마지막 줄 채우기 (7의 배수가 되도록)
+        let remainder = days.count % 7
+        if remainder != 0 {
+            for _ in 0..<(7 - remainder) {
+                days.append(nil)
+            }
         }
     }
 
@@ -297,6 +331,26 @@ final class CalendarView: UIView {
             return nil
         }
         return (start, end)
+    }
+
+    func setTemplateTotalDays(_ days: Int) {
+        templateTotalDays = days
+        updateWarningLabel()
+    }
+
+    // MARK: - Private Methods
+
+    private func updateWarningLabel() {
+        guard let start = selectedStartDate, let end = selectedEndDate else {
+            warningLabel.isHidden = true
+            return
+        }
+
+        let selectedDays = calendar.dateComponents([.day], from: start, to: end).day ?? 0
+        let selectedTotalDays = selectedDays + 1  // 시작일 포함
+
+        // 선택한 기간이 템플릿 일정보다 짧을 때만 경고 표시
+        warningLabel.isHidden = selectedTotalDays >= templateTotalDays
     }
 }
 
@@ -384,6 +438,7 @@ extension CalendarView: UICollectionViewDelegate {
         }
 
         collectionView.reloadData()
+        updateWarningLabel()
 
         if let start = selectedStartDate, let end = selectedEndDate {
             delegate?.calendarView(self, didSelectRange: start, endDate: end)

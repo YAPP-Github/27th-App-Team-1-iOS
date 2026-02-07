@@ -39,9 +39,17 @@ public struct FollowPlaceResponse: Decodable, Sendable {
     public let id: Int
     public let day: Int
     public let sequence: Int
-    public let travelerTip: String?
-    public let estimatedDuration: Int
+    public let distanceKm: Double?
+    public let transportation: [TransportationResponse]?
+    public let youtubeTips: [String]?
+    public let planB: [PlaceResponse]?
+    public let estimatedDuration: Int?
     public let place: PlaceResponse
+}
+
+public struct TransportationResponse: Decodable, Sendable {
+    public let mode: String
+    public let timeMin: Int?
 }
 
 public struct PlaceResponse: Decodable, Sendable {
@@ -51,4 +59,5 @@ public struct PlaceResponse: Decodable, Sendable {
     public let longitude: Double
     public let name: String
     public let regularOpeningHours: String?
+    public let googleMapsUri: String
 }

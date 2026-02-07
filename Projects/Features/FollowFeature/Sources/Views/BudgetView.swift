@@ -41,16 +41,14 @@ final class BudgetView: UIView {
     // MARK: - Setup
 
     private func setupUI() {
-        backgroundColor = UIColor(hexCode: "#FFFFFF")
+        backgroundColor = UIColor(hexCode: "#F5F5F5")
         layer.cornerRadius = 8
-        layer.borderWidth = 1
-        layer.borderColor = UIColor(hexCode: "#D9D9D9").cgColor
 
         [iconImageView, titleLabel, budgetLabel].forEach {
             addSubview($0)
         }
 
-        titleLabel.setText(.bodyMM, text: "1인 기준 여행 예산 :", color: UIColor(hexCode: "#2C2C2C"))
+        titleLabel.setText(.bodyMM, text: "1일차 여행 예산:", color: UIColor(hexCode: "#2C2C2C"))
     }
 
     private func setupConstraints() {
@@ -74,9 +72,6 @@ final class BudgetView: UIView {
     // MARK: - Configuration
 
     func configure(budget: Int) {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        let formattedNumber = formatter.string(from: NSNumber(value: budget)) ?? "\(budget)"
-        budgetLabel.setText(.bodyMSB, text: "\(formattedNumber)원", color: UIColor(hexCode: "#111111"))
+        budgetLabel.setText(.bodyMSB, text: "\(budget/10000)만원", color: UIColor(hexCode: "#111111"))
     }
 }

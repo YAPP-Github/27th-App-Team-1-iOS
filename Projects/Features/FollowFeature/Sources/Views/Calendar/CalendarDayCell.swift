@@ -23,7 +23,7 @@ final class CalendarDayCell: UICollectionViewCell {
     }
 
     private let rangeBackgroundView = UIView().then {
-        $0.backgroundColor = UIColor(hexCode: "#C6F6D5")
+        $0.backgroundColor = DSKitAsset.Colors.green200.color
         $0.isHidden = true
     }
 
@@ -124,7 +124,7 @@ final class CalendarDayCell: UICollectionViewCell {
 
         switch selectionState {
         case .startDate, .endDate:
-            backgroundCircleView.backgroundColor = UIColor(hexCode: "#38A169")
+            backgroundCircleView.backgroundColor = DSKitAsset.Colors.green500.color
             backgroundCircleView.isHidden = false
             textColor = UIColor(hexCode: "#FFFFFF")
 

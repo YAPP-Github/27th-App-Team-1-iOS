@@ -38,7 +38,6 @@ final class MediaInfoView: UIView {
         $0.clipsToBounds = true
     }
 
-    // 여행 정보 (icVideo1 + 4px + "유튜버 · 국가 · 3박4일")
     private let travelInfoStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 4
@@ -46,7 +45,8 @@ final class MediaInfoView: UIView {
     }
 
     private let travelInfoIconView = UIImageView().then {
-        $0.image = DSKitAsset.Assets.icVideo1.image
+        $0.image = DSKitAsset.Assets.icVideo1.image.withRenderingMode(.alwaysTemplate)
+        $0.tintColor = DSKitAsset.Colors.black400.color
         $0.contentMode = .scaleAspectFit
     }
 
@@ -84,7 +84,8 @@ final class MediaInfoView: UIView {
     }
 
     private let budgetIconView = UIImageView().then {
-        $0.image = DSKitAsset.Assets.icPiggybank1.image
+        $0.image = DSKitAsset.Assets.icPiggybank1.image.withRenderingMode(.alwaysTemplate)
+        $0.tintColor = UIColor(hexCode: "#2960EC")
         $0.contentMode = .scaleAspectFit
     }
 
@@ -102,7 +103,7 @@ final class MediaInfoView: UIView {
     }
 
     private let summaryIconView = UIImageView().then {
-        $0.image = DSKitAsset.Assets.icBook1.image
+        $0.image = DSKitAsset.Assets.icMagic1.image
         $0.contentMode = .scaleAspectFit
     }
 
@@ -127,7 +128,102 @@ final class MediaInfoView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - Setup
+    private func setupActions() {
+        toggleButton.addTarget(self, action: #selector(toggleButtonTapped), for: .touchUpInside)
+    }
+
+    // MARK: - Actions
+
+    @objc private func toggleButtonTapped() {
+        isExpanded.toggle()
+        updateExpandedState()
+        delegate?.mediaInfoViewDidToggleExpand(self, isExpanded: isExpanded)
+    }
+
+    private func updateExpandedState() {
+        expandedContainerView.isHidden = !isExpanded
+        let image = isExpanded ? DSKitAsset.Assets.icChevronUp3.image : DSKitAsset.Assets.icChevronDown3.image
+        toggleButton.setImage(image, for: .normal)
+
+        // 타이틀 줄 수 토글 (collapsed: 1줄, expanded: 무제한)
+        titleLabel.numberOfLines = isExpanded ? 0 : 1
+
+        // Bottom constraint 토글
+        if isExpanded {
+            collapsedBottomConstraint?.deactivate()
+            expandedBottomConstraint?.activate()
+        } else {
+            expandedBottomConstraint?.deactivate()
+            collapsedBottomConstraint?.activate()
+        }
+    }
+
+    // MARK: - Configuration
+
+    func configure(with detail: TravelDetail) {
+        // 여행 정보 라벨 (유튜버 · 국가 · 3박4일)
+        let travelInfoText = "\(detail.youtube.youtuber) · \(detail.country) · \(detail.nights)박\(detail.days)일"
+        travelInfoLabel.setText(.bodyMSB, text: travelInfoText, color: UIColor(hexCode: "#757575"))
+
+        // 제목
+        titleLabel.setText(.subTitleLSB, text: detail.youtube.title, color: UIColor(hexCode: "#111111"))
+
+        // 예산 라벨 (1인 기준 예산 + 금액) - 파란색
+        let budgetText = "1인 기준 예산 \(formatBudget(detail.budgetPerPerson))"
+        budgetLabel.setText(.bodyMM, text: budgetText, color: UIColor(hexCode: "#2960EC"))
+
+        // 요약 라벨
+        summaryLabel.setText(.bodyMR, text: detail.youtube.summary, color: DSKitAsset.Colors.black400.color)
+
+        // 프로필 이미지 로딩
+        if let profileURLString = detail.youtube.profileImage,
+           let profileURL = URL(string: profileURLString) {
+            profileImageView.kf.setImage(
+                with: profileURL,
+                placeholder: nil,
+                options: [
+                    .transition(.fade(0.2)),
+                    .cacheOriginalImage
+                ]
+            )
+        }
+
+        // 썸네일 이미지 로딩
+        if let thumbnailURLString = detail.youtube.thumbnail,
+           let thumbnailURL = URL(string: thumbnailURLString) {
+            thumbnailImageView.kf.setImage(
+                with: thumbnailURL,
+                placeholder: nil,
+                options: [
+                    .transition(.fade(0.2)),
+                    .cacheOriginalImage
+                ]
+            )
+        }
+    }
+
+    private func formatBudget(_ budget: Int) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        let formattedNumber = formatter.string(from: NSNumber(value: budget)) ?? "\(budget)"
+        return "\(formattedNumber)원"
+    }
+
+    // MARK: - Public Methods
+
+    func calculateHeight() -> CGFloat {
+        setNeedsLayout()
+        layoutIfNeeded()
+        let targetSize = CGSize(width: bounds.width, height: UIView.layoutFittingCompressedSize.height)
+        return systemLayoutSizeFitting(
+            targetSize,
+            withHorizontalFittingPriority: .required,
+            verticalFittingPriority: .fittingSizeLevel
+        ).height
+    }
+}
+
+extension MediaInfoView {
 
     private func setupUI() {
         backgroundColor = UIColor(hexCode: "#F5F5F5")
@@ -234,99 +330,5 @@ final class MediaInfoView: UIView {
             $0.horizontalEdges.equalTo(separatorView)
             $0.bottom.equalToSuperview().offset(-16)
         }
-    }
-
-    private func setupActions() {
-        toggleButton.addTarget(self, action: #selector(toggleButtonTapped), for: .touchUpInside)
-    }
-
-    // MARK: - Actions
-
-    @objc private func toggleButtonTapped() {
-        isExpanded.toggle()
-        updateExpandedState()
-        delegate?.mediaInfoViewDidToggleExpand(self, isExpanded: isExpanded)
-    }
-
-    private func updateExpandedState() {
-        expandedContainerView.isHidden = !isExpanded
-        let image = isExpanded ? DSKitAsset.Assets.icChevronUp3.image : DSKitAsset.Assets.icChevronDown3.image
-        toggleButton.setImage(image, for: .normal)
-
-        // 타이틀 줄 수 토글 (collapsed: 1줄, expanded: 무제한)
-        titleLabel.numberOfLines = isExpanded ? 0 : 1
-
-        // Bottom constraint 토글
-        if isExpanded {
-            collapsedBottomConstraint?.deactivate()
-            expandedBottomConstraint?.activate()
-        } else {
-            expandedBottomConstraint?.deactivate()
-            collapsedBottomConstraint?.activate()
-        }
-    }
-
-    // MARK: - Configuration
-
-    func configure(with detail: TravelDetail) {
-        // 여행 정보 라벨 (유튜버 · 국가 · 3박4일)
-        let travelInfoText = "\(detail.youtube.youtuber) · \(detail.country) · \(detail.nights)박\(detail.days)일"
-        travelInfoLabel.setText(.bodyMSB, text: travelInfoText, color: UIColor(hexCode: "#757575"))
-
-        // 제목
-        titleLabel.setText(.subTitleLSB, text: detail.youtube.title, color: UIColor(hexCode: "#111111"))
-
-        // 예산 라벨 (1인 기준 예산 + 금액) - 파란색
-        let budgetText = "1인 기준 예산 \(formatBudget(detail.budgetPerPerson))"
-        budgetLabel.setText(.bodyLR, text: budgetText, color: UIColor(hexCode: "#28A745"))
-
-        // 요약 라벨
-        summaryLabel.setText(.bodyMM, text: detail.youtube.summary, color: UIColor(hexCode: "#2C2C2C"))
-
-        // 프로필 이미지 로딩
-        if let profileURLString = detail.youtube.profileImage,
-           let profileURL = URL(string: profileURLString) {
-            profileImageView.kf.setImage(
-                with: profileURL,
-                placeholder: nil,
-                options: [
-                    .transition(.fade(0.2)),
-                    .cacheOriginalImage
-                ]
-            )
-        }
-
-        // 썸네일 이미지 로딩
-        if let thumbnailURLString = detail.youtube.thumbnail,
-           let thumbnailURL = URL(string: thumbnailURLString) {
-            thumbnailImageView.kf.setImage(
-                with: thumbnailURL,
-                placeholder: nil,
-                options: [
-                    .transition(.fade(0.2)),
-                    .cacheOriginalImage
-                ]
-            )
-        }
-    }
-
-    private func formatBudget(_ budget: Int) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        let formattedNumber = formatter.string(from: NSNumber(value: budget)) ?? "\(budget)"
-        return "\(formattedNumber)원"
-    }
-
-    // MARK: - Public Methods
-
-    func calculateHeight() -> CGFloat {
-        setNeedsLayout()
-        layoutIfNeeded()
-        let targetSize = CGSize(width: bounds.width, height: UIView.layoutFittingCompressedSize.height)
-        return systemLayoutSizeFitting(
-            targetSize,
-            withHorizontalFittingPriority: .required,
-            verticalFittingPriority: .fittingSizeLevel
-        ).height
     }
 }

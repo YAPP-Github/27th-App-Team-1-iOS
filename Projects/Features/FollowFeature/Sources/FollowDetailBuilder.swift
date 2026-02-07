@@ -12,14 +12,19 @@ import RIBs
 // MARK: - FollowDetailDependency
 
 public protocol FollowDetailDependency: Dependency {
-    var followRepository: FollowRepositoryProtocol { get }
+    var followService: FollowServiceProtocol { get }
+    var travelService: TravelServiceProtocol { get }
 }
 
 // MARK: - FollowDetailComponent
 
 final class FollowDetailComponent: Component<FollowDetailDependency>, TripCalendarDependency {
-    var repository: FollowRepositoryProtocol {
-        dependency.followRepository
+    var followService: FollowServiceProtocol {
+        dependency.followService
+    }
+
+    var travelService: TravelServiceProtocol {
+        dependency.travelService
     }
 }
 
@@ -42,7 +47,8 @@ public final class FollowDetailBuilder: Builder<FollowDetailDependency>, FollowD
         let viewController = FollowDetailViewController()
         let interactor = FollowDetailInteractor(
             presenter: viewController,
-            repository: component.repository,
+            followService: component.followService,
+            travelService: component.travelService,
             recommendationId: recommendationId
         )
         interactor.listener = listener

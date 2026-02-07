@@ -47,7 +47,8 @@ final class FollowDetailInteractor: PresentableInteractor<FollowDetailPresentabl
     weak var router: FollowDetailRouting?
     weak var listener: FollowDetailListener?
 
-    private let repository: FollowRepositoryProtocol
+    private let followService: FollowServiceProtocol
+    private let travelService: TravelServiceProtocol
     private let disposeBag = DisposeBag()
 
     // MARK: - Data (Source of Truth)
@@ -59,10 +60,12 @@ final class FollowDetailInteractor: PresentableInteractor<FollowDetailPresentabl
 
     init(
         presenter: FollowDetailPresentable,
-        repository: FollowRepositoryProtocol,
+        followService: FollowServiceProtocol,
+        travelService: TravelServiceProtocol,
         recommendationId: Int
     ) {
-        self.repository = repository
+        self.followService = followService
+        self.travelService = travelService
         self.recommendationId = recommendationId
         super.init(presenter: presenter)
         presenter.listener = self
@@ -85,14 +88,17 @@ final class FollowDetailInteractor: PresentableInteractor<FollowDetailPresentabl
                 presenter.showLoading()
             }
 
-            guard let detail = await repository.fetchTravelDetail(id: recommendationId) else {
+            let detailResult = await followService.fetchTravelDetail(id: recommendationId)
+
+            guard case .success(let detail) = detailResult else {
                 await MainActor.run {
                     presenter.hideLoading()
                 }
                 return
             }
 
-            let places = await repository.fetchPlaces(travelId: recommendationId, day: 1)
+            let placesResult = await followService.fetchPlaces(travelId: recommendationId, day: 1)
+            let places = (try? placesResult.get()) ?? []
 
             await MainActor.run {
                 self.travelDetail = detail
@@ -117,7 +123,8 @@ final class FollowDetailInteractor: PresentableInteractor<FollowDetailPresentabl
                 presenter.showLoading()
             }
 
-            let places = await repository.fetchPlaces(travelId: recommendationId, day: day)
+            let result = await followService.fetchPlaces(travelId: recommendationId, day: day)
+            let places = (try? result.get()) ?? []
 
             await MainActor.run {
                 self.placesByDay[day] = places
@@ -143,7 +150,8 @@ extension FollowDetailInteractor: FollowDetailPresentableListener {
     }
 
     func didTapAddToTrip() {
-        router?.routeToTripCalendar()
+        let totalDays = travelDetail?.days ?? 1
+        router?.routeToTripCalendar(templateTotalDays: totalDays)
     }
 
     func didSelectDay(_ day: Int) {
@@ -161,16 +169,54 @@ extension FollowDetailInteractor: FollowDetailPresentableListener {
 
 extension FollowDetailInteractor: TripCalendarListener {
     func tripCalendarDidSelectRange(startDate: Date, endDate: Date) {
-        router?.detachTripCalendar()
-
-        // 여행 제목 (city + "여행")
-        let tripTitle = "\(travelDetail?.city ?? "새로운") 여행"
-
-        // Home으로 돌아가면서 Travel 탭으로 이동하도록 알림
-        listener?.followDetailDidAddTrip(title: tripTitle, startDate: startDate, endDate: endDate)
+        createUserTravel(startDate: startDate, endDate: endDate)
     }
 
     func tripCalendarDidCancel() {
         router?.detachTripCalendar()
+    }
+
+    private func createUserTravel(startDate: Date, endDate: Date) {
+        let request = CreateTravelRequest(
+            templateId: recommendationId,
+            startDate: startDate,
+            endDate: endDate
+        )
+
+        Task {
+            await MainActor.run {
+                presenter.showLoading()
+            }
+
+            let result = await travelService.createUserTravel(request: request)
+
+            await MainActor.run {
+                presenter.hideLoading()
+                router?.detachTripCalendar()
+
+                switch result {
+                case .success(let response):
+                    let tripTitle = "\(travelDetail?.city ?? "새로운") 여행"
+                    listener?.followDetailDidAddTrip(title: tripTitle, startDate: startDate, endDate: endDate)
+                    print("여행 생성 성공 - userTravelId: \(response.userTravelId)")
+
+                case .failure(let error):
+                    handleCreateTravelError(error)
+                }
+            }
+        }
+    }
+
+    private func handleCreateTravelError(_ error: CreateTravelError) {
+        switch error {
+        case .validationFailed(let field, let message):
+            print("유효성 검증 실패 - \(field): \(message)")
+        case .invalidDateOrder(let message):
+            print("날짜 순서 오류: \(message)")
+        case .notFoundTemplate(let message):
+            print("템플릿 없음: \(message)")
+        case .unknown(let code, let message):
+            print("알 수 없는 오류 (\(code)): \(message)")
+        }
     }
 }

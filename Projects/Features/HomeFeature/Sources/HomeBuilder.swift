@@ -14,20 +14,23 @@ import RIBs
 // MARK: - HomeDependency
 
 public protocol HomeDependency: Dependency {
-    // 부모 RIB로부터 주입받을 의존성 정의
+    var tokenProvider: TokenProviding { get }
 }
 
 // MARK: - HomeComponent
 
 final class HomeComponent: Component<HomeDependency>, FollowDetailDependency {
-    var travelRepository: TravelRepositoryProtocol {
-        // TODO: 실제 API 연동 시 실제 Repository로 교체
-        MockTravelRepository()
+    var homeService: HomeServiceProtocol {
+        // TODO: 실제 API 연동 시 실제 Service로 교체
+        MockHomeService()
     }
 
-    var followRepository: FollowRepositoryProtocol {
-        let service = makeFollowService()
-        return makeFollowRepository(service: service)
+    var followService: FollowServiceProtocol {
+        makeFollowService()
+    }
+
+    var travelService: TravelServiceProtocol {
+        makeTravelService(tokenProvider: dependency.tokenProvider)
     }
 }
 
@@ -50,7 +53,7 @@ public final class HomeBuilder: Builder<HomeDependency>, HomeBuildable {
         let viewController = HomeViewController()
         let interactor = HomeInteractor(
             presenter: viewController,
-            repository: component.travelRepository
+            homeService: component.homeService
         )
         interactor.listener = listener
 
