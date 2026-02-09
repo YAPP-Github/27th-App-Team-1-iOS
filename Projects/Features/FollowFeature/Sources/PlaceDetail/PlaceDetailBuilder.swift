@@ -26,7 +26,7 @@ final class PlaceDetailComponent: Component<PlaceDetailDependency> {
 // MARK: - PlaceDetailBuildable
 
 protocol PlaceDetailBuildable: Buildable {
-    func build(withListener listener: PlaceDetailListener, googlePlaceId: String) -> PlaceDetailRouting
+    func build(withListener listener: PlaceDetailListener, travelPlace: TravelPlace, youtuberName: String) -> PlaceDetailRouting
 }
 
 // MARK: - PlaceDetailBuilder
@@ -37,13 +37,14 @@ final class PlaceDetailBuilder: Builder<PlaceDetailDependency>, PlaceDetailBuild
         super.init(dependency: dependency)
     }
 
-    func build(withListener listener: PlaceDetailListener, googlePlaceId: String) -> PlaceDetailRouting {
+    func build(withListener listener: PlaceDetailListener, travelPlace: TravelPlace, youtuberName: String) -> PlaceDetailRouting {
         let component = PlaceDetailComponent(dependency: dependency)
         let viewController = PlaceDetailViewController()
         let interactor = PlaceDetailInteractor(
             presenter: viewController,
             followService: component.followService,
-            googlePlaceId: googlePlaceId
+            travelPlace: travelPlace,
+            youtuberName: youtuberName
         )
         interactor.listener = listener
 

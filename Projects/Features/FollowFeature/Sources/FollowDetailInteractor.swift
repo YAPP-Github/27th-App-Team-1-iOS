@@ -156,7 +156,8 @@ extension FollowDetailInteractor: FollowDetailPresentableListener {
     }
 
     func didTapPlaceDetailChevron(_ place: TravelPlace) {
-        router?.routeToPlaceDetail(googlePlaceId: place.place.googlePlaceId)
+        let youtuberName = travelDetail?.youtube.youtuber ?? ""
+        router?.routeToPlaceDetail(travelPlace: place, youtuberName: youtuberName)
     }
 }
 

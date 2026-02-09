@@ -20,12 +20,30 @@ protocol PlaceDetailListener: AnyObject {
 
 protocol PlaceDetailPresentable: Presentable {
     var listener: PlaceDetailPresentableListener? { get set }
+
+    func updatePlaceInfo(viewModel: PlaceDetailViewModel)
 }
 
 // MARK: - PlaceDetailPresentableListener
 
 protocol PlaceDetailPresentableListener: AnyObject {
     func didTapBackButton()
+    func didScrollToTipPage(_ page: Int)
+}
+
+// MARK: - PlaceDetailViewModel
+
+struct PlaceDetailViewModel {
+    let name: String
+    let rating: Double?
+    let reviewCount: Int?
+    let thumbnailURL: String?
+    let address: String?
+    let phoneNumber: String?
+    let estimatedDuration: Int?
+    let youtubeTips: [String]
+    let youtuberName: String
+    let planBItems: [PlanBInfo]
 }
 
 // MARK: - PlaceDetailInteractor
@@ -36,20 +54,24 @@ final class PlaceDetailInteractor: PresentableInteractor<PlaceDetailPresentable>
     weak var listener: PlaceDetailListener?
 
     private let followService: FollowServiceProtocol
-    private let googlePlaceId: String
+    private let travelPlace: TravelPlace
+    private let youtuberName: String
 
     // MARK: - State
 
     private var placeDetail: PlaceDetail?
     private var placePhotos: [PlacePhoto] = []
+    private var currentTipPage: Int = 0
 
     init(
         presenter: PlaceDetailPresentable,
         followService: FollowServiceProtocol,
-        googlePlaceId: String
+        travelPlace: TravelPlace,
+        youtuberName: String
     ) {
         self.followService = followService
-        self.googlePlaceId = googlePlaceId
+        self.travelPlace = travelPlace
+        self.youtuberName = youtuberName
         super.init(presenter: presenter)
         presenter.listener = self
     }
@@ -64,6 +86,8 @@ final class PlaceDetailInteractor: PresentableInteractor<PlaceDetailPresentable>
     }
 
     private func fetchPlaceData() {
+        let googlePlaceId = travelPlace.place.googlePlaceId
+
         Task {
             async let detailResult = followService.fetchPlaceDetail(googlePlaceId: googlePlaceId)
             async let photosResult = followService.fetchPlacePhotos(googlePlaceId: googlePlaceId)
@@ -100,8 +124,26 @@ final class PlaceDetailInteractor: PresentableInteractor<PlaceDetailPresentable>
                         print("PlacePhotos 실패 [unknown] code: \(code), message: \(message)")
                     }
                 }
+
+                updatePresenter()
             }
         }
+    }
+
+    private func updatePresenter() {
+        let viewModel = PlaceDetailViewModel(
+            name: placeDetail?.name ?? travelPlace.place.name,
+            rating: placeDetail?.rating,
+            reviewCount: placeDetail?.userRatingCount,
+            thumbnailURL: placeDetail?.thumbnail ?? travelPlace.place.thumbnail,
+            address: placeDetail?.formattedAddress,
+            phoneNumber: placeDetail?.internationalPhoneNumber ?? placeDetail?.nationalPhoneNumber,
+            estimatedDuration: travelPlace.estimatedDuration,
+            youtubeTips: travelPlace.youtubeTips,
+            youtuberName: youtuberName,
+            planBItems: travelPlace.planB
+        )
+        presenter.updatePlaceInfo(viewModel: viewModel)
     }
 }
 
@@ -110,5 +152,9 @@ final class PlaceDetailInteractor: PresentableInteractor<PlaceDetailPresentable>
 extension PlaceDetailInteractor: PlaceDetailPresentableListener {
     func didTapBackButton() {
         listener?.placeDetailDidTapBack()
+    }
+
+    func didScrollToTipPage(_ page: Int) {
+        currentTipPage = page
     }
 }

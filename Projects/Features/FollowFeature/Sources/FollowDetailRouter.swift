@@ -6,6 +6,7 @@
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
+import Domain
 import RIBs
 
 // MARK: - FollowDetailInteractable
@@ -27,7 +28,7 @@ public protocol FollowDetailViewControllable: ViewControllable {
 public protocol FollowDetailRouting: ViewableRouting {
     func routeToTripCalendar(templateTotalDays: Int)
     func detachTripCalendar()
-    func routeToPlaceDetail(googlePlaceId: String)
+    func routeToPlaceDetail(travelPlace: TravelPlace, youtuberName: String)
     func detachPlaceDetail()
 }
 
@@ -77,10 +78,10 @@ final class FollowDetailRouter: ViewableRouter<FollowDetailInteractable, FollowD
         tripCalendarRouter = nil
     }
 
-    func routeToPlaceDetail(googlePlaceId: String) {
+    func routeToPlaceDetail(travelPlace: TravelPlace, youtuberName: String) {
         guard placeDetailRouter == nil else { return }
 
-        let router = placeDetailBuilder.build(withListener: interactor, googlePlaceId: googlePlaceId)
+        let router = placeDetailBuilder.build(withListener: interactor, travelPlace: travelPlace, youtuberName: youtuberName)
         placeDetailRouter = router
         attachChild(router)
         viewController.present(router.viewControllable)
