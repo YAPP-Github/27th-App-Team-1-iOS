@@ -121,10 +121,10 @@ final class PlaceDetailViewController: UIViewController, PlaceDetailPresentable,
     }()
 
     private let infoContainerView = UIView()
-    private let photoContainerView: UIView = {
-        let view = UIView()
-        view.isHidden = true
-        return view
+    private let photoCollectionView: PhotoCollectionView = {
+        let collectionView = PhotoCollectionView()
+        collectionView.isHidden = true
+        return collectionView
     }()
 
     private let addressInfoView = PlaceInfoRowView(
@@ -150,11 +150,13 @@ final class PlaceDetailViewController: UIViewController, PlaceDetailPresentable,
 
     private let tipCollectionView = TipCollectionView()
 
+    // PageControl is OUTSIDE the cells, visually overlapping but not scrolling with them
     private let tipPageControl: UIPageControl = {
         let pageControl = UIPageControl()
         pageControl.currentPageIndicatorTintColor = UIColor(hexCode: "#4D4D4D")
         pageControl.pageIndicatorTintColor = UIColor(hexCode: "#CCCCCC")
         pageControl.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+        pageControl.isUserInteractionEnabled = false
         return pageControl
     }()
 
@@ -208,9 +210,8 @@ final class PlaceDetailViewController: UIViewController, PlaceDetailPresentable,
         scrollView.addSubview(contentView)
 
         [thumbnailImageView, segmentedControl, underlineView,
-         infoContainerView, photoContainerView, separatorView,
-         tipCollectionView, tipPageControl,
-         planBHeaderLabel, planBCollectionView].forEach {
+         infoContainerView, photoCollectionView, separatorView,
+         tipCollectionView, tipPageControl, planBHeaderLabel, planBCollectionView].forEach {
             contentView.addSubview($0)
         }
 
@@ -279,10 +280,10 @@ final class PlaceDetailViewController: UIViewController, PlaceDetailPresentable,
             $0.trailing.equalToSuperview().offset(-25)
         }
 
-        photoContainerView.snp.makeConstraints {
+        photoCollectionView.snp.makeConstraints {
             $0.top.equalTo(underlineView.snp.bottom).offset(16)
-            $0.leading.trailing.equalToSuperview().inset(20)
-            $0.height.equalTo(300)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(0)
         }
 
         addressInfoView.snp.makeConstraints {
@@ -303,23 +304,21 @@ final class PlaceDetailViewController: UIViewController, PlaceDetailPresentable,
             $0.top.equalTo(infoContainerView.snp.bottom).offset(25)
             $0.leading.trailing.equalToSuperview().inset(25)
             $0.height.equalTo(1)
-            $0.bottom.equalToSuperview().offset(-40)
         }
 
-        // Tip carousel - full card cells (gray background + labels + tip text)
         tipCollectionView.snp.makeConstraints {
             $0.top.equalTo(separatorView.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(160)
+            $0.height.equalTo(218)
         }
 
         tipPageControl.snp.makeConstraints {
-            $0.top.equalTo(tipCollectionView.snp.bottom).offset(12)
             $0.centerX.equalToSuperview()
+            $0.bottom.equalTo(tipCollectionView.snp.bottom).offset(-20)
         }
 
         planBHeaderLabel.snp.makeConstraints {
-            $0.top.equalTo(tipPageControl.snp.bottom).offset(32)
+            $0.top.equalTo(tipCollectionView.snp.bottom).offset(32)
             $0.centerX.equalToSuperview()
         }
 
@@ -327,6 +326,7 @@ final class PlaceDetailViewController: UIViewController, PlaceDetailPresentable,
             $0.top.equalTo(planBHeaderLabel.snp.bottom).offset(16)
             $0.leading.trailing.equalToSuperview().inset(20)
             $0.height.equalTo(0)
+            $0.bottom.equalToSuperview().offset(-40)
         }
 
         // Sticky Header
@@ -364,10 +364,32 @@ final class PlaceDetailViewController: UIViewController, PlaceDetailPresentable,
 
     @objc private func segmentChanged(_ sender: UISegmentedControl) {
         let isInfoSelected = sender.selectedSegmentIndex == 0
-        infoContainerView.isHidden = !isInfoSelected
-        photoContainerView.isHidden = isInfoSelected
 
-        // Sync both segment controls
+        infoContainerView.isHidden = !isInfoSelected
+        separatorView.isHidden = !isInfoSelected
+        tipCollectionView.isHidden = !isInfoSelected
+        tipPageControl.isHidden = !isInfoSelected
+        planBHeaderLabel.isHidden = !isInfoSelected
+        planBCollectionView.isHidden = !isInfoSelected
+
+        photoCollectionView.isHidden = isInfoSelected
+
+        if isInfoSelected {
+            photoCollectionView.snp.remakeConstraints {
+                $0.top.equalTo(underlineView.snp.bottom).offset(16)
+                $0.leading.trailing.equalToSuperview()
+                $0.height.equalTo(photoCollectionView.calculateTotalHeight())
+            }
+        } else {
+            // Photo tab: add bottom constraint to photoCollectionView
+            photoCollectionView.snp.remakeConstraints {
+                $0.top.equalTo(underlineView.snp.bottom).offset(16)
+                $0.leading.trailing.equalToSuperview()
+                $0.height.equalTo(photoCollectionView.calculateTotalHeight())
+                $0.bottom.equalToSuperview().offset(-40)
+            }
+        }
+
         segmentedControl.selectedSegmentIndex = sender.selectedSegmentIndex
         stickySegmentedControl.selectedSegmentIndex = sender.selectedSegmentIndex
 
@@ -386,14 +408,12 @@ final class PlaceDetailViewController: UIViewController, PlaceDetailPresentable,
     // MARK: - PlaceDetailPresentable
 
     func updatePlaceInfo(viewModel: PlaceDetailViewModel) {
-        // Name
         let nameAttributedText = NSAttributedString(
             string: viewModel.name,
             attributes: UIFont.NDGL.titleMSB.attributes
         )
         nameLabel.attributedText = nameAttributedText
 
-        // Review info - Rating in #314158, Count in black300
         if let rating = viewModel.rating {
             var ratingAttributes = UIFont.NDGL.bodyMM.attributes
             ratingAttributes[.foregroundColor] = UIColor(hexCode: "#314158")
@@ -457,12 +477,10 @@ final class PlaceDetailViewController: UIViewController, PlaceDetailPresentable,
             durationInfoView.isHidden = true
         }
 
-        // Tip section - each cell is a full card with gray background + labels + tip text
         if !viewModel.youtubeTips.isEmpty {
             tipCollectionView.isHidden = false
-            tipPageControl.isHidden = false
-
             tipCollectionView.applySnapshot(tips: viewModel.youtubeTips, youtuberName: viewModel.youtuberName)
+            tipPageControl.isHidden = false
             tipPageControl.numberOfPages = viewModel.youtubeTips.count
             tipPageControl.currentPage = 0
         } else {
@@ -470,7 +488,6 @@ final class PlaceDetailViewController: UIViewController, PlaceDetailPresentable,
             tipPageControl.isHidden = true
         }
 
-        // Plan B section
         if !viewModel.planBItems.isEmpty {
             planBHeaderLabel.isHidden = false
             planBCollectionView.isHidden = false
@@ -487,6 +504,18 @@ final class PlaceDetailViewController: UIViewController, PlaceDetailPresentable,
             planBCollectionView.isHidden = true
         }
 
+        if !viewModel.placePhotos.isEmpty {
+            photoCollectionView.applySnapshot(photos: viewModel.placePhotos)
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                self.photoCollectionView.layoutIfNeeded()
+                let photoHeight = self.photoCollectionView.calculateTotalHeight()
+                self.photoCollectionView.snp.updateConstraints {
+                    $0.height.equalTo(photoHeight)
+                }
+            }
+        }
+
         let planBHeight = planBCollectionView.calculateHeight(for: viewModel.planBItems.count)
         updateBottomConstraints(
             hasTips: !viewModel.youtubeTips.isEmpty,
@@ -501,7 +530,6 @@ final class PlaceDetailViewController: UIViewController, PlaceDetailPresentable,
 private extension PlaceDetailViewController {
 
     func updateBottomConstraints(hasTips: Bool, hasPlanB: Bool, planBHeight: CGFloat) {
-        // Reset separator constraints (always needed)
         separatorView.snp.remakeConstraints {
             $0.top.equalTo(infoContainerView.snp.bottom).offset(25)
             $0.leading.trailing.equalToSuperview().inset(25)
@@ -509,18 +537,17 @@ private extension PlaceDetailViewController {
         }
 
         if hasPlanB && hasTips {
-            // Tips -> PageControl -> PlanB Header -> PlanB Collection -> Bottom
             tipCollectionView.snp.remakeConstraints {
                 $0.top.equalTo(separatorView.snp.bottom).offset(20)
                 $0.leading.trailing.equalToSuperview()
-                $0.height.equalTo(160)
+                $0.height.equalTo(218)
             }
             tipPageControl.snp.remakeConstraints {
-                $0.top.equalTo(tipCollectionView.snp.bottom).offset(12)
                 $0.centerX.equalToSuperview()
+                $0.bottom.equalTo(tipCollectionView.snp.bottom).offset(-20)
             }
             planBHeaderLabel.snp.remakeConstraints {
-                $0.top.equalTo(tipPageControl.snp.bottom).offset(32)
+                $0.top.equalTo(tipCollectionView.snp.bottom).offset(32)
                 $0.centerX.equalToSuperview()
             }
             planBCollectionView.snp.remakeConstraints {
@@ -530,16 +557,14 @@ private extension PlaceDetailViewController {
                 $0.bottom.equalToSuperview().offset(-40)
             }
         } else if hasPlanB {
-            // No tips: Separator -> PlanB Header -> PlanB Collection -> Bottom
             tipCollectionView.snp.remakeConstraints {
                 $0.top.equalTo(separatorView.snp.bottom)
                 $0.leading.trailing.equalToSuperview()
                 $0.height.equalTo(0)
             }
             tipPageControl.snp.remakeConstraints {
-                $0.top.equalTo(tipCollectionView.snp.bottom)
                 $0.centerX.equalToSuperview()
-                $0.height.equalTo(0)
+                $0.bottom.equalTo(tipCollectionView.snp.bottom)
             }
             planBHeaderLabel.snp.remakeConstraints {
                 $0.top.equalTo(separatorView.snp.bottom).offset(32)
@@ -552,19 +577,18 @@ private extension PlaceDetailViewController {
                 $0.bottom.equalToSuperview().offset(-40)
             }
         } else if hasTips {
-            // Tips -> PageControl -> Bottom (no planB)
             tipCollectionView.snp.remakeConstraints {
                 $0.top.equalTo(separatorView.snp.bottom).offset(20)
                 $0.leading.trailing.equalToSuperview()
-                $0.height.equalTo(160)
-            }
-            tipPageControl.snp.remakeConstraints {
-                $0.top.equalTo(tipCollectionView.snp.bottom).offset(12)
-                $0.centerX.equalToSuperview()
+                $0.height.equalTo(218)
                 $0.bottom.equalToSuperview().offset(-40)
             }
+            tipPageControl.snp.remakeConstraints {
+                $0.centerX.equalToSuperview()
+                $0.bottom.equalTo(tipCollectionView.snp.bottom).offset(-20)
+            }
             planBHeaderLabel.snp.remakeConstraints {
-                $0.top.equalTo(tipPageControl.snp.bottom)
+                $0.top.equalTo(tipCollectionView.snp.bottom)
                 $0.centerX.equalToSuperview()
                 $0.height.equalTo(0)
             }
@@ -574,7 +598,6 @@ private extension PlaceDetailViewController {
                 $0.height.equalTo(0)
             }
         } else {
-            // No tips, no planB: Separator -> Bottom
             separatorView.snp.remakeConstraints {
                 $0.top.equalTo(infoContainerView.snp.bottom).offset(25)
                 $0.leading.trailing.equalToSuperview().inset(25)
@@ -587,9 +610,8 @@ private extension PlaceDetailViewController {
                 $0.height.equalTo(0)
             }
             tipPageControl.snp.remakeConstraints {
-                $0.top.equalTo(tipCollectionView.snp.bottom)
                 $0.centerX.equalToSuperview()
-                $0.height.equalTo(0)
+                $0.bottom.equalTo(tipCollectionView.snp.bottom)
             }
             planBHeaderLabel.snp.remakeConstraints {
                 $0.top.equalTo(separatorView.snp.bottom)
@@ -613,7 +635,6 @@ extension PlaceDetailViewController: UIScrollViewDelegate {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let offsetY = scrollView.contentOffset.y
-        // Show sticky header when the underline (segment + 44 + underline 2px) is fully scrolled past
         let segmentHeight: CGFloat = 44
         let underlineHeight: CGFloat = 2
         let threshold = segmentOriginY + segmentHeight + underlineHeight

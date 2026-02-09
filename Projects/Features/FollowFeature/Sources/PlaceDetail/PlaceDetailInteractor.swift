@@ -44,6 +44,7 @@ struct PlaceDetailViewModel {
     let youtubeTips: [String]
     let youtuberName: String
     let planBItems: [PlanBInfo]
+    let placePhotos: [PlacePhoto]
 }
 
 // MARK: - PlaceDetailInteractor
@@ -88,13 +89,16 @@ final class PlaceDetailInteractor: PresentableInteractor<PlaceDetailPresentable>
     private func fetchPlaceData() {
         let googlePlaceId = travelPlace.place.googlePlaceId
 
-        Task {
-            async let detailResult = followService.fetchPlaceDetail(googlePlaceId: googlePlaceId)
-            async let photosResult = followService.fetchPlacePhotos(googlePlaceId: googlePlaceId)
+        Task { [weak self] in
+            guard let self else { return }
+
+            async let detailResult = self.followService.fetchPlaceDetail(googlePlaceId: googlePlaceId)
+            async let photosResult = self.followService.fetchPlacePhotos(googlePlaceId: googlePlaceId)
 
             let (detail, photos) = await (detailResult, photosResult)
 
-            await MainActor.run {
+            await MainActor.run { [weak self] in
+                guard let self else { return }
                 switch detail {
                 case .success(let placeDetail):
                     self.placeDetail = placeDetail
@@ -141,7 +145,8 @@ final class PlaceDetailInteractor: PresentableInteractor<PlaceDetailPresentable>
             estimatedDuration: travelPlace.estimatedDuration,
             youtubeTips: travelPlace.youtubeTips,
             youtuberName: youtuberName,
-            planBItems: travelPlace.planB
+            planBItems: travelPlace.planB,
+            placePhotos: placePhotos
         )
         presenter.updatePlaceInfo(viewModel: viewModel)
     }

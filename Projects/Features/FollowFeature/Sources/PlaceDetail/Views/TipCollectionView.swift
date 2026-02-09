@@ -57,7 +57,6 @@ final class TipCollectionView: UICollectionView {
         isPagingEnabled = false
         decelerationRate = .fast
         delegate = self
-        // Left inset 37, right inset 37 (for last cell to snap correctly)
         contentInset = UIEdgeInsets(top: 0, left: 37, bottom: 0, right: 37)
         register(TipCell.self, forCellWithReuseIdentifier: TipCell.identifier)
     }
@@ -77,9 +76,15 @@ final class TipCollectionView: UICollectionView {
         }
     }
 
+    // MARK: - Properties (Public)
+
+    private(set) var totalTipsCount: Int = 0
+
     // MARK: - Public Methods
 
     func applySnapshot(tips: [String], youtuberName: String) {
+        totalTipsCount = tips.count
+
         var snapshot = NSDiffableDataSourceSnapshot<Int, TipItem>()
         snapshot.appendSections([0])
         let items = tips.enumerated().map {
@@ -99,7 +104,6 @@ extension TipCollectionView: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        // Cell width: collectionView.width - leftInset(37) - spacing(10) - nextCellVisible(27)
         let width = collectionView.frame.width - 37 - 10 - 27
         return CGSize(width: width, height: collectionView.frame.height)
     }
@@ -129,7 +133,6 @@ final class TipCell: UICollectionViewCell {
 
     static let identifier = "TipCell"
 
-    // Gray rounded container (the whole card)
     private let containerView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor(hexCode: "#F5F5F7")
@@ -155,7 +158,6 @@ final class TipCell: UICollectionViewCell {
         return label
     }()
 
-    // Tip content text
     private let tipLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
