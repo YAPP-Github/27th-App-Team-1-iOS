@@ -37,6 +37,7 @@ protocol FollowDetailPresentableListener: AnyObject {
     func didTapAddToTrip()
     func didSelectDay(_ day: Int)
     func didSelectPlace(_ place: TravelPlace)
+    func didTapPlaceDetailChevron(_ place: TravelPlace)
 }
 
 // MARK: - FollowDetailInteractor
@@ -152,6 +153,18 @@ extension FollowDetailInteractor: FollowDetailPresentableListener {
 
     func didSelectPlace(_ place: TravelPlace) {
         presenter.showPlaceDetail(place)
+    }
+
+    func didTapPlaceDetailChevron(_ place: TravelPlace) {
+        router?.routeToPlaceDetail(googlePlaceId: place.place.googlePlaceId)
+    }
+}
+
+// MARK: - PlaceDetailListener
+
+extension FollowDetailInteractor: PlaceDetailListener {
+    func placeDetailDidTapBack() {
+        router?.detachPlaceDetail()
     }
 }
 

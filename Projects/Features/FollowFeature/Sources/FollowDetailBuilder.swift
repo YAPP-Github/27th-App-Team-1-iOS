@@ -18,7 +18,7 @@ public protocol FollowDetailDependency: Dependency {
 
 // MARK: - FollowDetailComponent
 
-final class FollowDetailComponent: Component<FollowDetailDependency>, TripCalendarDependency {
+final class FollowDetailComponent: Component<FollowDetailDependency>, TripCalendarDependency, PlaceDetailDependency {
     var followService: FollowServiceProtocol {
         dependency.followService
     }
@@ -54,11 +54,13 @@ public final class FollowDetailBuilder: Builder<FollowDetailDependency>, FollowD
         interactor.listener = listener
 
         let tripCalendarBuilder = TripCalendarBuilder(dependency: component)
+        let placeDetailBuilder = PlaceDetailBuilder(dependency: component)
 
         let router = FollowDetailRouter(
             interactor: interactor,
             viewController: viewController,
-            tripCalendarBuilder: tripCalendarBuilder
+            tripCalendarBuilder: tripCalendarBuilder,
+            placeDetailBuilder: placeDetailBuilder
         )
 
         return router

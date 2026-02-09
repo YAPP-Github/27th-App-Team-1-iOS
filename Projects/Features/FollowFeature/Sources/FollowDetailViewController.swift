@@ -258,6 +258,12 @@ extension FollowDetailViewController {
             configuration: configuration
         )
 
+        contentView.onChevronTapped = { [weak self, weak bottomSheet] in
+            bottomSheet?.dismiss(animated: true) {
+                self?.listener?.didTapPlaceDetailChevron(place)
+            }
+        }
+
         present(bottomSheet, animated: false)
     }
 }

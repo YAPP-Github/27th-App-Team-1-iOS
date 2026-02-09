@@ -18,6 +18,7 @@ final class PlaceDetailBottomSheetView: UIView {
     // MARK: - Properties
 
     private var googleMapsUri: String?
+    var onChevronTapped: (() -> Void)?
 
     // MARK: - UI Components
 
@@ -219,6 +220,7 @@ final class PlaceDetailBottomSheetView: UIView {
 
     private func setupActions() {
         findRouteButton.addTarget(self, action: #selector(findRouteButtonTapped), for: .touchUpInside)
+        chevronButton.addTarget(self, action: #selector(chevronButtonTapped), for: .touchUpInside)
     }
 
     // MARK: - Actions
@@ -227,6 +229,10 @@ final class PlaceDetailBottomSheetView: UIView {
         guard let urlString = googleMapsUri,
               let url = URL(string: urlString) else { return }
         UIApplication.shared.open(url)
+    }
+
+    @objc private func chevronButtonTapped() {
+        onChevronTapped?()
     }
 
     // MARK: - Configuration
