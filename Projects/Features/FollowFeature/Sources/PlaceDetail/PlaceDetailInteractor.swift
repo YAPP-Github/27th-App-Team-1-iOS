@@ -6,6 +6,7 @@
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
+import Domain
 import Foundation
 import RIBs
 
@@ -34,9 +35,20 @@ final class PlaceDetailInteractor: PresentableInteractor<PlaceDetailPresentable>
     weak var router: PlaceDetailRouting?
     weak var listener: PlaceDetailListener?
 
+    private let followService: FollowServiceProtocol
     private let googlePlaceId: String
 
-    init(presenter: PlaceDetailPresentable, googlePlaceId: String) {
+    // MARK: - State
+
+    private var placeDetail: PlaceDetail?
+    private var placePhotos: [PlacePhoto] = []
+
+    init(
+        presenter: PlaceDetailPresentable,
+        followService: FollowServiceProtocol,
+        googlePlaceId: String
+    ) {
+        self.followService = followService
         self.googlePlaceId = googlePlaceId
         super.init(presenter: presenter)
         presenter.listener = self
@@ -44,11 +56,52 @@ final class PlaceDetailInteractor: PresentableInteractor<PlaceDetailPresentable>
 
     override func didBecomeActive() {
         super.didBecomeActive()
-        print("PlaceDetail loaded with googlePlaceId: \(googlePlaceId)")
+        fetchPlaceData()
     }
 
     override func willResignActive() {
         super.willResignActive()
+    }
+
+    private func fetchPlaceData() {
+        Task {
+            async let detailResult = followService.fetchPlaceDetail(googlePlaceId: googlePlaceId)
+            async let photosResult = followService.fetchPlacePhotos(googlePlaceId: googlePlaceId)
+
+            let (detail, photos) = await (detailResult, photosResult)
+
+            await MainActor.run {
+                switch detail {
+                case .success(let placeDetail):
+                    self.placeDetail = placeDetail
+                case .failure(let error):
+                    switch error {
+                    case .missingParameter(let message):
+                        print("PlaceDetail 실패 [missingParameter]: \(message)")
+                    case .notFound(let message):
+                        print("PlaceDetail 실패 [notFound]: \(message)")
+                    case .unknown(let code, let message):
+                        print("PlaceDetail 실패 [unknown] code: \(code), message: \(message)")
+                    }
+                }
+
+                switch photos {
+                case .success(let placePhotos):
+                    self.placePhotos = placePhotos
+                case .failure(let error):
+                    switch error {
+                    case .missingParameter(let message):
+                        print("PlacePhotos 실패 [missingParameter]: \(message)")
+                    case .serverError(let message):
+                        print("PlacePhotos 실패 [serverError]: \(message)")
+                    case .googleApiError(let message):
+                        print("PlacePhotos 실패 [googleApiError]: \(message)")
+                    case .unknown(let code, let message):
+                        print("PlacePhotos 실패 [unknown] code: \(code), message: \(message)")
+                    }
+                }
+            }
+        }
     }
 }
 

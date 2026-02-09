@@ -14,18 +14,18 @@ import Foundation
 extension PlaceDetailResponse {
     func toDomain() -> PlaceDetail {
         PlaceDetail(
-            id: id,
-            name: name,
-            thumbnail: thumbnail,
-            nationalPhoneNumber: nationalPhoneNumber,
-            internationalPhoneNumber: internationalPhoneNumber,
-            formattedAddress: formattedAddress,
-            location: location.toDomain(),
-            userRatingCount: userRatingCount,
-            rating: rating,
-            regularOpeningHours: regularOpeningHours,
-            googleMapsUri: googleMapsUri,
-            websiteUri: websiteUri
+            id: place.id,
+            name: place.name,
+            thumbnail: place.thumbnail,
+            nationalPhoneNumber: place.nationalPhoneNumber,
+            internationalPhoneNumber: place.internationalPhoneNumber,
+            formattedAddress: place.formattedAddress,
+            location: place.location.toDomain(),
+            userRatingCount: place.userRatingCount,
+            rating: place.rating,
+            regularOpeningHours: place.regularOpeningHours,
+            googleMapsUri: place.googleMapsUri,
+            websiteUri: place.websiteUri
         )
     }
 }

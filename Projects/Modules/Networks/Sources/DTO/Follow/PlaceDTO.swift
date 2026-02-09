@@ -11,6 +11,10 @@ import Foundation
 // MARK: - Place Detail Response
 
 public struct PlaceDetailResponse: Decodable, Sendable {
+    public let place: PlaceDetailDataResponse
+}
+
+public struct PlaceDetailDataResponse: Decodable, Sendable {
     public let id: String
     public let name: String
     public let thumbnail: String?
