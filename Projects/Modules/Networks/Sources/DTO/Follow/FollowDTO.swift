@@ -42,9 +42,14 @@ public struct FollowPlaceResponse: Decodable, Sendable {
     public let distanceKm: Double?
     public let transportation: [TransportationResponse]?
     public let youtubeTips: [String]?
-    public let planB: [PlaceResponse]?
+    public let planB: [PlanBResponse]?
     public let estimatedDuration: Int?
     public let place: PlaceResponse
+}
+
+public struct PlanBResponse: Decodable, Sendable {
+    public let name: String
+    public let feature: String?
 }
 
 public struct TransportationResponse: Decodable, Sendable {
