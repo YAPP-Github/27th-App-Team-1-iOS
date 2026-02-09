@@ -18,6 +18,10 @@ final class PlaceCell: UICollectionViewCell {
 
     static let identifier = "PlaceCell"
 
+    // MARK: - Properties
+
+    var onContainerTapped: (() -> Void)?
+
     // MARK: - UI Components
 
     // 순서 뷰 (셀 왼쪽)
@@ -71,6 +75,7 @@ final class PlaceCell: UICollectionViewCell {
         super.init(frame: frame)
         setupUI()
         setupConstraints()
+        setupGestures()
     }
 
     required init?(coder: NSCoder) {
@@ -82,6 +87,19 @@ final class PlaceCell: UICollectionViewCell {
         thumbnailImageView.kf.cancelDownloadTask()
         thumbnailImageView.image = nil
         travelTimeContainerView.isHidden = false
+        onContainerTapped = nil
+    }
+
+    // MARK: - Gestures
+
+    private func setupGestures() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(containerViewTapped))
+        containerView.addGestureRecognizer(tapGesture)
+        containerView.isUserInteractionEnabled = true
+    }
+
+    @objc private func containerViewTapped() {
+        onContainerTapped?()
     }
 
     // MARK: - Setup

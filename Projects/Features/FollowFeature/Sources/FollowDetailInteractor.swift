@@ -27,7 +27,6 @@ protocol FollowDetailPresentable: Presentable {
     func hideLoading()
     func updateTravelDetail(_ detail: TravelDetail)
     func updatePlaces(_ places: [TravelPlace])
-    func updateBudget(_ budget: Int)
     func showPlaceDetail(_ place: TravelPlace)
 }
 
@@ -105,7 +104,6 @@ final class FollowDetailInteractor: PresentableInteractor<FollowDetailPresentabl
                 self.placesByDay[1] = places
                 presenter.updateTravelDetail(detail)
                 presenter.updatePlaces(places)
-                updateBudgetForDay(1)
                 presenter.hideLoading()
             }
         }
@@ -114,7 +112,6 @@ final class FollowDetailInteractor: PresentableInteractor<FollowDetailPresentabl
     private func loadPlaces(for day: Int) {
         if let cachedPlaces = placesByDay[day] {
             presenter.updatePlaces(cachedPlaces)
-            updateBudgetForDay(day)
             return
         }
 
@@ -129,16 +126,9 @@ final class FollowDetailInteractor: PresentableInteractor<FollowDetailPresentabl
             await MainActor.run {
                 self.placesByDay[day] = places
                 presenter.updatePlaces(places)
-                updateBudgetForDay(day)
                 presenter.hideLoading()
             }
         }
-    }
-
-    private func updateBudgetForDay(_ day: Int) {
-        guard let detail = travelDetail else { return }
-        let dailyBudget = detail.budgetPerPerson / detail.days
-        presenter.updateBudget(dailyBudget)
     }
 }
 
