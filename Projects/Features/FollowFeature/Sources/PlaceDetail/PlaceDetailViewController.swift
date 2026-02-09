@@ -407,14 +407,17 @@ final class PlaceDetailViewController: UIViewController, PlaceDetailPresentable,
 
     // MARK: - PlaceDetailPresentable
 
-    func updatePlaceInfo(viewModel: PlaceDetailViewModel) {
+    func updatePlaceDetail(_ detail: PlaceDetail?, travelPlace: TravelPlace, youtuberName: String) {
+        // Name
+        let name = detail?.name ?? travelPlace.place.name
         let nameAttributedText = NSAttributedString(
-            string: viewModel.name,
+            string: name,
             attributes: UIFont.NDGL.titleMSB.attributes
         )
         nameLabel.attributedText = nameAttributedText
 
-        if let rating = viewModel.rating {
+        // Rating
+        if let rating = detail?.rating {
             var ratingAttributes = UIFont.NDGL.bodyMM.attributes
             ratingAttributes[.foregroundColor] = UIColor(hexCode: "#314158")
             let ratingText = NSAttributedString(
@@ -427,7 +430,8 @@ final class PlaceDetailViewController: UIViewController, PlaceDetailPresentable,
             ratingLabel.isHidden = true
         }
 
-        if let reviewCount = viewModel.reviewCount {
+        // Review Count
+        if let reviewCount = detail?.userRatingCount {
             var countAttributes = UIFont.NDGL.bodyMM.attributes
             countAttributes[.foregroundColor] = DSKitAsset.Colors.black300.color
             let countText = NSAttributedString(
@@ -441,26 +445,30 @@ final class PlaceDetailViewController: UIViewController, PlaceDetailPresentable,
         }
 
         // Thumbnail
-        if let thumbnailURL = viewModel.thumbnailURL, let url = URL(string: thumbnailURL) {
+        let thumbnailURL = detail?.thumbnail ?? travelPlace.place.thumbnail
+        if let thumbnailURL, let url = URL(string: thumbnailURL) {
             thumbnailImageView.kf.setImage(with: url)
         }
 
-        // Info section
-        if let address = viewModel.address, !address.isEmpty {
+        // Address
+        if let address = detail?.formattedAddress, !address.isEmpty {
             addressInfoView.configure(text: address)
             addressInfoView.isHidden = false
         } else {
             addressInfoView.isHidden = true
         }
 
-        if let phone = viewModel.phoneNumber, !phone.isEmpty {
+        // Phone
+        let phoneNumber = detail?.internationalPhoneNumber ?? detail?.nationalPhoneNumber
+        if let phone = phoneNumber, !phone.isEmpty {
             phoneInfoView.configure(text: phone)
             phoneInfoView.isHidden = false
         } else {
             phoneInfoView.isHidden = true
         }
 
-        if let duration = viewModel.estimatedDuration {
+        // Duration
+        if let duration = travelPlace.estimatedDuration {
             let hours = duration / 60
             let minutes = duration % 60
             let durationText: String
@@ -477,18 +485,22 @@ final class PlaceDetailViewController: UIViewController, PlaceDetailPresentable,
             durationInfoView.isHidden = true
         }
 
-        if !viewModel.youtubeTips.isEmpty {
+        // Tips
+        let youtubeTips = travelPlace.youtubeTips
+        if !youtubeTips.isEmpty {
             tipCollectionView.isHidden = false
-            tipCollectionView.applySnapshot(tips: viewModel.youtubeTips, youtuberName: viewModel.youtuberName)
+            tipCollectionView.applySnapshot(tips: youtubeTips, youtuberName: youtuberName)
             tipPageControl.isHidden = false
-            tipPageControl.numberOfPages = viewModel.youtubeTips.count
+            tipPageControl.numberOfPages = youtubeTips.count
             tipPageControl.currentPage = 0
         } else {
             tipCollectionView.isHidden = true
             tipPageControl.isHidden = true
         }
 
-        if !viewModel.planBItems.isEmpty {
+        // Plan B
+        let planBItems = travelPlace.planB
+        if !planBItems.isEmpty {
             planBHeaderLabel.isHidden = false
             planBCollectionView.isHidden = false
 
@@ -498,30 +510,32 @@ final class PlaceDetailViewController: UIViewController, PlaceDetailPresentable,
             )
             planBHeaderLabel.attributedText = planBText
 
-            planBCollectionView.applySnapshot(planBItems: viewModel.planBItems)
+            planBCollectionView.applySnapshot(planBItems: planBItems)
         } else {
             planBHeaderLabel.isHidden = true
             planBCollectionView.isHidden = true
         }
 
-        if !viewModel.placePhotos.isEmpty {
-            photoCollectionView.applySnapshot(photos: viewModel.placePhotos)
-            DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
-                self.photoCollectionView.layoutIfNeeded()
-                let photoHeight = self.photoCollectionView.calculateTotalHeight()
-                self.photoCollectionView.snp.updateConstraints {
-                    $0.height.equalTo(photoHeight)
-                }
-            }
-        }
-
-        let planBHeight = planBCollectionView.calculateHeight(for: viewModel.planBItems.count)
+        let planBHeight = planBCollectionView.calculateHeight(for: planBItems.count)
         updateBottomConstraints(
-            hasTips: !viewModel.youtubeTips.isEmpty,
-            hasPlanB: !viewModel.planBItems.isEmpty,
+            hasTips: !youtubeTips.isEmpty,
+            hasPlanB: !planBItems.isEmpty,
             planBHeight: planBHeight
         )
+    }
+
+    func updatePhotos(_ photos: [PlacePhoto]) {
+        guard !photos.isEmpty else { return }
+
+        photoCollectionView.applySnapshot(photos: photos)
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            self.photoCollectionView.layoutIfNeeded()
+            let photoHeight = self.photoCollectionView.calculateTotalHeight()
+            self.photoCollectionView.snp.updateConstraints {
+                $0.height.equalTo(photoHeight)
+            }
+        }
     }
 }
 

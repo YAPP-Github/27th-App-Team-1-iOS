@@ -21,7 +21,8 @@ protocol PlaceDetailListener: AnyObject {
 protocol PlaceDetailPresentable: Presentable {
     var listener: PlaceDetailPresentableListener? { get set }
 
-    func updatePlaceInfo(viewModel: PlaceDetailViewModel)
+    func updatePlaceDetail(_ detail: PlaceDetail?, travelPlace: TravelPlace, youtuberName: String)
+    func updatePhotos(_ photos: [PlacePhoto])
 }
 
 // MARK: - PlaceDetailPresentableListener
@@ -29,22 +30,6 @@ protocol PlaceDetailPresentable: Presentable {
 protocol PlaceDetailPresentableListener: AnyObject {
     func didTapBackButton()
     func didScrollToTipPage(_ page: Int)
-}
-
-// MARK: - PlaceDetailViewModel
-
-struct PlaceDetailViewModel {
-    let name: String
-    let rating: Double?
-    let reviewCount: Int?
-    let thumbnailURL: String?
-    let address: String?
-    let phoneNumber: String?
-    let estimatedDuration: Int?
-    let youtubeTips: [String]
-    let youtuberName: String
-    let planBItems: [PlanBInfo]
-    let placePhotos: [PlacePhoto]
 }
 
 // MARK: - PlaceDetailInteractor
@@ -135,20 +120,8 @@ final class PlaceDetailInteractor: PresentableInteractor<PlaceDetailPresentable>
     }
 
     private func updatePresenter() {
-        let viewModel = PlaceDetailViewModel(
-            name: placeDetail?.name ?? travelPlace.place.name,
-            rating: placeDetail?.rating,
-            reviewCount: placeDetail?.userRatingCount,
-            thumbnailURL: placeDetail?.thumbnail ?? travelPlace.place.thumbnail,
-            address: placeDetail?.formattedAddress,
-            phoneNumber: placeDetail?.internationalPhoneNumber ?? placeDetail?.nationalPhoneNumber,
-            estimatedDuration: travelPlace.estimatedDuration,
-            youtubeTips: travelPlace.youtubeTips,
-            youtuberName: youtuberName,
-            planBItems: travelPlace.planB,
-            placePhotos: placePhotos
-        )
-        presenter.updatePlaceInfo(viewModel: viewModel)
+        presenter.updatePlaceDetail(placeDetail, travelPlace: travelPlace, youtuberName: youtuberName)
+        presenter.updatePhotos(placePhotos)
     }
 }
 
