@@ -25,7 +25,7 @@ public struct YouTubeResponse: Decodable, Sendable {
     public let name: String
     public let thumbnail: String?
     public let profileImage: String?
-    public let link: String
+    public let link: String?
     public let summary: String
 }
 
