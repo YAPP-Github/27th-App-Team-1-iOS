@@ -15,6 +15,10 @@ import UIKit
 
 final class PlaceDetailBottomSheetView: UIView {
 
+    // MARK: - Properties
+
+    private var googleMapsUri: String?
+
     // MARK: - UI Components
 
     // 상단 타이틀 영역
@@ -108,6 +112,7 @@ final class PlaceDetailBottomSheetView: UIView {
         super.init(frame: frame)
         setupUI()
         setupConstraints()
+        setupActions()
     }
 
     required init?(coder: NSCoder) {
@@ -212,9 +217,24 @@ final class PlaceDetailBottomSheetView: UIView {
         }
     }
 
+    private func setupActions() {
+        findRouteButton.addTarget(self, action: #selector(findRouteButtonTapped), for: .touchUpInside)
+    }
+
+    // MARK: - Actions
+
+    @objc private func findRouteButtonTapped() {
+        guard let urlString = googleMapsUri,
+              let url = URL(string: urlString) else { return }
+        UIApplication.shared.open(url)
+    }
+
     // MARK: - Configuration
 
     func configure(with place: TravelPlace) {
+        // Google Maps URI 저장
+        googleMapsUri = place.place.googleMapsUri
+
         // 타이틀
         titleLabel.setText(.subTitleLSB, text: place.place.name, color: UIColor(hexCode: "#111111"))
 
