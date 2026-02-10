@@ -105,7 +105,47 @@ extension MoyaProvider {
             }
         }
     }
-
+    
+    func asyncThowsRequest<T: Decodable>(_ target: Target) async throws -> T {
+        try await withCheckedThrowingContinuation { continuation in
+            request(target) { result in
+                NetworkLogger.logRequest(target)
+                
+                switch result {
+                case .success(let response):
+                    NetworkLogger.logResponse(response)
+                    if (200...299).contains(response.statusCode) {
+                        do {
+                            let decodedData = try response.map(BaseResponse<T>.self)
+                            
+                            if let data = decodedData.data {
+                                continuation.resume(returning: data)
+                            } else {
+                                continuation.resume(throwing: NetworkError.noData)
+                            }
+                        } catch {
+                            continuation.resume(throwing: NetworkError.decodingFailed)
+                        }
+                    } else {
+                        do {
+                            let errorResponse = try response.map(ErrorResponse.self)
+                            continuation.resume(
+                                throwing: NetworkError.unknown(
+                                    errorResponse.message ?? "알 수 없는 오류가 발생했습니다."
+                                )
+                            )
+                        } catch {
+                            continuation.resume(throwing: NetworkError.unknown("알 수 없는 오류가 발생했습니다."))
+                        }
+                    }
+                case .failure(let error):
+                    NetworkLogger.logError(error)
+                    continuation.resume(throwing: NetworkError.unknown(error.localizedDescription))
+                }
+            }
+        }
+    }
+    
     private static func mapMoyaError(_ error: MoyaError) -> NetworkError {
         switch error {
         case .underlying(let nsError as NSError, _)
