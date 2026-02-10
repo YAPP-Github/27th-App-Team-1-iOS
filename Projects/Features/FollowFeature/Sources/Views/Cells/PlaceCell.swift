@@ -9,7 +9,6 @@
 import Core
 import Domain
 import DSKit
-import Kingfisher
 import SnapKit
 import Then
 import UIKit

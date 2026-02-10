@@ -48,7 +48,8 @@ public extension Target {
         dependencies: [TargetDependency],
         scripts: [TargetScript],
         isStatic: Bool = false,
-        hasResources: Bool = true
+        hasResources: Bool = true,
+        settings: Settings? = nil
     ) -> Target {
         return .target(
             name: name,
@@ -61,7 +62,7 @@ public extension Target {
             resources: hasResources ? ["Resources/**"] : nil,
             scripts: scripts,
             dependencies: dependencies,
-            settings: .frameworkSettings
+            settings: settings ?? .frameworkSettings
         )
     }
 }

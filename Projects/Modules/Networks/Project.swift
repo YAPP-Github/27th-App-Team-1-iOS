@@ -16,8 +16,7 @@ let project = Project.makeModule(
         .makeFrameworkTarget(
             name: "Networks",
             dependencies: [
-                .core,
-                .domain
+                .core
             ],
             scripts: [.swiftLint],
             isStatic: true,

@@ -21,8 +21,7 @@ let project = Project.makeModule(
             scripts: [.swiftLint],
             dependencies: [
                 .data,
-                .Modules.networks,
-                .Features.rootFeature,
+                .Features.rootFeature
             ],
             settings: .appSettings()
         )

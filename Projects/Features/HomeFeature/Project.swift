@@ -16,8 +16,8 @@ let project = Project.makeModule(
             name: "HomeFeature",
             dependencies: [
                 .Features.baseFeatureDependency,
-                .Features.Follow.feature,
-                .data
+                .Features.Search.feature,
+                .Features.Setting.feature                
             ],
             scripts: [.swiftLint],
             isStatic: true,

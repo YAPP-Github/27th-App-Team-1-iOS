@@ -15,7 +15,6 @@ let project = Project.makeModule(
         .makeFrameworkTarget(
             name: "BaseFeatureDependency",
             dependencies: [
-                .core,
                 .domain,
                 .Modules.dsKit
             ],

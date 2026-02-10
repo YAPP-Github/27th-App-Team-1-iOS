@@ -18,7 +18,6 @@ let project = Project.makeModule(
                 .SPM.Kingfisher,
                 .SPM.Moya,
                 .SPM.RIBs,
-                .SPM.RxSwift,
                 .SPM.RxCocoa,
                 .SPM.SnapKit,
                 .SPM.Then
