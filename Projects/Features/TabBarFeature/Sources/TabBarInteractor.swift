@@ -11,9 +11,10 @@ import HomeFeature
 import RIBs
 import RxSwift
 
-// MARK: - TabBarListener
+// MARK: - TabBarRouting
 
-public protocol TabBarListener: AnyObject {
+public protocol TabBarRouting: ViewableRouting {
+    func attachTabs()
 }
 
 // MARK: - TabBarPresentable
@@ -22,6 +23,15 @@ protocol TabBarPresentable: Presentable {
     var listener: TabBarPresentableListener? { get set }
 
     func switchToTab(at index: Int)
+}
+
+// MARK: - TabBarListener
+
+public protocol TabBarListener: AnyObject {
+    func routeToFollow(with recommendationId: Int)
+    func routeToSetting()
+    func routeToSearch()
+    func routeToPopularTravel()
 }
 
 // MARK: - TabBarInteractor
@@ -55,6 +65,21 @@ extension TabBarInteractor: TabBarPresentableListener {
 // MARK: - HomeListener
 
 extension TabBarInteractor: HomeListener {
+    func homeDidTapPopularTravel() {
+        listener?.routeToPopularTravel()
+    }
+    
+    func homeDidTapFollowDetail(with recommendationId: Int) {
+        listener?.routeToFollow(with: recommendationId)
+    }
+    
+    func homeDidTapSearch() {
+        listener?.routeToSearch()
+    }
+    
+    func homeDidTapSetting() {
+        listener?.routeToSetting()
+    }
 
     func homeDidAddTrip(title: String, startDate: Date, endDate: Date) {
         presenter.switchToTab(at: 2)

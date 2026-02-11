@@ -13,6 +13,8 @@ import RxSwift
 import SnapKit
 import Then
 
+import DSKit
+
 // MARK: - TabBarPresentableListener
 
 protocol TabBarPresentableListener: AnyObject {
@@ -38,18 +40,15 @@ public final class TabBarViewController: UITabBarController, TabBarPresentable, 
 
     // MARK: - Lifecycle
 
-    public override func viewDidLoad() {
+    override public func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.tabBar.isHidden = true
         setupStyle()
         setupUI()
         setupConstraints()
     }
-
-    public override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        tabBar.isHidden = true
-    }
-
+    
     // MARK: - TabBarViewControllable
 
     public func setViewControllers(_ viewControllers: [ViewControllable]) {
@@ -66,8 +65,6 @@ public final class TabBarViewController: UITabBarController, TabBarPresentable, 
         let homeNav = UINavigationController(rootViewController: homeVC)
         let travelNav = UINavigationController(rootViewController: travelVC)
 
-        [infoNav, homeNav, travelNav].forEach { $0.delegate = self }
-
         super.setViewControllers([infoNav, homeNav, travelNav], animated: false)
         setupTabItems()
     }
@@ -75,31 +72,19 @@ public final class TabBarViewController: UITabBarController, TabBarPresentable, 
     func switchToTab(at index: Int) {
         guard index < tabItems.count else { return }
 
-        viewControllers?.forEach { viewController in
-            if let navController = viewController as? UINavigationController {
-                navController.popToRootViewController(animated: false)
-            }
-        }
-
         updateSelection(at: index)
-
-        DispatchQueue.main.async {
-            self.customTabBarContainer.isHidden = false
-            self.customTabBarContainer.alpha = 1
-        }
     }
 }
 
 // MARK: - Setup
 
 private extension TabBarViewController {
-
     func setupStyle() {
         customTabBarContainer.do {
             if #available(iOS 26.0, *) {
                 let glass = UIGlassEffect(style: .regular)
                 glass.isInteractive = true
-                glass.tintColor = .white.withAlphaComponent(0.1)
+                glass.tintColor = DSKitAsset.Colors.white.color.withAlphaComponent(0.1)
                 $0.effect = glass
             } else {
                 $0.effect = UIBlurEffect(style: .extraLight)
@@ -119,7 +104,7 @@ private extension TabBarViewController {
             if #available(iOS 26.0, *) {
                 let glass = UIGlassEffect(style: .regular)
                 glass.isInteractive = true
-                glass.tintColor = UIColor(hexCode: "#2C2C2C")
+                glass.tintColor = DSKitAsset.Colors.black900.color
                 $0.effect = glass
             } else {
                 $0.effect = UIBlurEffect(style: .dark)
@@ -153,7 +138,7 @@ private extension TabBarViewController {
             $0.size.equalTo(56.adjusted)
         }
     }
-
+    
     func setupTabItems() {
         tabItems.forEach { $0.removeFromSuperview() }
         tabItems.removeAll()
@@ -203,41 +188,6 @@ private extension TabBarViewController {
 
         if animated {
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
-        }
-    }
-}
-
-// MARK: - UINavigationControllerDelegate
-
-extension TabBarViewController: UINavigationControllerDelegate {
-
-    public func navigationController(
-        _ navigationController: UINavigationController,
-        willShow viewController: UIViewController,
-        animated: Bool
-    ) {
-        let shouldHideTabBar = navigationController.viewControllers.count > 1
-
-        guard animated else {
-            customTabBarContainer.isHidden = shouldHideTabBar
-            customTabBarContainer.alpha = shouldHideTabBar ? 0 : 1
-            return
-        }
-
-        if shouldHideTabBar {
-            UIView.animate(withDuration: 0.3) {
-                self.customTabBarContainer.alpha = 0
-            } completion: { _ in
-                self.customTabBarContainer.isHidden = true
-            }
-        } else {
-            customTabBarContainer.isHidden = false
-            customTabBarContainer.alpha = 0
-            customTabBarContainer.layoutIfNeeded()
-
-            UIView.animate(withDuration: 0.3) {
-                self.customTabBarContainer.alpha = 1
-            }
         }
     }
 }
