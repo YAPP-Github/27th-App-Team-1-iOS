@@ -79,7 +79,7 @@ private extension HomeViewController {
         section.contentInsets = .init(
             top: 24.adjustedH,
             leading: 24.adjusted,
-            bottom: 16.adjustedH,
+            bottom: 24.adjustedH,
             trailing: 24.adjusted
         )
         section.boundarySupplementaryItems = [createHeaderLayout()]

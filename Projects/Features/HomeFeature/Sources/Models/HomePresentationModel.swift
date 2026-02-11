@@ -81,7 +81,7 @@ extension MyTripSummary {
 }
 
 extension TripCategory {
-    func toPresentaion() -> HomePresentationModel.Category {
+    func toHomeModel() -> HomePresentationModel.Category {
         return HomePresentationModel.Category(
             id: self.id,
             creator: self.creator,
@@ -91,7 +91,7 @@ extension TripCategory {
 }
 
 extension TripInfo {
-    func toPopularPresentaion() -> HomePresentationModel.PopularTrip {
+    func toPopularHomeModel() -> HomePresentationModel.PopularTrip {
         return HomePresentationModel.PopularTrip(
             id: self.id,
             title: self.title,
@@ -103,7 +103,7 @@ extension TripInfo {
         )
     }
     
-    func toPresentaion() -> HomePresentationModel.RecommendedTrip {
+    func toRecommendHomeModel() -> HomePresentationModel.RecommendedTrip {
         return HomePresentationModel.RecommendedTrip(
             id: self.id,
             title: self.title,
