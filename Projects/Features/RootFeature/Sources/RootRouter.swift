@@ -8,11 +8,11 @@
 
 import RIBs
 
-import TabBarFeature
+import MainFeature
 
 // MARK: - RootInteractable
 
-protocol RootInteractable: Interactable, TabBarListener {
+protocol RootInteractable: Interactable, MainListener {
     var router: RootRouting? { get set }
     var listener: RootListener? { get set }
 }
@@ -25,50 +25,42 @@ public protocol RootViewControllable: ViewControllable {
     func setRootViewController(_ viewController: ViewControllable)
 }
 
-// MARK: - RootRouting
-
-public protocol RootRouting: ViewableRouting {
-    func attachTabBar()
-    func detachTabBar()
-}
-
 // MARK: - RootRouter
 
 final class RootRouter: LaunchRouter<RootInteractable, RootViewControllable>, RootRouting {
-
-    private let tabBarBuilder: TabBarBuildable
-    private var tabBarRouter: TabBarRouting?
+    private let mainBuilder: MainBuildable
+    private var mainRouter: MainRouting?
 
     init(
         interactor: RootInteractable,
         viewController: RootViewControllable,
-        tabBarBuilder: TabBarBuildable
+        mainBuilder: MainBuildable
     ) {
-        self.tabBarBuilder = tabBarBuilder
+        self.mainBuilder = mainBuilder
         super.init(interactor: interactor, viewController: viewController)
         interactor.router = self
     }
 
     override func didLoad() {
         super.didLoad()
-        attachTabBar()
+        attachMain()
     }
 
     // MARK: - RootRouting
 
-    func attachTabBar() {
-        guard tabBarRouter == nil else { return }
+    func attachMain() {
+        guard mainRouter == nil else { return }
 
-        let router = tabBarBuilder.build(withListener: interactor)
-        tabBarRouter = router
+        let router = mainBuilder.build(withListener: interactor)
+        mainRouter = router
         attachChild(router)
         viewController.setRootViewController(router.viewControllable)
     }
 
-    func detachTabBar() {
-        guard let router = tabBarRouter else { return }
+    func detachMain() {
+        guard let router = mainRouter else { return }
 
         detachChild(router)
-        tabBarRouter = nil
+        mainRouter = nil
     }
 }
