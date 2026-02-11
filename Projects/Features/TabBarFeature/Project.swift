@@ -16,7 +16,11 @@ let project = Project.makeModule(
             name: "TabBarFeature",
             dependencies: [
                 .Features.Home.feature,
-                .Features.Travel.feature
+                .Features.Travel.feature,
+                
+                // TODO: - 지워야됨
+                .data,
+                .Modules.networks
             ],
             scripts: [.swiftLint],
             isStatic: true,
