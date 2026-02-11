@@ -15,9 +15,7 @@ let project = Project.makeModule(
         .makeFrameworkTarget(
             name: "HomeFeature",
             dependencies: [
-                .Features.baseFeatureDependency,
-                .Features.Search.feature,
-                .Features.Setting.feature                
+                .Features.baseFeatureDependency      
             ],
             scripts: [.swiftLint],
             isStatic: true,
