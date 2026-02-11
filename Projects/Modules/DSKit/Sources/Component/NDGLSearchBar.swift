@@ -93,22 +93,22 @@ public final class NDGLSearchBar: UIView {
 private extension NDGLSearchBar {
     func setStyle(_ placeholder: String, _ leading: UIImage, _ trailing: UIImage) {
         searchContainerView.do {
-            $0.backgroundColor = UIColor(hexCode: "#E6E6E6")
+            $0.backgroundColor = DSKitAsset.Colors.black100.color
             $0.layer.cornerRadius = 22.adjustedH
             $0.clipsToBounds = true
         }
 
         textField.do {
             var placeHolderAttributes = UIFont.NDGL.bodyLR.attributes
-            placeHolderAttributes[.foregroundColor] = UIColor(hexCode: "#757575")
+            placeHolderAttributes[.foregroundColor] = DSKitAsset.Colors.black400.color
             $0.attributedPlaceholder = NSAttributedString(
                 string: placeholder,
                 attributes: placeHolderAttributes
             )
 
             $0.font = UIFont.NDGL.bodyLR.font
-            $0.textColor = UIColor(hexCode: "#2C2C2C")
-            $0.tintColor = UIColor(hexCode: "#757575")
+            $0.textColor = DSKitAsset.Colors.black700.color
+            $0.tintColor = DSKitAsset.Colors.black400.color
 
             $0.autocapitalizationType = .none
             $0.autocorrectionType = .no
@@ -116,7 +116,7 @@ private extension NDGLSearchBar {
             $0.returnKeyType = .search
         }
 
-        let normalColor = UIColor(hexCode: "#383838")
+        let normalColor = DSKitAsset.Colors.black600.color
         [(leadingButton, leading), (trailingButton, trailing)].forEach { button, image in
             var config = UIButton.Configuration.plain()
             config.image = image.resize(targetSize: 28.adjustedH).withRenderingMode(.alwaysTemplate)
@@ -126,7 +126,7 @@ private extension NDGLSearchBar {
         
         containerStackView.do {
             $0.axis = .horizontal
-            $0.spacing = 8
+            $0.spacing = 8.adjusted
             $0.alignment = .center
         }
     }
@@ -139,12 +139,12 @@ private extension NDGLSearchBar {
     
     func setLayout() {
         self.snp.makeConstraints {
-            $0.height.equalTo(48.adjustedH)
+            $0.height.equalTo(48.adjustedH).priority(.high)
         }
         
         containerStackView.snp.makeConstraints {
-            $0.directionalHorizontalEdges.equalToSuperview().inset(24)
-            $0.directionalVerticalEdges.equalToSuperview().inset(2)
+            $0.directionalHorizontalEdges.equalToSuperview().inset(24.adjusted)
+            $0.directionalVerticalEdges.equalToSuperview().inset(2.adjusted)
         }
         
         leadingButton.snp.makeConstraints {
@@ -152,18 +152,18 @@ private extension NDGLSearchBar {
         }
         
         searchContainerView.snp.makeConstraints {
-            $0.height.equalTo(44.adjustedH)
+            $0.height.greaterThanOrEqualTo(44.adjustedH)
         }
         
         textField.snp.makeConstraints {
-            $0.leading.equalToSuperview().inset(18)
-            $0.trailing.equalTo(trailingButton.snp.leading).offset(-2)
+            $0.leading.equalToSuperview().inset(18.adjusted)
+            $0.trailing.equalTo(trailingButton.snp.leading).offset(-2.adjusted)
             $0.centerY.equalToSuperview()
         }
         
         trailingButton.snp.makeConstraints {
             $0.size.equalTo(40.adjustedH)
-            $0.trailing.equalToSuperview().inset(16)
+            $0.trailing.equalToSuperview().inset(16.adjusted)
             $0.centerY.equalToSuperview()
         }
     }
