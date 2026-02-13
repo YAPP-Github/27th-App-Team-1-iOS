@@ -40,8 +40,6 @@ final class FollowDetailViewController: UIViewController, FollowDetailPresentabl
 
     private let dayCollectionView = DayCollectionView()
 
-    private let budgetView = BudgetView()
-
     private let mapView = TravelMapView()
 
     private let placeListCollectionView = PlaceListCollectionView()
@@ -106,7 +104,7 @@ final class FollowDetailViewController: UIViewController, FollowDetailPresentabl
 
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
-        [mediaInfoView, dayCollectionView, budgetView, mapView, placeListCollectionView].forEach {
+        [mediaInfoView, dayCollectionView, mapView, placeListCollectionView].forEach {
             contentView.addSubview($0)
         }
 
@@ -150,15 +148,8 @@ final class FollowDetailViewController: UIViewController, FollowDetailPresentabl
             $0.height.equalTo(30)
         }
 
-        budgetView.snp.makeConstraints {
-            $0.top.equalTo(dayCollectionView.snp.bottom).offset(16)
-            $0.leading.equalToSuperview().offset(24)
-            $0.trailing.equalToSuperview().offset(-24)
-            $0.height.equalTo(44)
-        }
-
         mapView.snp.makeConstraints {
-            $0.top.equalTo(budgetView.snp.bottom).offset(16)
+            $0.top.equalTo(dayCollectionView.snp.bottom).offset(16)
             $0.leading.equalToSuperview().offset(24)
             $0.trailing.equalToSuperview().offset(-24)
             $0.height.equalTo(200)
@@ -251,10 +242,6 @@ extension FollowDetailViewController {
         }
     }
 
-    func updateBudget(_ budget: Int) {
-        budgetView.configure(budget: budget)
-    }
-
     func showPlaceDetail(_ place: TravelPlace) {
         let contentView = PlaceDetailBottomSheetView()
         contentView.configure(with: place)
@@ -270,6 +257,12 @@ extension FollowDetailViewController {
             contentHeight: 280,
             configuration: configuration
         )
+
+        contentView.onChevronTapped = { [weak self, weak bottomSheet] in
+            bottomSheet?.dismiss(animated: true) {
+                self?.listener?.didTapPlaceDetailChevron(place)
+            }
+        }
 
         present(bottomSheet, animated: false)
     }

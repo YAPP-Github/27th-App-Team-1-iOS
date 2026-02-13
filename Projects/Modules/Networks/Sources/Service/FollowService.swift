@@ -17,10 +17,10 @@ public final class FollowService: FollowServiceProtocol, @unchecked Sendable {
         self.provider = provider
     }
 
-    public func fetchTravelDetail(id: Int) async -> Result<TravelDetail, FollowError> {
-        let result: NetworkResult<FollowContentCardResponse, FollowError> = await provider.request(
+    public func fetchTravelDetail(id: Int) async -> Result<TravelDetail, ContentCardError> {
+        let result: NetworkResult<FollowContentCardResponse, ContentCardError> = await provider.request(
             .getContentCard(id: id),
-            errorMapper: FollowError.init
+            errorMapper: ContentCardError.init
         )
 
         switch result {
@@ -29,14 +29,14 @@ public final class FollowService: FollowServiceProtocol, @unchecked Sendable {
         case .failure(let error):
             return .failure(error)
         case .networkFailure(let error):
-            return .failure(.networkError(message: error.message))
+            return .failure(.unknown(code: "NETWORK", message: error.message))
         }
     }
 
-    public func fetchPlaces(travelId: Int, day: Int) async -> Result<[TravelPlace], FollowError> {
-        let result: NetworkResult<FollowItineraryResponse, FollowError> = await provider.request(
+    public func fetchPlaces(travelId: Int, day: Int) async -> Result<[TravelPlace], ItineraryError> {
+        let result: NetworkResult<FollowItineraryResponse, ItineraryError> = await provider.request(
             .getItinerary(id: travelId, day: day),
-            errorMapper: FollowError.init
+            errorMapper: ItineraryError.init
         )
 
         switch result {
@@ -45,7 +45,39 @@ public final class FollowService: FollowServiceProtocol, @unchecked Sendable {
         case .failure(let error):
             return .failure(error)
         case .networkFailure(let error):
-            return .failure(.networkError(message: error.message))
+            return .failure(.unknown(code: "NETWORK", message: error.message))
+        }
+    }
+
+    public func fetchPlaceDetail(googlePlaceId: String) async -> Result<PlaceDetail, PlaceDetailError> {
+        let result: NetworkResult<PlaceDetailResponse, PlaceDetailError> = await provider.request(
+            .getPlaceDetail(googlePlaceId: googlePlaceId),
+            errorMapper: PlaceDetailError.init
+        )
+
+        switch result {
+        case .success(let response):
+            return .success(response.toDomain())
+        case .failure(let error):
+            return .failure(error)
+        case .networkFailure(let error):
+            return .failure(.unknown(code: "NETWORK", message: error.message))
+        }
+    }
+
+    public func fetchPlacePhotos(googlePlaceId: String) async -> Result<[PlacePhoto], PlacePhotosError> {
+        let result: NetworkResult<PlacePhotosResponse, PlacePhotosError> = await provider.request(
+            .getPlacePhotos(googlePlaceId: googlePlaceId),
+            errorMapper: PlacePhotosError.init
+        )
+
+        switch result {
+        case .success(let response):
+            return .success(response.toDomain())
+        case .failure(let error):
+            return .failure(error)
+        case .networkFailure(let error):
+            return .failure(.unknown(code: "NETWORK", message: error.message))
         }
     }
 }

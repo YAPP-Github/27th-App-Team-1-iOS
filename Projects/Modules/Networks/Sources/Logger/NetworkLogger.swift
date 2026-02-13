@@ -46,6 +46,17 @@ enum NetworkLogger {
         #endif
     }
 
+    static func logDecodingError(_ error: Error, data: Data) {
+        #if DEBUG
+        print("──────────────────────────────────────")
+        print("[DECODING ERROR] \(error)")
+        if let rawString = String(data: data, encoding: .utf8) {
+            print("[RAW DATA] \(rawString)")
+        }
+        print("──────────────────────────────────────")
+        #endif
+    }
+
     private static func requestBody(from task: Moya.Task) -> String? {
         switch task {
         case .requestParameters(let parameters, _):

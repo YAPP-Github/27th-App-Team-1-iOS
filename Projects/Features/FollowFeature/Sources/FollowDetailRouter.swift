@@ -6,11 +6,12 @@
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
+import Domain
 import RIBs
 
 // MARK: - FollowDetailInteractable
 
-protocol FollowDetailInteractable: Interactable, TripCalendarListener {
+protocol FollowDetailInteractable: Interactable, TripCalendarListener, PlaceDetailListener {
     var router: FollowDetailRouting? { get set }
     var listener: FollowDetailListener? { get set }
 }
@@ -27,6 +28,8 @@ public protocol FollowDetailViewControllable: ViewControllable {
 public protocol FollowDetailRouting: ViewableRouting {
     func routeToTripCalendar(templateTotalDays: Int)
     func detachTripCalendar()
+    func routeToPlaceDetail(travelPlace: TravelPlace, youtuberName: String)
+    func detachPlaceDetail()
 }
 
 // MARK: - FollowDetailRouter
@@ -36,12 +39,17 @@ final class FollowDetailRouter: ViewableRouter<FollowDetailInteractable, FollowD
     private let tripCalendarBuilder: TripCalendarBuildable
     private var tripCalendarRouter: TripCalendarRouting?
 
+    private let placeDetailBuilder: PlaceDetailBuildable
+    private var placeDetailRouter: PlaceDetailRouting?
+
     init(
         interactor: FollowDetailInteractable,
         viewController: FollowDetailViewControllable,
-        tripCalendarBuilder: TripCalendarBuildable
+        tripCalendarBuilder: TripCalendarBuildable,
+        placeDetailBuilder: PlaceDetailBuildable
     ) {
         self.tripCalendarBuilder = tripCalendarBuilder
+        self.placeDetailBuilder = placeDetailBuilder
         super.init(interactor: interactor, viewController: viewController)
         interactor.router = self
     }
@@ -68,5 +76,26 @@ final class FollowDetailRouter: ViewableRouter<FollowDetailInteractable, FollowD
 
         detachChild(router)
         tripCalendarRouter = nil
+    }
+
+    func routeToPlaceDetail(travelPlace: TravelPlace, youtuberName: String) {
+        guard placeDetailRouter == nil else { return }
+
+        let router = placeDetailBuilder.build(withListener: interactor, travelPlace: travelPlace, youtuberName: youtuberName)
+        placeDetailRouter = router
+        attachChild(router)
+        viewController.present(router.viewControllable)
+    }
+
+    func detachPlaceDetail() {
+        guard let router = placeDetailRouter else { return }
+
+        if let navController = viewController.uiviewController.navigationController,
+           navController.viewControllers.contains(router.viewControllable.uiviewController) {
+            viewController.dismiss(router.viewControllable)
+        }
+
+        detachChild(router)
+        placeDetailRouter = nil
     }
 }

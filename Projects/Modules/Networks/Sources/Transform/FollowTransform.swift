@@ -71,6 +71,15 @@ extension TransportationResponse {
     }
 }
 
+extension PlanBResponse {
+    func toDomain() -> PlanBInfo {
+        PlanBInfo(
+            name: name,
+            feature: feature
+        )
+    }
+}
+
 extension PlaceResponse {
     func toDomain() -> PlaceInfo {
         PlaceInfo(

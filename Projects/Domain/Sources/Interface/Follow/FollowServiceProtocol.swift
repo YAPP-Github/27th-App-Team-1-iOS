@@ -10,8 +10,14 @@ import Foundation
 
 public protocol FollowServiceProtocol: Sendable {
     /// 여행 상세 정보 조회
-    func fetchTravelDetail(id: Int) async -> Result<TravelDetail, FollowError>
+    func fetchTravelDetail(id: Int) async -> Result<TravelDetail, ContentCardError>
 
     /// 일차별 장소 목록 조회
-    func fetchPlaces(travelId: Int, day: Int) async -> Result<[TravelPlace], FollowError>
+    func fetchPlaces(travelId: Int, day: Int) async -> Result<[TravelPlace], ItineraryError>
+
+    /// 장소 상세 조회
+    func fetchPlaceDetail(googlePlaceId: String) async -> Result<PlaceDetail, PlaceDetailError>
+
+    /// 장소 사진 조회
+    func fetchPlacePhotos(googlePlaceId: String) async -> Result<[PlacePhoto], PlacePhotosError>
 }

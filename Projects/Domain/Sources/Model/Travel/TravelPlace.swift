@@ -16,7 +16,7 @@ public struct TravelPlace: Hashable {
     public let distanceKm: Double?
     public let transportation: [Transportation]
     public let youtubeTips: [String]
-    public let planB: [PlaceInfo]
+    public let planB: [PlanBInfo]
     public let estimatedDuration: Int?
     public let place: PlaceInfo
 
@@ -27,7 +27,7 @@ public struct TravelPlace: Hashable {
         distanceKm: Double? = nil,
         transportation: [Transportation] = [],
         youtubeTips: [String] = [],
-        planB: [PlaceInfo] = [],
+        planB: [PlanBInfo] = [],
         estimatedDuration: Int? = nil,
         place: PlaceInfo
     ) {
@@ -40,6 +40,17 @@ public struct TravelPlace: Hashable {
         self.planB = planB
         self.estimatedDuration = estimatedDuration
         self.place = place
+    }
+}
+
+/// 플랜B 정보
+public struct PlanBInfo: Hashable {
+    public let name: String
+    public let feature: String?
+
+    public init(name: String, feature: String? = nil) {
+        self.name = name
+        self.feature = feature
     }
 }
 
