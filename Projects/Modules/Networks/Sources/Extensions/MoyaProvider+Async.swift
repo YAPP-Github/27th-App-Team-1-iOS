@@ -49,6 +49,7 @@ extension MoyaProvider {
                             continuation.resume(returning: .failure(apiError))
                         }
                     } catch {
+                        NetworkLogger.logDecodingError(error, data: response.data)
                         continuation.resume(returning: .networkFailure(.decodingFailed))
                     }
 
@@ -94,6 +95,7 @@ extension MoyaProvider {
                             continuation.resume(returning: .failure(apiError))
                         }
                     } catch {
+                        NetworkLogger.logDecodingError(error, data: response.data)
                         continuation.resume(returning: .networkFailure(.decodingFailed))
                     }
 

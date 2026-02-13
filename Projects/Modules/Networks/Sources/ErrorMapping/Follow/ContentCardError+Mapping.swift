@@ -1,15 +1,15 @@
 //
-//  FollowError+Mapping.swift
+//  ContentCardError+Mapping.swift
 //  Networks
 //
-//  Created by kimnahun on 2026-01-23.
+//  Created by kimnahun on 2026-02-09.
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
 import Domain
 import Foundation
 
-extension FollowError {
+extension ContentCardError {
     public init(code: String, message: String, errors: [ErrorResponse.ErrorDetail]) {
         switch code {
         case "TRAVEL-02-001":

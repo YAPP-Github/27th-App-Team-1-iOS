@@ -15,6 +15,10 @@ public enum FollowAPI {
     case getContentCard(id: Int)
     /// 여행 템플릿 일정 조회
     case getItinerary(id: Int, day: Int?)
+    /// 장소 상세 조회
+    case getPlaceDetail(googlePlaceId: String)
+    /// 장소 사진 조회
+    case getPlacePhotos(googlePlaceId: String)
 }
 
 extension FollowAPI: TargetType {
@@ -28,12 +32,16 @@ extension FollowAPI: TargetType {
             return "/api/v1/travel-templates/\(id)/content-card"
         case .getItinerary(let id, _):
             return "/api/v1/travel-templates/\(id)/itinerary"
+        case .getPlaceDetail:
+            return "/api/v1/places/detail"
+        case .getPlacePhotos:
+            return "/api/v1/places/photos"
         }
     }
 
     public var method: Moya.Method {
         switch self {
-        case .getContentCard, .getItinerary:
+        case .getContentCard, .getItinerary, .getPlaceDetail, .getPlacePhotos:
             return .get
         }
     }
@@ -50,6 +58,16 @@ extension FollowAPI: TargetType {
                 )
             }
             return .requestPlain
+        case .getPlaceDetail(let googlePlaceId):
+            return .requestParameters(
+                parameters: ["googlePlaceId": googlePlaceId],
+                encoding: URLEncoding.queryString
+            )
+        case .getPlacePhotos(let googlePlaceId):
+            return .requestParameters(
+                parameters: ["googlePlaceId": googlePlaceId],
+                encoding: URLEncoding.queryString
+            )
         }
     }
 

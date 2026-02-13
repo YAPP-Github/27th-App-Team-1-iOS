@@ -11,7 +11,7 @@ import Foundation
 
 final class MockFollowDetailService: FollowServiceProtocol {
 
-    func fetchTravelDetail(id: Int) async -> Result<TravelDetail, FollowError> {
+    func fetchTravelDetail(id: Int) async -> Result<TravelDetail, ContentCardError> {
         // 네트워크 지연 시뮬레이션
         try? await Task.sleep(nanoseconds: 100_000_000)
 
@@ -33,7 +33,7 @@ final class MockFollowDetailService: FollowServiceProtocol {
         ))
     }
 
-    func fetchPlaces(travelId: Int, day: Int) async -> Result<[TravelPlace], FollowError> {
+    func fetchPlaces(travelId: Int, day: Int) async -> Result<[TravelPlace], ItineraryError> {
         // 네트워크 지연 시뮬레이션
         try? await Task.sleep(nanoseconds: 300_000_000)
 
@@ -203,5 +203,29 @@ final class MockFollowDetailService: FollowServiceProtocol {
         default:
             return .success([])
         }
+    }
+
+    func fetchPlaceDetail(googlePlaceId: String) async -> Result<PlaceDetail, PlaceDetailError> {
+        // 네트워크 지연 시뮬레이션
+        try? await Task.sleep(nanoseconds: 100_000_000)
+
+        return .success(PlaceDetail(
+            id: googlePlaceId,
+            name: "Mock Place",
+            formattedAddress: "Mock Address",
+            location: PlaceLocation(latitude: 35.6585805, longitude: 139.7454329),
+            regularOpeningHours: ["월-금: 09:00-18:00"],
+            googleMapsUri: "https://maps.google.com/?cid=123456"
+        ))
+    }
+
+    func fetchPlacePhotos(googlePlaceId: String) async -> Result<[PlacePhoto], PlacePhotosError> {
+        // 네트워크 지연 시뮬레이션
+        try? await Task.sleep(nanoseconds: 100_000_000)
+
+        return .success([
+            PlacePhoto(photoUri: "https://example.com/photo1.jpg", widthPx: 1920, heightPx: 1080),
+            PlacePhoto(photoUri: "https://example.com/photo2.jpg", widthPx: 1920, heightPx: 1080)
+        ])
     }
 }

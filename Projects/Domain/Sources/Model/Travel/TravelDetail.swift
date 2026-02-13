@@ -43,7 +43,7 @@ public struct YouTubeInfo: Hashable {
     public let youtuber: String
     public let thumbnail: String?
     public let profileImage: String?
-    public let link: String
+    public let link: String?
     public let summary: String
 
     public init(
@@ -51,7 +51,7 @@ public struct YouTubeInfo: Hashable {
         youtuber: String,
         thumbnail: String?,
         profileImage: String?,
-        link: String,
+        link: String?,
         summary: String
     ) {
         self.title = title

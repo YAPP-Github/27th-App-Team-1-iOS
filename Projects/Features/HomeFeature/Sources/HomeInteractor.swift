@@ -130,15 +130,15 @@ extension HomeInteractor: HomePresentableListener {
         let category = categories[section]
         guard let trips = tripsByCategory[category], index < trips.count else { return }
         // TODO: 실제 API 연동 시 trip.id 사용
-        // 현재는 테스트를 위해 항상 id 1로 이동
-        router?.routeToFollowDetail(with: 1)
+        // 현재는 테스트를 위해 항상 id 2로 이동
+        router?.routeToFollowDetail(with: 2)
     }
 
     func didSelectRecommendation(at index: Int) {
         guard index < recommendations.count else { return }
         // TODO: 실제 API 연동 시 recommendation.id 사용
-        // 현재는 테스트를 위해 항상 id 1로 이동
-        router?.routeToFollowDetail(with: 1)
+        // 현재는 테스트를 위해 항상 id 2로 이동
+        router?.routeToFollowDetail(with: 2)
     }
 
     func didTapShowMoreTrips() {

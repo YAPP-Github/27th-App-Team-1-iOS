@@ -50,15 +50,20 @@ final class PlaceListCollectionView: UICollectionView {
         diffableDataSource = UICollectionViewDiffableDataSource<Int, TravelPlace>(
             collectionView: self
         ) { [weak self] collectionView, indexPath, place in
-            guard let cell = collectionView.dequeueReusableCell(
+            guard let self = self,
+                  let cell = collectionView.dequeueReusableCell(
                 withReuseIdentifier: PlaceCell.identifier,
                 for: indexPath
             ) as? PlaceCell else {
                 return UICollectionViewCell()
             }
 
-            let isLast = indexPath.item == (self?.places.count ?? 0) - 1
+            let isLast = indexPath.item == (self.places.count) - 1
             cell.configure(with: place, isLast: isLast)
+            cell.onContainerTapped = { [weak self] in
+                guard let self = self else { return }
+                self.placeDelegate?.placeListCollectionView(self, didSelectPlace: place)
+            }
             return cell
         }
     }
@@ -78,13 +83,7 @@ final class PlaceListCollectionView: UICollectionView {
 
 // MARK: - UICollectionViewDelegate
 
-extension PlaceListCollectionView: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard indexPath.item < places.count else { return }
-        let place = places[indexPath.item]
-        placeDelegate?.placeListCollectionView(self, didSelectPlace: place)
-    }
-}
+extension PlaceListCollectionView: UICollectionViewDelegate { }
 
 // MARK: - UICollectionViewDelegateFlowLayout
 
