@@ -173,7 +173,7 @@ final class PhotoCell: UICollectionViewCell {
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 8
-        imageView.backgroundColor = UIColor(hexCode: "#F5F5F5")
+        imageView.backgroundColor = DSKitAsset.Colors.white.color
         return imageView
     }()
 
