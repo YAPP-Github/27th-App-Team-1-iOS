@@ -23,10 +23,10 @@ public struct UpcomingResponse: Decodable {
 public struct UpcomingPlaceResponse: Decodable {
     public let id: Int
     public let estimatedDuration: Int
-    public let place: PlaceDetailResponse
+    public let place: UpcomingPlaceDetailResponse
 }
 
-public struct PlaceDetailResponse: Decodable {
+public struct UpcomingPlaceDetailResponse: Decodable {
     public let googlePlaceId: String
     public let thumbnail: String?
     public let latitude: Double
