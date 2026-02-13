@@ -100,7 +100,7 @@ final class PopularTravelInteractor: PresentableInteractor<PopularTravelPresenta
         presenter.setLoading(true)
         presenter.showErrorView(false)
         
-        fetchDataTask = Task {
+        fetchDataTask = Task { [weak self] in
             guard let self, !Task.isCancelled else { return }
             
             do {
