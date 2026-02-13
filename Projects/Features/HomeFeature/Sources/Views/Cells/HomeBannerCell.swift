@@ -43,31 +43,30 @@ final class HomeBannerCell: UICollectionViewCell {
     
     func configure(_ model: HomePresentationModel.Banner) {
         [emptyView, upCommingView, onGoingView].forEach { $0.isHidden = true }
-        
-        if model.tripSchedule.isEmpty {
-            self.type = .empty
-            emptyView.isHidden = false
-            return
-        }
 
         let now = Date()
         let calendar = Calendar.current
         
+        if model.id == 0 {
+            self.type = .empty
+            emptyView.isHidden = false
+            return
+        }
+        
         let startOfToday = calendar.startOfDay(for: now)
         let startOfTravel = calendar.startOfDay(for: model.startDay)
         let startOfEnd = calendar.startOfDay(for: model.endDay)
-        let dateRangeString = formatDateRange(start: model.startDay, end: model.endDay)
 
         if startOfToday >= startOfTravel && startOfToday <= startOfEnd {
-            let schedule = model.tripSchedule.first
+            let schedule = model.tripSchedule
             
             self.type = .onGoing(
                 title: model.title,
-                date: dateRangeString,
+                date: model.duration,
                 transportIcon: DSKitAsset.Assets.icBus2.image,
-                duration: "\(schedule?.estimatedDuration ?? 0)분",
-                place: schedule?.placeName ?? "",
-                imageUrl: schedule?.thumbnailUrl ?? ""
+                duration: "\(schedule.estimatedDuration)분",
+                place: schedule.placeName,
+                imageUrl: schedule.thumbnailUrl
             )
             onGoingView.isHidden = false
             
@@ -78,9 +77,9 @@ final class HomeBannerCell: UICollectionViewCell {
             
             self.type = .upComming(
                 title: model.title,
-                date: dateRangeString,
+                date: model.duration,
                 dDay: dDayValue,
-                imageUrl: model.tripSchedule.first?.thumbnailUrl ?? ""
+                imageUrl: model.tripSchedule.thumbnailUrl
             )
             upCommingView.isHidden = false
         }
@@ -95,17 +94,6 @@ final class HomeBannerCell: UICollectionViewCell {
 }
 
 private extension HomeBannerCell {
-    func formatDateRange(start: Date, end: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.dateFormat = "M월 d일"
-        
-        let startStr = formatter.string(from: start)
-        let endStr = formatter.string(from: end)
-        
-        return "\(startStr) ~ \(endStr)"
-    }
-    
     func updateViewWithCurrentType() {
         switch type {
         case .upComming(let title, let date, let dDay, let imageUrl):

@@ -26,7 +26,7 @@ public extension String {
     }
     
     func toKoreanCountryName() -> String {
-        guard self.count == 2 else { return "알 수 없음"}
+        guard self.count == 2 else { return "알 수 없음" }
         
         let locale = Locale(identifier: "ko_KR")
         return locale.localizedString(forRegionCode: self) ?? "알 수 없음"

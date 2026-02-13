@@ -41,6 +41,19 @@ final class RecommendInfoCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override public func prepareForReuse() {
+        super.prepareForReuse()
+        
+        thumbnailView.kf.cancelDownloadTask()
+        thumbnailView.image = nil
+        nationalFlagLabel.text = nil
+        cityLabel.text = nil
+        nameLabel.text = nil
+        titleLabel.text = nil
+        nationLabel.text = nil
+        scheduleLabel.text = nil
+    }
+    
     // MARK: - Configure
     func configure(_ model: HomePresentationModel.RecommendedTrip) {
         if let url = URL(string: model.thumbnailUrl) {
