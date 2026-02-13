@@ -12,9 +12,7 @@ import Moya
 
 // MARK: - API 나오기 전 임시
 public protocol HomeServiceProtocol {
-    //임시
-    func getMyTrip() async throws -> Int
-    
+    func getUpcoming() async throws -> UpcomingResponse
     func getCategoryList() async throws -> [ProgramResponse]
     func getPopularTripList(id: Int?, page: Int?, size: Int?) async throws -> TripResponse
     func getRecommendTripList(page: Int?, size: Int?) async throws -> TripResponse
@@ -27,8 +25,8 @@ public final class HomeService: HomeServiceProtocol {
         self.provider = provider
     }
     
-    public func getMyTrip() async throws -> Int {
-        try await provider.asyncThowsRequest(.getMyTrip)
+    public func getUpcoming() async throws -> UpcomingResponse {
+        try await provider.asyncThowsRequest(.getUpcoming)
     }
     
     public func getCategoryList() async throws -> [ProgramResponse] {

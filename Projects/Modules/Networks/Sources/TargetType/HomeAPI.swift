@@ -12,7 +12,7 @@ import Moya
 
 // MARK: - API 나오기 전 임시
 public enum HomeAPI {
-    case getMyTrip
+    case getUpcoming
     case getCategoryList
     case getPopularTripList(id: Int?, page: Int?, size: Int?)
     case getRecommendTripList(page: Int?, size: Int?)
@@ -25,8 +25,8 @@ extension HomeAPI: TargetType {
 
     public var path: String {
         switch self {
-        case .getMyTrip:
-            return ""
+        case .getUpcoming:
+            return "/api/v1/travels/upcoming"
         case .getCategoryList:
             return "/api/v1/travel-programs"
         case .getPopularTripList:
@@ -38,14 +38,14 @@ extension HomeAPI: TargetType {
 
     public var method: Moya.Method {
         switch self {
-        case .getMyTrip, .getCategoryList, .getPopularTripList, .getRecommendTripList:
+        case .getUpcoming, .getCategoryList, .getPopularTripList, .getRecommendTripList:
             return .get
         }
     }
 
     public var task: Moya.Task {
         switch self {
-        case .getMyTrip, .getCategoryList:
+        case .getUpcoming, .getCategoryList:
             return .requestPlain
         case .getPopularTripList(let id, let page, let size):
             var params: [String: Any] = [:]

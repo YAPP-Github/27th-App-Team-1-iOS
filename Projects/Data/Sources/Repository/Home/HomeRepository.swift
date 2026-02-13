@@ -18,8 +18,12 @@ public final class HomeRepository: HomeRepositoryInterface {
         self.homeService = homeService
     }
     
-    public func fetchMyTripInfo() async throws -> MyTripSummary? {
-        return MyTripSummary(title: "임시", startDay: .now, endDay: .now, tripSchedule: [Schedule(id: 1, day: 1, placeName: "임시", thumbnailUrl: "", transport: "", estimatedDuration: 2)])
+    public func fetchMyTripInfo() async throws -> MyTripSummary {
+        do {
+            return try await homeService.getUpcoming().toDomain()
+        } catch {
+            throw error.toNDGLError()
+        }
     }
     
     public func fetchCategoryList() async throws -> [TripCategory] {

@@ -10,12 +10,14 @@ import Foundation
 
 // MARK: - API 나오기 전 임시
 public struct MyTripSummary {
+    public let id: Int
     public let title: String
     public let startDay: Date
     public let endDay: Date
-    public let tripSchedule: [Schedule]
+    public let tripSchedule: Schedule
     
-    public init(title: String, startDay: Date, endDay: Date, tripSchedule: [Schedule]) {
+    public init(id: Int, title: String, startDay: Date, endDay: Date, tripSchedule: Schedule) {
+        self.id = id
         self.title = title
         self.startDay = startDay
         self.endDay = endDay
@@ -25,7 +27,6 @@ public struct MyTripSummary {
 
 // MARK: - API 나오기 전 임시
 public struct Schedule {
-    // 시작 시간이 있어야 홈 상단에 현재 갈 장소 카드로 보여줄 수 있음
     public let id: Int
     public let day: Int
     public let placeName: String

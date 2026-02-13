@@ -12,7 +12,7 @@ import Domain
 import Networks
 
 extension TripResponse {
-    public func toDomain() -> [TripInfo] {
+    func toDomain() -> [TripInfo] {
         self.content.map {
             .init(
                 id: $0.travelId,

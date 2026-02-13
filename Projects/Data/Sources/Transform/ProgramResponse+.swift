@@ -12,7 +12,7 @@ import Domain
 import Networks
 
 extension ProgramResponse {
-    public func toDomain() -> TripCategory {
+    func toDomain() -> TripCategory {
         .init(id: self.id, creator: self.name, viedoType: VideoType(rawValue: self.type))
     }
 }

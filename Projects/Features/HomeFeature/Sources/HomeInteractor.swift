@@ -114,13 +114,21 @@ final class HomeInteractor: PresentableInteractor<HomePresentable>, HomeInteract
             guard let self, !Task.isCancelled else { return }
             
             do {
-                async let myTrip = self.usecase.fetchMyTripInfo()?.toPresention()
+                let myTripBanner: HomePresentationModel.Banner = await {
+                    do {
+                        return try await self.usecase.fetchMyTripInfo().toPresention()
+                    } catch {
+                        
+                        return .empty
+                    }
+                }()
+                
                 async let categories = self.usecase.fetchCategoryList().map { $0.toHomeModel() }
                 async let populars = self.usecase.fetchPopularTripList().map { $0.toPopularHomeModel() }
                 async let recommended = self.usecase.fetchRecommendTripList().map { $0.toRecommendHomeModel() }
                 
                 let model = try await HomePresentationModel(
-                    banner: myTrip ?? .init(title: "", startDay: .now, endDay: .now, tripSchedule: []),
+                    banner: myTripBanner,
                     category: categories,
                     popularTrip: populars,
                     recommendedTrip: recommended
@@ -135,6 +143,7 @@ final class HomeInteractor: PresentableInteractor<HomePresentable>, HomeInteract
                 homeDataRelay.accept(model)
                 presenter.setLoading(false)
             } catch let error {
+                print(error)
                 presenter.setLoading(false)
                 presenter.showErrorView(true)
             }
@@ -161,9 +170,9 @@ extension HomeInteractor: HomePresentableListener {
         case .category(let category, _):
             selectedCategoryRelay.accept(category.id)
         case .popularTrip(let trip):
-            listener?.homeDidTapFollowDetail(with: Int(trip.id) ?? 0)
+            listener?.homeDidTapFollowDetail(with: Int(trip.id) ?? 1)
         case .recommendedTrip(let trip):
-            listener?.homeDidTapFollowDetail(with: Int(trip.id) ?? 0)
+            listener?.homeDidTapFollowDetail(with: Int(trip.id) ?? 1)
         default: break
         }
     }

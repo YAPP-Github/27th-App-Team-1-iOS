@@ -6,8 +6,8 @@
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
-import Networks
 import Domain
+import Networks
 
 import Moya
 

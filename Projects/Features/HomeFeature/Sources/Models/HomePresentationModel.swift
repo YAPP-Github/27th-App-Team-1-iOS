@@ -17,11 +17,12 @@ struct HomePresentationModel {
     let recommendedTrip: [HomePresentationModel.RecommendedTrip]
     
     struct Banner: Hashable {
-        let id = UUID()
+        let id: Int
         let title: String
         let startDay: Date
         let endDay: Date
-        let tripSchedule: [Schedule]
+        let duration: String
+        let tripSchedule: Schedule
     }
     
     struct Schedule: Hashable {
@@ -60,22 +61,49 @@ struct HomePresentationModel {
     }
 }
 
+extension HomePresentationModel.Banner {
+    static var empty: Self {
+        return .init(
+            id: 0, // 0으로 설정하여 empty 배너임을 구분
+            title: "다가오는 여행이 없습니다.",
+            startDay: Date(),
+            endDay: Date(),
+            duration: "",
+            tripSchedule: .empty
+        )
+    }
+}
+
+extension HomePresentationModel.Schedule {
+    static var empty: Self {
+        return .init(
+            id: 0,
+            day: 0,
+            placeName: "",
+            thumbnailUrl: "",
+            transport: "",
+            estimatedDuration: 0
+        )
+    }
+}
+
 extension MyTripSummary {
     func toPresention() -> HomePresentationModel.Banner {
         return HomePresentationModel.Banner(
+            id: self.id,
             title: self.title,
             startDay: self.startDay,
             endDay: self.endDay,
-            tripSchedule: self.tripSchedule.map {
-                HomePresentationModel.Schedule(
-                    id: $0.id,
-                    day: $0.day,
-                    placeName: $0.placeName,
-                    thumbnailUrl: $0.thumbnailUrl,
-                    transport: $0.transport,
-                    estimatedDuration: $0.estimatedDuration
-                )
-            }
+            duration: "\(self.startDay.toKoreanMMdd())~\(self.endDay.toKoreanMMdd())",
+            tripSchedule:
+                    .init(
+                        id: self.tripSchedule.id,
+                        day: self.tripSchedule.day,
+                        placeName: self.tripSchedule.placeName,
+                        thumbnailUrl: self.tripSchedule.thumbnailUrl,
+                        transport: self.tripSchedule.transport,
+                        estimatedDuration: self.tripSchedule.estimatedDuration
+                    )
         )
     }
 }
@@ -113,5 +141,14 @@ extension TripInfo {
             schedule: "\(self.nights)박 \(self.days)일",
             city: self.city
         )
+    }
+}
+
+extension Date {
+    func toKoreanMMdd() -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.dateFormat = "M월 d일"
+        return formatter.string(from: self)
     }
 }
