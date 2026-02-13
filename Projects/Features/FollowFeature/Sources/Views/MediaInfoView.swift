@@ -121,6 +121,7 @@ final class MediaInfoView: UIView {
         setupConstraints()
         setupActions()
         layer.cornerRadius = 20
+        layer.maskedCorners = CACornerMask(arrayLiteral: [.layerMinXMaxYCorner, .layerMaxXMaxYCorner])
     }
 
     required init?(coder: NSCoder) {

@@ -48,7 +48,7 @@ final class MainInteractor: PresentableInteractor<MainPresentable>, MainInteract
         super.willResignActive()
     }
     
-    func followDetailDidTapClose() {
+    func detachFollowDetail() {
         router?.detachFollow()
     }
     

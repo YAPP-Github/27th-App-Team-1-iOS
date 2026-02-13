@@ -29,11 +29,17 @@ final class FollowDetailViewController: UIViewController, FollowDetailPresentabl
     private var totalDays: Int = 0
 
     // MARK: - UI Components (Scroll)
-
+    private let navigationBar = NDGLNavigationBar(
+        style: .gray,
+        leadingIcon: DSKitAsset.Assets.icChevronLeft3.image,
+        trailingIcon: DSKitAsset.Assets.icShare1.image
+    )
+    
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = true
+        $0.backgroundColor = DSKitAsset.Colors.white.color
     }
-
+    
     private let contentView = UIView()
 
     private let mediaInfoView = MediaInfoView()
@@ -80,15 +86,11 @@ final class FollowDetailViewController: UIViewController, FollowDetailPresentabl
         setupActions()
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(false, animated: animated)
-    }
-
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+        
         if isMovingFromParent {
-            listener?.didTapCloseButton()
+            listener?.detachFollowDetail()
         }
     }
 
@@ -100,9 +102,9 @@ final class FollowDetailViewController: UIViewController, FollowDetailPresentabl
     // MARK: - Setup
 
     private func setupUI() {
-        view.backgroundColor = UIColor(hexCode: "#FFFFFF")
+        view.backgroundColor = DSKitAsset.Colors.black50.color
 
-        view.addSubview(scrollView)
+        view.addSubviews(navigationBar, scrollView)
         scrollView.addSubview(contentView)
         [mediaInfoView, dayCollectionView, mapView, placeListCollectionView].forEach {
             contentView.addSubview($0)
@@ -125,9 +127,14 @@ final class FollowDetailViewController: UIViewController, FollowDetailPresentabl
             $0.leading.trailing.bottom.equalToSuperview()
             $0.height.equalTo(126.adjustedH)
         }
-
-        scrollView.snp.makeConstraints {
+        
+        navigationBar.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.horizontalEdges.equalToSuperview()
+        }
+        
+        scrollView.snp.makeConstraints {
+            $0.top.equalTo(navigationBar.snp.bottom)
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(bottomContainerView.snp.top)
         }
@@ -164,7 +171,7 @@ final class FollowDetailViewController: UIViewController, FollowDetailPresentabl
         }
 
         stickyHeaderView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.top.equalTo(navigationBar.snp.bottom)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(62)
         }
@@ -194,6 +201,12 @@ final class FollowDetailViewController: UIViewController, FollowDetailPresentabl
 
     private func setupActions() {
         addToTripButton.addTarget(self, action: #selector(addToTripButtonTapped), for: .touchUpInside)
+        
+        navigationBar.leadingButtonDidTap
+            .subscribe(with: self) { owner, _ in
+                owner.navigationController?.popViewController(animated: true)
+            }
+            .disposed(by: disposeBag)
     }
 
     // MARK: - Actions

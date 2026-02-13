@@ -14,7 +14,7 @@ import RxSwift
 // MARK: - FollowDetailListener
 
 public protocol FollowDetailListener: AnyObject {
-    func followDetailDidTapClose()
+    func detachFollowDetail()
     func followDetailDidAddTrip(title: String, startDate: Date, endDate: Date)
 }
 
@@ -33,7 +33,7 @@ protocol FollowDetailPresentable: Presentable {
 // MARK: - FollowDetailPresentableListener
 
 protocol FollowDetailPresentableListener: AnyObject {
-    func didTapCloseButton()
+    func detachFollowDetail()
     func didTapAddToTrip()
     func didSelectDay(_ day: Int)
     func didSelectPlace(_ place: TravelPlace)
@@ -136,8 +136,8 @@ final class FollowDetailInteractor: PresentableInteractor<FollowDetailPresentabl
 // MARK: - FollowDetailPresentableListener
 
 extension FollowDetailInteractor: FollowDetailPresentableListener {
-    func didTapCloseButton() {
-        listener?.followDetailDidTapClose()
+    func detachFollowDetail() {
+        listener?.detachFollowDetail()
     }
 
     func didTapAddToTrip() {
