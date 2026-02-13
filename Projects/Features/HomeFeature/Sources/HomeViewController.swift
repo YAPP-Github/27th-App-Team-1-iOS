@@ -276,7 +276,9 @@ extension HomeViewController: HomePresentable {
     }
     
     func update(with sections: [HomeSectionModel]) {
-        applySnapshot(with: sections)
+        DispatchQueue.main.async { [weak self] in
+            self?.applySnapshot(with: sections)
+        }
     }
     
     func setLoading(_ isLoading: Bool) {

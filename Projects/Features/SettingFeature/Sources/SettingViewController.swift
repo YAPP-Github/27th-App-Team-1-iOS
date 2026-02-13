@@ -30,6 +30,8 @@ final class SettingViewController: UIViewController, SettingPresentable, Setting
     private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
+        super.viewDidLoad()
+        
         setStyle()
         setUI()
         setLayout()

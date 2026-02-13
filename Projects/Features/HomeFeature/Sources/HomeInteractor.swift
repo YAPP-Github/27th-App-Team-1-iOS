@@ -110,10 +110,10 @@ final class HomeInteractor: PresentableInteractor<HomePresentable>, HomeInteract
         presenter.setLoading(true)
         presenter.showErrorView(false)
         
-        fetchDataTask = Task {
+        fetchDataTask = Task { [weak self] in
+            guard let self, !Task.isCancelled else { return }
+            
             do {
-                guard !Task.isCancelled else { return }
-                
                 async let myTrip = self.usecase.fetchMyTripInfo()?.toPresention()
                 async let categories = self.usecase.fetchCategoryList().map { $0.toHomeModel() }
                 async let populars = self.usecase.fetchPopularTripList().map { $0.toPopularHomeModel() }
@@ -126,6 +126,8 @@ final class HomeInteractor: PresentableInteractor<HomePresentable>, HomeInteract
                     recommendedTrip: recommended
                 )
                 
+                guard !Task.isCancelled else { return }
+                
                 if self.selectedCategoryRelay.value == nil, let firstId = model.category.first?.id {
                     self.selectedCategoryRelay.accept(firstId)
                 }
@@ -136,8 +138,6 @@ final class HomeInteractor: PresentableInteractor<HomePresentable>, HomeInteract
                 presenter.setLoading(false)
                 presenter.showErrorView(true)
             }
-            
-            fetchDataTask = nil
         }
     }
 }

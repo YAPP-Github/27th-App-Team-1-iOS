@@ -26,8 +26,7 @@ public struct TripInfo {
         country: String,
         city: String,
         nights: Int,
-        days: Int,
-        countryCode: String
+        days: Int
     ) {
         self.id = id
         self.title = title

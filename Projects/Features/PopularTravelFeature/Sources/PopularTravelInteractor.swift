@@ -101,9 +101,9 @@ final class PopularTravelInteractor: PresentableInteractor<PopularTravelPresenta
         presenter.showErrorView(false)
         
         fetchDataTask = Task {
+            guard let self, !Task.isCancelled else { return }
+            
             do {
-                guard !Task.isCancelled else { return }
-                
                 async let categories = self.usecase.fetchCategoryList().map { $0.toPopularTravelModel() }
                 async let populars = self.usecase.fetchPopularTripList().map { $0.toPopularTravelModel() }
                 
@@ -111,6 +111,8 @@ final class PopularTravelInteractor: PresentableInteractor<PopularTravelPresenta
                     category: categories,
                     popularTrip: populars
                 )
+                
+                guard !Task.isCancelled else { return }
                 
                 if self.selectedCategoryRelay.value == nil, let firstId = model.category.first?.id {
                     self.selectedCategoryRelay.accept(firstId)
@@ -122,8 +124,6 @@ final class PopularTravelInteractor: PresentableInteractor<PopularTravelPresenta
                 presenter.setLoading(false)
                 presenter.showErrorView(true)
             }
-            
-            fetchDataTask = nil
         }
     }
 }

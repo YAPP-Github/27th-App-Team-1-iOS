@@ -22,8 +22,7 @@ extension TripResponse {
                 country: $0.country,
                 city: $0.city,
                 nights: $0.nights,
-                days: $0.days,
-                countryCode: $0.country
+                days: $0.days
             )
         }
     }

@@ -138,12 +138,6 @@ private extension PopularTravelViewController {
             }
             .disposed(by: disposeBag)
         
-        navigationBar.trailingButtonDidTap
-            .subscribe(with: self) { owner, _ in
-                owner.listener?.searchBtnTapped()
-            }
-            .disposed(by: disposeBag)
-        
         collectionView.rx.itemSelected
             .compactMap { [weak self] indexPath in
                 self?.dataSource?.itemIdentifier(for: indexPath)
@@ -194,7 +188,9 @@ private extension PopularTravelViewController {
 
 extension PopularTravelViewController: PopularTravelPresentable {
     func update(with sections: [PopularTravelSectionModel]) {
-        applySnapshot(with: sections)
+        DispatchQueue.main.async { [weak self] in
+            self?.applySnapshot(with: sections)
+        }
     }
     
     func setLoading(_ isLoading: Bool) {

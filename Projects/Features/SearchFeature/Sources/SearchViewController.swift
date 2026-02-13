@@ -32,6 +32,8 @@ final class SearchViewController: UIViewController, SearchPresentable,  SearchVi
     private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
+        super.viewDidLoad()
+        
         setStyle()
         setUI()
         setLayout()

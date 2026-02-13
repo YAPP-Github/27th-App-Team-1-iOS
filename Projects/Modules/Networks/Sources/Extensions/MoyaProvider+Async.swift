@@ -108,9 +108,9 @@ extension MoyaProvider {
     
     func asyncThowsRequest<T: Decodable>(_ target: Target) async throws -> T {
         try await withCheckedThrowingContinuation { continuation in
+            NetworkLogger.logRequest(target)
+            
             request(target) { result in
-                NetworkLogger.logRequest(target)
-                
                 switch result {
                 case .success(let response):
                     NetworkLogger.logResponse(response)
