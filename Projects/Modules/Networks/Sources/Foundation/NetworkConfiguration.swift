@@ -20,5 +20,3 @@ public enum NetworkConfiguration {
         return url
     }
 }
-
-

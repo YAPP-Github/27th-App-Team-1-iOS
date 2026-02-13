@@ -16,8 +16,10 @@ let project = Project.makeModule(
             name: "HomeFeature",
             dependencies: [
                 .Features.baseFeatureDependency,
-                .Features.Follow.feature,
-                .data
+                
+                // TODO: - 지워야됨
+                .data,
+                .Modules.networks
             ],
             scripts: [.swiftLint],
             isStatic: true,

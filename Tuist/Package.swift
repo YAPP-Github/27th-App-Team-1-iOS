@@ -8,7 +8,18 @@ import PackageDescription
         // Customize the product types for specific package product
         // Default is .staticFramework
         // productTypes: ["Alamofire": .framework,]
-        productTypes: [:]
+        productTypes: [
+            "RxSwift": .framework,
+            "RxCocoa": .framework,
+            "RxRelay": .framework,
+            "RxCocoaRuntime": .framework,
+            "Moya": .framework,
+            "Alamofire": .framework,
+            "SnapKit": .framework,
+            "Then": .framework,
+            "Kingfisher": .framework,
+            "RIBs": .framework
+        ]
     )
 #endif
 

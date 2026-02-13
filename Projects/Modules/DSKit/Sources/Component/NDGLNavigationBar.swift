@@ -109,12 +109,12 @@ private extension NDGLNavigationBar {
             titleLabel.setText(
                 .bodyLM,
                 text: title,
-                color: UIColor(hexCode: "#2C2C2C"),
+                color: DSKitAsset.Colors.black900.color,
                 alignment: .center
             )
         }
 
-        let normalColor = UIColor(hexCode: "#383838")
+        let normalColor = DSKitAsset.Colors.black600.color
         
         [(leadingButton, leading), (trailingButton, trailing), (trailing2Button, trailing2)]
             .forEach { button, image in
@@ -132,7 +132,7 @@ private extension NDGLNavigationBar {
         
         containerStackView.do {
             $0.axis = .horizontal
-            $0.spacing = 4
+            $0.spacing = 4.adjusted
             $0.alignment = .center
         }
     }
@@ -152,7 +152,7 @@ private extension NDGLNavigationBar {
     
     func setLayout() {
         [leadingButton, trailingButton, trailing2Button].forEach {
-            $0.snp.makeConstraints { $0.size.equalTo(40.adjustedH) }
+            $0.snp.makeConstraints { $0.size.equalTo(40.adjustedH).priority(.high) }
         }
         
         leftSpacer.snp.makeConstraints {
@@ -168,12 +168,12 @@ private extension NDGLNavigationBar {
         }
         
         containerStackView.snp.makeConstraints {
-            $0.directionalHorizontalEdges.equalToSuperview().inset(24)
-            $0.directionalVerticalEdges.equalToSuperview().inset(4)
+            $0.directionalHorizontalEdges.equalToSuperview().inset(24.adjusted)
+            $0.directionalVerticalEdges.equalToSuperview().inset(4.adjustedH)
         }
         
         self.snp.makeConstraints {
-            $0.height.equalTo(48.adjustedH)
+            $0.height.greaterThanOrEqualTo(48.adjustedH)
         }
     }
 }
@@ -188,9 +188,9 @@ public enum NDGLNavigationBarStyle {
     var backgroundColor: UIColor {
         switch self {
         case .white:
-            return UIColor(hexCode: "#FFFFFF")
+            return DSKitAsset.Colors.white.color
         case .gray:
-            return UIColor(hexCode: "#F5F5F5")
+            return DSKitAsset.Colors.black50.color
         }
     }
 }

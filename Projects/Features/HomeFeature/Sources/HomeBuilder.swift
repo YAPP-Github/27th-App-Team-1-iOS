@@ -6,31 +6,24 @@
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
-import Data
 import Domain
-import FollowFeature
+
+// TODO: - 지워야됨
+import Data
 import RIBs
 
 // MARK: - HomeDependency
 
 public protocol HomeDependency: Dependency {
     var tokenProvider: TokenProviding { get }
+    var homeUsecase: HomeUsecaseProtocol { get }
 }
 
 // MARK: - HomeComponent
 
-final class HomeComponent: Component<HomeDependency>, FollowDetailDependency {
-    var homeService: HomeServiceProtocol {
-        // TODO: 실제 API 연동 시 실제 Service로 교체
-        MockHomeService()
-    }
-
-    var followService: FollowServiceProtocol {
-        makeFollowService()
-    }
-
-    var travelService: TravelServiceProtocol {
-        makeTravelService(tokenProvider: dependency.tokenProvider)
+final class HomeComponent: Component<HomeDependency> {
+    var homeUsecase: HomeUsecaseProtocol {
+        dependency.homeUsecase
     }
 }
 
@@ -53,18 +46,13 @@ public final class HomeBuilder: Builder<HomeDependency>, HomeBuildable {
         let viewController = HomeViewController()
         let interactor = HomeInteractor(
             presenter: viewController,
-            homeService: component.homeService
+            usecase: component.homeUsecase
         )
         interactor.listener = listener
-
-        let followDetailBuilder = FollowDetailBuilder(dependency: component)
-
-        let router = HomeRouter(
+        
+        return HomeRouter(
             interactor: interactor,
-            viewController: viewController,
-            followDetailBuilder: followDetailBuilder
+            viewController: viewController
         )
-
-        return router
     }
 }

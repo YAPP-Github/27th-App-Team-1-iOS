@@ -8,6 +8,8 @@
 
 import UIKit
 
+import DSKit
+
 final class NDGLTabItem: UIControl {
     private let containerStackView = UIStackView()
     private let iconView = UIImageView()
@@ -34,7 +36,7 @@ final class NDGLTabItem: UIControl {
     
     func setup(title: String, image: UIImage) {
         iconView.image = image
-        titleLabel.setText(.bodyLM, text: title, color: UIColor(hexCode: "#2C2C2C"))
+        titleLabel.setText(.bodyLM, text: title, color: DSKitAsset.Colors.white.color)
         updateState(animation: false)
     }
 }
@@ -88,8 +90,8 @@ private extension NDGLTabItem {
             self.titleLabel.alpha = self.isTabSelected ? 1 : 0
             
             self.iconView.tintColor = self.isTabSelected
-            ? UIColor(hexCode: "#2C2C2C")
-            : UIColor(hexCode: "#2C2C2C")
+            ? DSKitAsset.Colors.white.color
+            : DSKitAsset.Colors.black600.color
             
             self.containerStackView.layoutIfNeeded()
             

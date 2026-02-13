@@ -15,6 +15,7 @@ import TravelFeature
 
 public protocol TabBarDependency: Dependency {
     var tokenProvider: TokenProviding { get }
+    var homeUsecase: HomeUsecaseProtocol { get }
 }
 
 // MARK: - TabBarComponent
@@ -22,6 +23,10 @@ public protocol TabBarDependency: Dependency {
 final class TabBarComponent: Component<TabBarDependency>, HomeDependency, TravelDependency {
     var tokenProvider: TokenProviding {
         dependency.tokenProvider
+    }
+    
+    var homeUsecase: HomeUsecaseProtocol {
+        dependency.homeUsecase
     }
 }
 

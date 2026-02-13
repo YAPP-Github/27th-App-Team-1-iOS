@@ -7,7 +7,7 @@
 //
 
 import Foundation
-                                                                                                                      
+
 struct BaseResponse<T: Decodable & Sendable>: Decodable, Sendable {
     let code: String
     let message: String

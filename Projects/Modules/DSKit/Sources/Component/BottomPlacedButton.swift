@@ -7,7 +7,6 @@
 //
 
 import Core
-import SnapKit
 import UIKit
 
 public final class BottomPlacedButton: UIButton {

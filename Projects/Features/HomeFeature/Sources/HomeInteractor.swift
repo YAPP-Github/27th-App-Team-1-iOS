@@ -6,166 +6,178 @@
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
-import Domain
-import FollowFeature
 import Foundation
+
+import Domain
+
 import RIBs
+import RxCocoa
+import RxRelay
 import RxSwift
 
-// MARK: - HomeListener
+struct HomeSectionModel {
+    let section: HomeSectionKind
+    let items: [HomeItem]
+}
 
-public protocol HomeListener: AnyObject {
-    func homeDidAddTrip(title: String, startDate: Date, endDate: Date)
+// MARK: - HomeRouting
+public protocol HomeRouting: ViewableRouting {
+    
 }
 
 // MARK: - HomePresentable
-
 protocol HomePresentable: Presentable {
     var listener: HomePresentableListener? { get set }
-
-    func updateCategories(_ categories: [TripCategory], selectedIndex: Int)
-    func updateMyTrips(_ trips: [MyTrip])
-    func updatePopularTrips(_ tripsByCategory: [TripCategory: [PopularTrip]], categories: [TripCategory])
-    func updateRecommendations(_ recommendations: [Recommendation])
-    func scrollToCategory(at index: Int)
-    func showLoading()
-    func hideLoading()
+    
+    func update(with sections: [HomeSectionModel])
+    func setLoading(_ isLoading: Bool)
+    func showErrorView(_ isError: Bool)
 }
 
-// MARK: - HomePresentableListener
-
-protocol HomePresentableListener: AnyObject {
-    func didSelectCategory(at index: Int)
-    func didScrollToCategory(at index: Int)
-    func didSelectPopularTrip(at index: Int, in section: Int)
-    func didSelectRecommendation(at index: Int)
-    func didTapShowMoreTrips()
-    func didTapAddButton()
-    func didTapRefresh()
+// MARK: - HomeListener
+public protocol HomeListener: AnyObject {
+    func homeDidTapFollowDetail(with recommendationId: Int)
+    func homeDidTapSearch()
+    func homeDidTapSetting()
+    func homeDidTapPopularTravel()
 }
 
 // MARK: - HomeInteractor
 
 final class HomeInteractor: PresentableInteractor<HomePresentable>, HomeInteractable {
-
     weak var router: HomeRouting?
     weak var listener: HomeListener?
 
-    private let homeService: HomeServiceProtocol
+    private var fetchDataTask: Task<Void, Never>?
+    private let usecase: HomeUsecaseProtocol
     private let disposeBag = DisposeBag()
 
     // MARK: - Data (Source of Truth)
+    private let homeDataRelay = BehaviorRelay<HomePresentationModel?>(value: nil)
+    private let selectedCategoryRelay = BehaviorRelay<Int?>(value: nil)
 
-    private let categories: [TripCategory] = TripCategory.allCases
-    private var selectedCategoryIndex: Int = 0
-    private var myTrips: [MyTrip] = []
-    private var tripsByCategory: [TripCategory: [PopularTrip]] = [:]
-    private var recommendations: [Recommendation] = []
-
-    init(presenter: HomePresentable, homeService: HomeServiceProtocol) {
-        self.homeService = homeService
+    init(presenter: HomePresentable, usecase: HomeUsecaseProtocol) {
+        self.usecase = usecase
         super.init(presenter: presenter)
         presenter.listener = self
     }
 
     override func didBecomeActive() {
         super.didBecomeActive()
-        presenter.updateCategories(categories, selectedIndex: selectedCategoryIndex)
-        loadHomeData()
+        
+        setupStream()
+        fetchHomeData()
     }
 
     override func willResignActive() {
         super.willResignActive()
+        
+        fetchDataTask?.cancel()
+        fetchDataTask = nil
     }
 
-    // MARK: - Private Methods
-
-    private func loadHomeData() {
-        Task {
-            await MainActor.run {
-                presenter.showLoading()
+    private func setupStream() {
+        Observable.combineLatest(
+            homeDataRelay.compactMap { $0 },
+            selectedCategoryRelay
+        )
+        .map { model, selectedId -> [HomeSectionModel] in
+            return [
+                .init(section: .banner, items: [.banner(model.banner)]),
+                .init(section: .category, items: model.category.map {
+                    .category($0, isSelected: $0.id == selectedId)
+                }),
+                .init(section: .popularTrip, items: model.popularTrip.map { .popularTrip($0) }),
+                .init(section: .recommendedTrip, items: model.recommendedTrip.map { .recommendedTrip($0) })
+            ]
+        }
+        .subscribe(with: self) { owner, sections in
+            owner.presenter.update(with: sections)
+        }
+        .disposed(by: disposeBag)
+        
+        homeDataRelay
+            .map { $0 == nil }
+            .subscribe(with: self) { owner, isLoading in
+                owner.presenter.setLoading(isLoading)
             }
-
-            async let myTripsResult = homeService.fetchMyTrips()
-            async let tripsByCategoryResult = homeService.fetchAllPopularTrips()
-            async let recommendationsResult = homeService.fetchRecommendations()
-
-            let (myTripsData, tripsByCategoryData, recommendationsData) = await (
-                (try? myTripsResult.get()) ?? [],
-                (try? tripsByCategoryResult.get()) ?? [:],
-                (try? recommendationsResult.get()) ?? []
-            )
-
-            await MainActor.run {
-                self.myTrips = myTripsData
-                self.tripsByCategory = tripsByCategoryData
-                self.recommendations = recommendationsData
-                presenter.hideLoading()
-                presenter.updateMyTrips(myTripsData)
-                presenter.updatePopularTrips(tripsByCategoryData, categories: categories)
-                presenter.updateRecommendations(recommendationsData)
+            .disposed(by: disposeBag)
+    }
+    
+    private func fetchHomeData() {
+        fetchDataTask?.cancel()
+        
+        presenter.setLoading(true)
+        presenter.showErrorView(false)
+        
+        fetchDataTask = Task { [weak self] in
+            guard let self, !Task.isCancelled else { return }
+            
+            do {
+                let myTripBanner: HomePresentationModel.Banner = await {
+                    do {
+                        return try await self.usecase.fetchMyTripInfo().toPresention()
+                    } catch {
+                        
+                        return .empty
+                    }
+                }()
+                
+                async let categories = self.usecase.fetchCategoryList().map { $0.toHomeModel() }
+                async let populars = self.usecase.fetchPopularTripList().map { $0.toPopularHomeModel() }
+                async let recommended = self.usecase.fetchRecommendTripList().map { $0.toRecommendHomeModel() }
+                
+                let model = try await HomePresentationModel(
+                    banner: myTripBanner,
+                    category: categories,
+                    popularTrip: populars,
+                    recommendedTrip: recommended
+                )
+                
+                guard !Task.isCancelled else { return }
+                
+                if self.selectedCategoryRelay.value == nil, let firstId = model.category.first?.id {
+                    self.selectedCategoryRelay.accept(firstId)
+                }
+                
+                homeDataRelay.accept(model)
+                presenter.setLoading(false)
+            } catch let error {
+                print(error)
+                presenter.setLoading(false)
+                presenter.showErrorView(true)
             }
         }
     }
 }
 
 // MARK: - HomePresentableListener
-
 extension HomeInteractor: HomePresentableListener {
-    func didSelectCategory(at index: Int) {
-        guard index != selectedCategoryIndex, index < categories.count else { return }
-        selectedCategoryIndex = index
-        presenter.updateCategories(categories, selectedIndex: index)
-        presenter.scrollToCategory(at: index)
+    func reloadBtnTapped() {
+        fetchHomeData()
     }
-
-    func didScrollToCategory(at index: Int) {
-        guard index != selectedCategoryIndex, index < categories.count else { return }
-        selectedCategoryIndex = index
-        presenter.updateCategories(categories, selectedIndex: index)
+    
+    func searchBtnTapped() {
+        listener?.homeDidTapSearch()
     }
-
-    func didSelectPopularTrip(at index: Int, in section: Int) {
-        guard section < categories.count else { return }
-        let category = categories[section]
-        guard let trips = tripsByCategory[category], index < trips.count else { return }
-        // TODO: 실제 API 연동 시 trip.id 사용
-        // 현재는 테스트를 위해 항상 id 2로 이동
-        router?.routeToFollowDetail(with: 2)
+    
+    func settingBtnTapped() {
+        listener?.homeDidTapSetting()
     }
-
-    func didSelectRecommendation(at index: Int) {
-        guard index < recommendations.count else { return }
-        // TODO: 실제 API 연동 시 recommendation.id 사용
-        // 현재는 테스트를 위해 항상 id 2로 이동
-        router?.routeToFollowDetail(with: 2)
+    
+    func itemSelected(item: HomeItem) {
+        switch item {
+        case .category(let category, _):
+            selectedCategoryRelay.accept(category.id)
+        case .popularTrip(let trip):
+            listener?.homeDidTapFollowDetail(with: Int(trip.id) ?? 2)
+        case .recommendedTrip(let trip):
+            listener?.homeDidTapFollowDetail(with: Int(trip.id) ?? 2)
+        default: break
+        }
     }
-
-    func didTapShowMoreTrips() {
-        // TODO: 더보기 화면으로 이동
-        print("Show more trips tapped")
-    }
-
-    func didTapAddButton() {
-        // TODO: 여행 추가 화면으로 이동
-        print("Add button tapped")
-    }
-
-    func didTapRefresh() {
-        loadHomeData()
-    }
-}
-
-// MARK: - FollowDetailListener
-
-extension HomeInteractor: FollowDetailListener {
-    func followDetailDidTapClose() {
-        router?.detachFollowDetail()
-    }
-
-    func followDetailDidAddTrip(title: String, startDate: Date, endDate: Date) {
-        router?.detachFollowDetail()
-        // TabBar에 알려서 Travel 탭으로 이동
-        listener?.homeDidAddTrip(title: title, startDate: startDate, endDate: endDate)
+    
+    func moreBtnTapped() {
+        listener?.homeDidTapPopularTravel()
     }
 }

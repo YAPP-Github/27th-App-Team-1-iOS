@@ -8,8 +8,8 @@
 
 import Foundation
 
-public enum HomeError: Error, Sendable {
-    case networkError(message: String)
-    case serverError(message: String)
-    case unknown(code: String, message: String)
-}
+//public enum HomeError: Error, Sendable {
+//    case networkError(message: String)
+//    case serverError(message: String)
+//    case unknown(code: String, message: String)
+//}

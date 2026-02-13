@@ -7,20 +7,26 @@
 //
 
 import Domain
+import MainFeature
+
 import RIBs
-import TabBarFeature
 
 // MARK: - RootDependency
 
 public protocol RootDependency: Dependency {
     var tokenProvider: TokenProviding { get }
+    var homeUsecase: HomeUsecaseProtocol { get }
 }
 
 // MARK: - RootComponent
 
-final class RootComponent: Component<RootDependency>, TabBarDependency {
+final class RootComponent: Component<RootDependency>, MainDependency {
     var tokenProvider: TokenProviding {
         dependency.tokenProvider
+    }
+    
+    var homeUsecase: HomeUsecaseProtocol {
+        dependency.homeUsecase
     }
 }
 
@@ -34,7 +40,7 @@ public protocol RootBuildable: Buildable {
 
 public final class RootBuilder: Builder<RootDependency>, RootBuildable {
 
-    public override init(dependency: RootDependency) {
+    override public init(dependency: RootDependency) {
         super.init(dependency: dependency)
     }
 
@@ -43,12 +49,12 @@ public final class RootBuilder: Builder<RootDependency>, RootBuildable {
         let viewController = RootViewController()
         let interactor = RootInteractor(presenter: viewController)
 
-        let tabBarBuilder = TabBarBuilder(dependency: component)
+        let mainBuilder = MainBuilder(dependency: component)
 
         let router = RootRouter(
             interactor: interactor,
             viewController: viewController,
-            tabBarBuilder: tabBarBuilder
+            mainBuilder: mainBuilder
         )
 
         return router

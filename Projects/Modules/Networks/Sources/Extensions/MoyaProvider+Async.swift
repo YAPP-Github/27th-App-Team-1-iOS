@@ -107,7 +107,42 @@ extension MoyaProvider {
             }
         }
     }
-
+    
+    func asyncThowsRequest<T: Decodable>(_ target: Target) async throws -> T {
+        try await withCheckedThrowingContinuation { continuation in
+            NetworkLogger.logRequest(target)
+            
+            request(target) { result in
+                switch result {
+                case .success(let response):
+                    NetworkLogger.logResponse(response)
+                    
+                    guard (200...299).contains(response.statusCode) else {
+                        let error = (try? response.map(ErrorResponse.self))
+                            .map { NetworkError.serverError($0) }
+                        ?? NetworkError.unknown("Status Code: \(response.statusCode)")
+                        continuation.resume(throwing: error)
+                        return
+                    }
+                    
+                    do {
+                        let baseResponse = try response.map(BaseResponse<T>.self)
+                        if let data = baseResponse.data {
+                            continuation.resume(returning: data)
+                        } else {
+                            continuation.resume(throwing: NetworkError.noData)
+                        }
+                    } catch {
+                        continuation.resume(throwing: NetworkError.decodingFailed)
+                    }
+                case .failure(let error):
+                    NetworkLogger.logError(error)
+                    continuation.resume(throwing: NetworkError.unknown(error.localizedDescription))
+                }
+            }
+        }
+    }
+    
     private static func mapMoyaError(_ error: MoyaError) -> NetworkError {
         switch error {
         case .underlying(let nsError as NSError, _)

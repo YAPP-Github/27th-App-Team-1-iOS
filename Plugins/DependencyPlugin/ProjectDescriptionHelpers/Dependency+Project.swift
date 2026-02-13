@@ -9,10 +9,14 @@ import ProjectDescription
 
 public extension TargetDependency {
     struct Features {
+        public struct Main {}
         public struct Home {}
         public struct TabBar {}
         public struct Follow {}
         public struct Travel {}
+        public struct Search {}
+        public struct Setting {}
+        public struct PopularTravel {}
     }
 
     struct Modules {}
@@ -61,5 +65,29 @@ public extension TargetDependency.Features.Follow {
 public extension TargetDependency.Features.Travel {
     static let group = "Travel"
 
+    static let feature = TargetDependency.Features.project(name: "Feature", group: group)
+}
+
+public extension TargetDependency.Features.Search {
+    static let group = "Search"
+    
+    static let feature = TargetDependency.Features.project(name: "Feature", group: group)
+}
+
+public extension TargetDependency.Features.Setting {
+    static let group = "Setting"
+    
+    static let feature = TargetDependency.Features.project(name: "Feature", group: group)
+}
+
+public extension TargetDependency.Features.Main {
+    static let group = "Main"
+    
+    static let feature = TargetDependency.Features.project(name: "Feature", group: group)
+}
+
+public extension TargetDependency.Features.PopularTravel {
+    static let group = "PopularTravel"
+    
     static let feature = TargetDependency.Features.project(name: "Feature", group: group)
 }

@@ -36,7 +36,7 @@ public extension UILabel {
         
         if let paragraphStyle = attributes[.paragraphStyle] as? NSMutableParagraphStyle {
             paragraphStyle.alignment = alignment
-            paragraphStyle.lineBreakMode = self.lineBreakMode
+            paragraphStyle.lineBreakMode = .byTruncatingTail
             attributes[.paragraphStyle] = paragraphStyle
         }
         

@@ -9,16 +9,23 @@
 import RIBs
 import RxSwift
 
-// MARK: - RootListener
+// MARK: - RootRouting
 
-public protocol RootListener: AnyObject {
-    // Root는 최상위 RIB이므로 Listener가 없음
+public protocol RootRouting: ViewableRouting {
+    func attachMain()
+    func detachMain()
 }
 
 // MARK: - RootPresentable
 
 protocol RootPresentable: Presentable {
     var listener: RootPresentableListener? { get set }
+}
+
+// MARK: - RootListener
+
+public protocol RootListener: AnyObject {
+    // Root는 최상위 RIB이므로 Listener가 없음
 }
 
 // MARK: - RootInteractor

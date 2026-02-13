@@ -8,10 +8,15 @@
 
 import Data
 import Domain
-import RIBs
 import RootFeature
 
+import RIBs
+
 final class AppComponent: Component<EmptyDependency>, RootDependency {
+    var homeUsecase: HomeUsecaseProtocol {
+        let homeRepository = HomeRepository(homeService: makeHomeService(tokenProvider: tokenProvider))
+        return HomeUsecase(repository: homeRepository)
+    }
 
     var tokenProvider: TokenProviding {
         shared { TokenRepositoryFactory.makeTokenProvider() }

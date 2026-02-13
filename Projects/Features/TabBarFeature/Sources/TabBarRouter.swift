@@ -24,12 +24,6 @@ public protocol TabBarViewControllable: ViewControllable {
     func setViewControllers(_ viewControllers: [ViewControllable])
 }
 
-// MARK: - TabBarRouting
-
-public protocol TabBarRouting: ViewableRouting {
-    func attachTabs()
-}
-
 // MARK: - TabBarRouter
 
 final class TabBarRouter: ViewableRouter<TabBarInteractable, TabBarViewControllable>, TabBarRouting {

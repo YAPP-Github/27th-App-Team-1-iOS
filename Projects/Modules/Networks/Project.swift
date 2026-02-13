@@ -17,6 +17,8 @@ let project = Project.makeModule(
             name: "Networks",
             dependencies: [
                 .core,
+                
+                //TODO: - 지워야됨
                 .domain
             ],
             scripts: [.swiftLint],

@@ -6,7 +6,6 @@
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
-import SnapKit
 import UIKit
 
 // MARK: - BottomSheetConfiguration
