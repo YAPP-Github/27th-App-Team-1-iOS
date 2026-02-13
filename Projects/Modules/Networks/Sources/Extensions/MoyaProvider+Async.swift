@@ -114,29 +114,24 @@ extension MoyaProvider {
                 switch result {
                 case .success(let response):
                     NetworkLogger.logResponse(response)
-                    if (200...299).contains(response.statusCode) {
-                        do {
-                            let decodedData = try response.map(BaseResponse<T>.self)
-                            
-                            if let data = decodedData.data {
-                                continuation.resume(returning: data)
-                            } else {
-                                continuation.resume(throwing: NetworkError.noData)
-                            }
-                        } catch {
-                            continuation.resume(throwing: NetworkError.decodingFailed)
+                    
+                    guard (200...299).contains(response.statusCode) else {
+                        let error = (try? response.map(ErrorResponse.self))
+                            .map { NetworkError.serverError($0) }
+                        ?? NetworkError.unknown("Status Code: \(response.statusCode)")
+                        continuation.resume(throwing: error)
+                        return
+                    }
+                    
+                    do {
+                        let baseResponse = try response.map(BaseResponse<T>.self)
+                        if let data = baseResponse.data {
+                            continuation.resume(returning: data)
+                        } else {
+                            continuation.resume(throwing: NetworkError.noData)
                         }
-                    } else {
-                        do {
-                            let errorResponse = try response.map(ErrorResponse.self)
-                            continuation.resume(
-                                throwing: NetworkError.unknown(
-                                    errorResponse.message ?? "알 수 없는 오류가 발생했습니다."
-                                )
-                            )
-                        } catch {
-                            continuation.resume(throwing: NetworkError.unknown("알 수 없는 오류가 발생했습니다."))
-                        }
+                    } catch {
+                        continuation.resume(throwing: NetworkError.decodingFailed)
                     }
                 case .failure(let error):
                     NetworkLogger.logError(error)

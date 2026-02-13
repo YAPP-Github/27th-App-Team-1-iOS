@@ -23,14 +23,26 @@ public final class HomeRepository: HomeRepositoryInterface {
     }
     
     public func fetchCategoryList() async throws -> [TripCategory] {
-        try await homeService.getCategoryList().map { $0.toDomain() }
+        do {
+            return try await homeService.getCategoryList().map { $0.toDomain() }
+        } catch {
+            throw error.toNDGLError()
+        }
     }
     
     public func fetchPopularTripList(id: Int?, page: Int?, size: Int?) async throws -> [TripInfo] {
-        try await homeService.getPopularTripList(id: id, page: page, size: size).toDomain()
+        do {
+            return try await homeService.getPopularTripList(id: id, page: page, size: size).toDomain()
+        } catch {
+            throw error.toNDGLError()
+        }
     }
     
     public func fetchRecommendTripList(page: Int?, size: Int?) async throws -> [TripInfo] {
-        try await homeService.getRecommendTripList(page: page, size: size).toDomain()
+        do {
+            return try await homeService.getRecommendTripList(page: page, size: size).toDomain()
+        } catch {
+            throw error.toNDGLError()
+        }
     }
 }

@@ -13,6 +13,7 @@ public enum NetworkError: Error, Sendable {
     case decodingFailed
     case noData
     case unknown(String)
+    case serverError(ErrorResponse)
 
     public var message: String {
         switch self {
@@ -24,6 +25,8 @@ public enum NetworkError: Error, Sendable {
             return "응답 데이터가 없습니다."
         case .unknown(let description):
             return "알 수 없는 오류: \(description)"
+        case .serverError(let error):
+            return error.message ?? "알 수 없는 오류가 발생했습니다."
         }
     }
 }  
