@@ -16,7 +16,7 @@
 default_platform(:ios)
 
 platform :ios do
-  
+
   # ---------------------------------------------------------
   # 1. CI 전용 레인 (PR 시 빌드 확인용)
   # ---------------------------------------------------------
@@ -45,10 +45,46 @@ platform :ios do
   desc "Push a new release build to the App Store"
   lane :release do
     begin
-      # match(type: "appstore", readonly: true) # CI 환경이라면 추가 권장
-      build_app(scheme: "NDGL-iOS-Workspace")
-      upload_to_app_store(skip_metadata: true, skip_screenshots: true)
-      
+      # 1. 인증서 동기화
+      match(type: "appstore", readonly: true)
+
+      # 2. 앱 빌드
+      build_app(
+        workspace: "NDGL-iOS.xcworkspace",
+	output_directory: "./Projects/App/Outputs/Archives/PROD",
+	scheme: "App",
+        export_method: "app-store",
+        clean: true,
+	output_name: "NDGL",
+	xcargs: "-allowProvisioningUpdates"
+      )
+	
+      # API Key 방식 TestFlight 업로드
+      api_key = app_store_connect_api_key(
+        key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
+        issuer_id: ENV["APP_STORE_CONNECT_API_ISSUER_ID"],
+        key_content: ENV["APP_STORE_CONNECT_API_KEY_CONTENT"]
+      )
+
+      match(
+        git_url: ENV["REPOSITORY"], # 인증서가 있는 프라이빗 레포
+	git_branch: ENV["BRANCH"],
+        type: "appstore",
+        readonly: true,
+        api_key: api_key 
+      ) 
+
+      # 3. TestFlight 업로드
+      upload_to_testflight(
+	api_key: api_key,
+        skip_waiting_for_build_processing: true # 업로드 후 프로세싱 완료까지 기다리지 않음
+      )      
+
+      download_dsyms(
+        app_identifier: "org.yapp.NDGL.App",
+        output_directory: "./Projects/App/Outputs/Archives/PROD"
+      )
+
       send_discord_message(message: "TestFlight 업로드 완료! 테스터 알림이 전송되었습니다. 🚀", success: true, type: "배포")
     rescue => exception
       send_discord_message(message: "배포 실패 에러: #{exception}", success: false, type: "배포")
@@ -71,15 +107,12 @@ end
 # ---------------------------------------------------------
 # 🔔 Discord 메시지 전송 함수 (공통)
 # ---------------------------------------------------------
-# ---------------------------------------------------------
-# 🔔 Discord 메시지 전송 함수 (공통)
-# ---------------------------------------------------------
 def send_discord_message(message:, success:, type: "CI")
-  project_path = "./Projects/App/App.xcodeproj" 
+  project_path = "./Projects/App/App.xcodeproj"
 
   version = get_version_number(xcodeproj: project_path)
   build_number = get_build_number(xcodeproj: project_path)
-  
+
   emoji = success ? "✅" : "🚨"
   title_text = success ? "#{type} 성공" : "#{type} 실패"
 
