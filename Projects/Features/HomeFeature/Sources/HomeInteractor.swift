@@ -170,9 +170,9 @@ extension HomeInteractor: HomePresentableListener {
         case .category(let category, _):
             selectedCategoryRelay.accept(category.id)
         case .popularTrip(let trip):
-            listener?.homeDidTapFollowDetail(with: Int(trip.id) ?? 2)
+            listener?.homeDidTapFollowDetail(with: trip.id)
         case .recommendedTrip(let trip):
-            listener?.homeDidTapFollowDetail(with: Int(trip.id) ?? 2)
+            listener?.homeDidTapFollowDetail(with: trip.id)
         default: break
         }
     }

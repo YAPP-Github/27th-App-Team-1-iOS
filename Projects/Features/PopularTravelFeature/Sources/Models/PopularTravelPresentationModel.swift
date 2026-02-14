@@ -21,7 +21,7 @@ struct PopularTravelPresentationModel {
     }
     
     struct PopularTrip: Hashable {
-        let id: String
+        let id: Int
         let title: String
         let thumbnailUrl: String
         let creator: String

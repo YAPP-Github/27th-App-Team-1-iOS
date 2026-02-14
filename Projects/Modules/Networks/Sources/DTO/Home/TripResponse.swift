@@ -14,7 +14,7 @@ public struct TripResponse: Decodable {
 }
 
 public struct TripContentResponse: Decodable {
-    public let travelId: String
+    public let id: Int
     public let title: String
     public let thumbnail: String?
     public let programName: String

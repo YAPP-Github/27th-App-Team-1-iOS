@@ -41,7 +41,7 @@ struct HomePresentationModel {
     }
     
     struct PopularTrip: Hashable {
-        let id: String
+        let id: Int
         let title: String
         let thumbnailUrl: String
         let creator: String
@@ -51,7 +51,7 @@ struct HomePresentationModel {
     }
     
     struct RecommendedTrip: Hashable {
-        let id: String
+        let id: Int
         let title: String
         let thumbnailUrl: String
         let creator: String

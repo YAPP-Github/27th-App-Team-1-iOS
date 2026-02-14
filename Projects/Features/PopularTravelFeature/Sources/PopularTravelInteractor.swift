@@ -142,7 +142,7 @@ extension PopularTravelInteractor: PopularTravelPresentableListener {
         case .category(let category, _):
             selectedCategoryRelay.accept(category.id)
         case .popularTrip(let trip):
-            listener?.popularTravelDidTapFollowDetail(with: Int(trip.id) ?? 0)
+            listener?.popularTravelDidTapFollowDetail(with: trip.id)
         }
     }
     

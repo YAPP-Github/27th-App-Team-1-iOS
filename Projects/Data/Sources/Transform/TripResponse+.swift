@@ -15,7 +15,7 @@ extension TripResponse {
     func toDomain() -> [TripInfo] {
         self.content.map {
             .init(
-                id: $0.travelId,
+                id: $0.id,
                 title: $0.title,
                 thumbnailUrl: $0.thumbnail ?? "",
                 creator: $0.programName,
