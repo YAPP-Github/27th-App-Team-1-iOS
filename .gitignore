@@ -60,6 +60,11 @@ DerivedData/
 !*.xcworkspace/contents.xcworkspacedata
 /*.gcno
 
+## App packaging
+*.ipa
+*.dSYM.zip
+*.dSYM
+
 ### Projects ###
 *.xcodeproj
 *.xcworkspace

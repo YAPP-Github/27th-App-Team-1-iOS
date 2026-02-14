@@ -43,7 +43,7 @@ public extension Settings {
         
         let debugSettings: [String: SettingValue] = [
             "APP_DISPLAY_NAME": .string("\(Environment.App.displayName)-Dev"),
-            "PRODUCT_NAME": .string("\(Environment.App.displayName)"),
+            "PRODUCT_NAME": .string("\(Project.Environment.appName)"),
             "PROVISIONING_PROFILE_SPECIFIER": SettingValue(stringLiteral: "$(APP_PROVISIONING_PROFILE)"),
             "CODE_SIGN_IDENTITY": SettingValue(stringLiteral: "$(CODE_SIGN_IDENTITY)"),
             "ENABLE_TESTABILITY": "YES",
@@ -55,7 +55,7 @@ public extension Settings {
         
         let releaseSettings: [String: SettingValue] = [
             "APP_DISPLAY_NAME": .string(Environment.App.displayName),
-            "PRODUCT_NAME": .string("\(Environment.App.displayName)"),
+            "PRODUCT_NAME": .string("\(Project.Environment.appName)"),
             "PROVISIONING_PROFILE_SPECIFIER": SettingValue(stringLiteral: "$(APP_PROVISIONING_PROFILE)"),
             "CODE_SIGN_IDENTITY": SettingValue(stringLiteral: "$(CODE_SIGN_IDENTITY)"),
             "SWIFT_OPTIMIZATION_LEVEL": "-O",
