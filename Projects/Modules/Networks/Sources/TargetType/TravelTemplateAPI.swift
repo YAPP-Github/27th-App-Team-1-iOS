@@ -1,8 +1,8 @@
 //
-//  HomeAPI.swift
+//  TravelTemplateAPI.swift
 //  Networks
 //
-//  Created by 최안용 on 2/4/26.
+//  Created by 최안용 on 2/14/26.
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
@@ -10,42 +10,54 @@ import Foundation
 
 import Moya
 
-// MARK: - API 나오기 전 임시
-public enum HomeAPI {
-    case getUpcoming
-    case getCategoryList
+public enum TravelTemplateAPI {
+    case getItinerary(id: Int, day: Int?)
+    case getContentCard(id: Int)
+    case searchTemplate // 아직 적용 x
     case getPopularTripList(id: Int?, page: Int?, size: Int?)
     case getRecommendTripList(page: Int?, size: Int?)
 }
 
-extension HomeAPI: TargetType {
+extension TravelTemplateAPI: TargetType {
     public var baseURL: URL {
         NetworkConfiguration.baseURL
     }
-
+    
     public var path: String {
         switch self {
-        case .getUpcoming:
-            return "/api/v1/travels/upcoming"
-        case .getCategoryList:
-            return "/api/v1/travel-programs"
+        case .getItinerary(let id, _):
+            return "/api/v1/travel-templates/\(id)/itinerary"
+        case .getContentCard(let id):
+            return "/api/v1/travel-templates/\(id)/content-card"
+        case .searchTemplate:
+            return "/api/v1/travel-templates/search"
         case .getPopularTripList:
             return "/api/v1/travel-templates/popular"
         case .getRecommendTripList:
             return "/api/v1/travel-templates/recommend"
         }
     }
-
+    
     public var method: Moya.Method {
         switch self {
-        case .getUpcoming, .getCategoryList, .getPopularTripList, .getRecommendTripList:
+        case .getItinerary, .getContentCard, .searchTemplate, .getPopularTripList, .getRecommendTripList:
             return .get
         }
     }
-
+    
     public var task: Moya.Task {
         switch self {
-        case .getUpcoming, .getCategoryList:
+        case .getItinerary(_, let day):
+            if let day = day {
+                return .requestParameters(
+                    parameters: ["day": day],
+                    encoding: URLEncoding.queryString
+                )
+            }
+            return .requestPlain
+        case .getContentCard(let id):
+            return .requestPlain
+        case .searchTemplate:
             return .requestPlain
         case .getPopularTripList(let id, let page, let size):
             var params: [String: Any] = [:]
@@ -55,7 +67,6 @@ extension HomeAPI: TargetType {
             if let size { params["size"] = size }
             
             return .requestParameters(parameters: params, encoding: URLEncoding.queryString)
-            
         case .getRecommendTripList(let page, let size):
             var params: [String: Any] = [:]
             
@@ -65,9 +76,8 @@ extension HomeAPI: TargetType {
             return .requestParameters(parameters: params, encoding: URLEncoding.queryString)
         }
     }
-
-    public var headers: [String: String]? {
+    
+    public var headers: [String : String]? {
         ["Content-Type": "application/json"]
     }
 }
-

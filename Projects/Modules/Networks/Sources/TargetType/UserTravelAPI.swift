@@ -1,46 +1,55 @@
 //
-//  TravelAPI.swift
+//  UserTravelAPI.swift
 //  Networks
 //
-//  Created by NDGL on 2026-02-06.
+//  Created by 최안용 on 2/14/26.
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
 import Foundation
+
 import Moya
 
-public enum TravelAPI {
-    /// 템플릿으로 내 여행 생성
+public enum UserTravelAPI {
     case createUserTravel(request: CreateUserTravelRequest)
+    case getUpcoming
 }
 
-extension TravelAPI: TargetType {
+extension UserTravelAPI: TargetType {
     public var baseURL: URL {
         NetworkConfiguration.baseURL
     }
-
+    
     public var path: String {
         switch self {
         case .createUserTravel:
             return "/api/v1/travels"
+        case .getUpcoming:
+            return "/api/v1/travels/upcoming"
         }
     }
-
+    
     public var method: Moya.Method {
         switch self {
         case .createUserTravel:
             return .post
+        case .getUpcoming:
+            return .get
         }
     }
-
+    
     public var task: Moya.Task {
         switch self {
         case .createUserTravel(let request):
             return .requestJSONEncodable(request)
+        case .getUpcoming:
+            return .requestPlain
         }
     }
-
-    public var headers: [String: String]? {
+    
+    public var headers: [String : String]? {
         ["Content-Type": "application/json"]
     }
+    
+    
 }
