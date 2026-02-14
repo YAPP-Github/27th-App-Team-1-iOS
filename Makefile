@@ -29,3 +29,6 @@ setup:
 # 디바이스 추가
 device:
 	bundle exec fastlane register_new_device
+
+release:
+	bundle exec fastlane release
