@@ -14,17 +14,12 @@ import RIBs
 // MARK: - RootDependency
 
 public protocol RootDependency: Dependency {
-    var tokenProvider: TokenProviding { get }
     var homeUsecase: HomeUsecaseProtocol { get }
 }
 
 // MARK: - RootComponent
 
 final class RootComponent: Component<RootDependency>, MainDependency {
-    var tokenProvider: TokenProviding {
-        dependency.tokenProvider
-    }
-    
     var homeUsecase: HomeUsecaseProtocol {
         dependency.homeUsecase
     }

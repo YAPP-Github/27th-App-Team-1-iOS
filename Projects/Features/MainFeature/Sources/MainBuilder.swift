@@ -18,7 +18,6 @@ import RIBs
 
 public protocol MainDependency: Dependency {
     var homeUsecase: HomeUsecaseProtocol { get }
-    var tokenProvider: TokenProviding { get }
 }
 
 final class MainComponent: Component<MainDependency>, FollowDetailDependency, PopularTravelDependency,SearchDependency, SettingDependency, TabBarDependency {
@@ -28,10 +27,6 @@ final class MainComponent: Component<MainDependency>, FollowDetailDependency, Po
     
     var travelService: TravelServiceProtocol {
         makeTravelService(tokenProvider: tokenProvider)
-    }
-    
-    var tokenProvider: TokenProviding {
-        dependency.tokenProvider
     }
     
     var homeUsecase: HomeUsecaseProtocol {
