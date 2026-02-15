@@ -15,7 +15,6 @@ let project = Project.makeModule(
         .makeFrameworkTarget(
             name: "MainFeature",
             dependencies: [
-                .Features.baseFeatureDependency,
                 .Features.Follow.feature,
                 .Features.Search.feature,
                 .Features.Setting.feature,

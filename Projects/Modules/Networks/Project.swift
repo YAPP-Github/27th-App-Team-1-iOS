@@ -16,10 +16,7 @@ let project = Project.makeModule(
         .makeFrameworkTarget(
             name: "Networks",
             dependencies: [
-                .core,
-                
-                //TODO: - 지워야됨
-                .domain
+                .core
             ],
             scripts: [.swiftLint],
             isStatic: true,
