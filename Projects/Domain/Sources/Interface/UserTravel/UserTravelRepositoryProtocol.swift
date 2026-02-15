@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol UserTravelRepositoryProtocol {
+public protocol UserTravelRepositoryInterface {
     func createUserTravel(request: CreateTravelRequest) async throws -> CreateTravelResponse
     func fetchUpcoming() async throws -> MyTripSummary
 }

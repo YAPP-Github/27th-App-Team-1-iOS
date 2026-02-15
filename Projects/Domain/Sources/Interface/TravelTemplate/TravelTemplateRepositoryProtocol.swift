@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol TravelTemplateRepositoryProtocol {
+public protocol TravelTemplateRepositoryInterface {
     func fetchPlaces(travelId: Int, day: Int) async throws -> [TravelPlace]
     func fetchTravelDetail(id: Int) async throws -> TravelDetail
     func searchTemplate() async throws -> Int

@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol PlaceRepositoryProtocol {
+public protocol PlaceRepositoryInterface {
     func searchPlaces() async throws -> Int //임시
     func fetchPlacePhotos(googlePlaceId: String) async throws -> [PlacePhoto]
     func fetchPlaceDetail(googlePlaceId: String) async throws -> PlaceDetail

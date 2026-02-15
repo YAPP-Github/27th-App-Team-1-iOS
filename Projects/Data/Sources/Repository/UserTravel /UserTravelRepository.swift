@@ -11,16 +11,24 @@ import Foundation
 import Domain
 import Networks
 
-public final class UserTravelRepository: UserTravelRepositoryProtocol {
+public final class UserTravelRepository: UserTravelRepositoryInterface {
     private let service: UserTravelServiceProtocol
+    private let dateFormatter: DateFormatter
     
     public init(service: UserTravelServiceProtocol) {
         self.service = service
+        self.dateFormatter = DateFormatter()
+        self.dateFormatter.dateFormat = "yyyy-MM-dd"
     }
     
     public func createUserTravel(request: CreateTravelRequest) async throws -> CreateTravelResponse {
         do {
-            return try await service.createUserTravel(request: request)
+            let dto = CreateUserTravelRequest(
+                templateId: request.templateId,
+                startDate: dateFormatter.string(from: request.startDate),
+                endDate: dateFormatter.string(from: request.endDate)
+            )
+            return try await service.createUserTravel(request: dto).toDomain()
         } catch {
             throw error.toNDGLError()
         }

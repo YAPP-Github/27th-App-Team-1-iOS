@@ -11,7 +11,7 @@ import Foundation
 import Domain
 import Networks
 
-public final class TravelTemplateRepository: TravelTemplateRepositoryProtocol {
+public final class TravelTemplateRepository: TravelTemplateRepositoryInterface {
     private let service: TravelTemplateServiceProtocol
     
     public init(service: TravelTemplateServiceProtocol) {
@@ -20,7 +20,7 @@ public final class TravelTemplateRepository: TravelTemplateRepositoryProtocol {
     
     public func fetchPlaces(travelId: Int, day: Int) async throws -> [TravelPlace] {
         do {
-            return try await service.getItinerary(travelId: travelId, day: day)
+            return try await service.getItinerary(travelId: travelId, day: day).toDomain()
         } catch {
             throw error.toNDGLError()
         }
@@ -28,7 +28,7 @@ public final class TravelTemplateRepository: TravelTemplateRepositoryProtocol {
     
     public func fetchTravelDetail(id: Int) async throws -> TravelDetail {
         do {
-            return try await service.getContentCard(id: id)
+            return try await service.getContentCard(id: id).toDomain()
         } catch {
             throw error.toNDGLError()
         }

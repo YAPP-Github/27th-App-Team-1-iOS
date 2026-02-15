@@ -11,7 +11,7 @@ import Foundation
 import Domain
 import Networks
 
-public final class PlaceRepository: PlaceRepositoryProtocol {
+public final class PlaceRepository: PlaceRepositoryInterface {
     private let service: PlaceServiceProtocol
     
     public init(service: PlaceServiceProtocol) {
@@ -28,7 +28,7 @@ public final class PlaceRepository: PlaceRepositoryProtocol {
     
     public func fetchPlacePhotos(googlePlaceId: String) async throws -> [PlacePhoto] {
         do {
-            return try await service.getPlacePhotos(googlePlaceId: googlePlaceId)
+            return try await service.getPlacePhotos(googlePlaceId: googlePlaceId).toDomain()
         } catch {
             throw error.toNDGLError()
         }
@@ -36,7 +36,7 @@ public final class PlaceRepository: PlaceRepositoryProtocol {
     
     public func fetchPlaceDetail(googlePlaceId: String) async throws -> PlaceDetail {
         do {
-            return try await service.getPlaceDetails(googlePlaceId: googlePlaceId)
+            return try await service.getPlaceDetails(googlePlaceId: googlePlaceId).toDomain()
         } catch {
             throw error.toNDGLError()
         }

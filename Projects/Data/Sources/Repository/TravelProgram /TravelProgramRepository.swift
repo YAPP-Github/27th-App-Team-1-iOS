@@ -11,7 +11,7 @@ import Foundation
 import Domain
 import Networks
 
-public final class TravelProgramRepository: TravelProgramRepositoryProtocol {
+public final class TravelProgramRepository: TravelProgramRepositoryInterface {
     private let service: TravelProgramServiceProtocol
     
     public init(service: TravelProgramServiceProtocol) {

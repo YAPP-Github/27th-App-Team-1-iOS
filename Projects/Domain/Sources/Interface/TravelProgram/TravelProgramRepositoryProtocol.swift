@@ -8,6 +8,6 @@
 
 import Foundation
 
-public protocol TravelProgramRepositoryProtocol {
+public protocol TravelProgramRepositoryInterface {
     func fetchCategoryList() async throws -> [TripCategory]
 }
