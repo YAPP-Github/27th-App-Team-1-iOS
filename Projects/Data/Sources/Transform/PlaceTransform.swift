@@ -1,15 +1,15 @@
 //
 //  PlaceTransform.swift
-//  Networks
+//  Data
 //
-//  Created by kimnahun on 2026-02-09.
+//  Created by 최안용 on 2/15/26.
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
-import Domain
 import Foundation
 
-// MARK: - PlaceDetailResponse to PlaceDetail
+import Domain
+import Networks
 
 extension PlaceDetailResponse {
     func toDomain() -> PlaceDetail {
@@ -38,8 +38,6 @@ extension PlaceLocationResponse {
         )
     }
 }
-
-// MARK: - PlacePhotosResponse to [PlacePhoto]
 
 extension PlacePhotosResponse {
     func toDomain() -> [PlacePhoto] {

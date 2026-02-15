@@ -1,8 +1,8 @@
 //
-//  UpcomingResponse+.swift
+//  UserTravelTransform.swift
 //  Data
 //
-//  Created by 최안용 on 2/13/26.
+//  Created by 최안용 on 2/15/26.
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
@@ -10,6 +10,7 @@ import Foundation
 
 import Domain
 import Networks
+
 
 extension UpcomingResponse {
     func toDomain() -> MyTripSummary {
@@ -27,6 +28,12 @@ extension UpcomingResponse {
                 estimatedDuration: self.upcomingUserTravelPlace.estimatedDuration
             )
         )
+    }
+}
+
+extension CreateUserTravelResponse {
+    func toDomain() -> CreateTravelResponse {
+        .init(userTravelId: self.userTravelId)
     }
 }
 
