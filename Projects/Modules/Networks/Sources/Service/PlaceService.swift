@@ -32,6 +32,6 @@ public final class PlaceService: PlaceServiceProtocol {
     }
     
     public func getPlaceDetails(googlePlaceId: String) async throws -> PlaceDetailResponse {
-        try await provider.asyncThowsRequest(.getPlacePhotos(googlePlaceId: googlePlaceId))
+        try await provider.asyncThowsRequest(.getPlaceDetails(googlePlaceId: googlePlaceId))
     }
 }
