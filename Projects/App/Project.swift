@@ -5,12 +5,11 @@
 //  Created by 최안용 on 1/13/26.
 //
 
+import ConfigPlugin
+import DependencyPlugin
+import EnvPlugin
 import ProjectDescription
 import ProjectDescriptionHelpers
-import EnvPlugin
-import DependencyPlugin
-import ConfigPlugin
-
 
 let project = Project.makeModule(
     name: "App",
