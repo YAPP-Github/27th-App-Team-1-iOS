@@ -15,11 +15,16 @@ import RIBs
 
 public protocol RootDependency: Dependency {
     var homeUsecase: HomeUsecaseProtocol { get }
+    var followDetailUsecase: FollowDetailUsecaseProtocol { get }
 }
 
 // MARK: - RootComponent
 
 final class RootComponent: Component<RootDependency>, MainDependency {
+    var followDetailUsecase: FollowDetailUsecaseProtocol {
+        dependency.followDetailUsecase
+    }
+    
     var homeUsecase: HomeUsecaseProtocol {
         dependency.homeUsecase
     }

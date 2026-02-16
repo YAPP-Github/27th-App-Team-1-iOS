@@ -12,14 +12,14 @@ import RIBs
 // MARK: - PlaceDetailDependency
 
 protocol PlaceDetailDependency: Dependency {
-    var followService: FollowServiceProtocol { get }
+    var followDetailUsecase: FollowDetailUsecaseProtocol { get }
 }
 
 // MARK: - PlaceDetailComponent
 
 final class PlaceDetailComponent: Component<PlaceDetailDependency> {
-    var followService: FollowServiceProtocol {
-        dependency.followService
+    var followDetailUsecase: FollowDetailUsecaseProtocol {
+        dependency.followDetailUsecase
     }
 }
 
@@ -42,7 +42,7 @@ final class PlaceDetailBuilder: Builder<PlaceDetailDependency>, PlaceDetailBuild
         let viewController = PlaceDetailViewController()
         let interactor = PlaceDetailInteractor(
             presenter: viewController,
-            followService: component.followService,
+            followDetailUsecase: component.followDetailUsecase,
             travelPlace: travelPlace,
             youtuberName: youtuberName
         )

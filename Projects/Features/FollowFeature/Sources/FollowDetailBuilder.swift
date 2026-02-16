@@ -7,24 +7,20 @@
 //
 
 import Domain
+
 import RIBs
 
 // MARK: - FollowDetailDependency
 
 public protocol FollowDetailDependency: Dependency {
-    var followService: FollowServiceProtocol { get }
-    var travelService: TravelServiceProtocol { get }
+    var followDetailUsecase: FollowDetailUsecaseProtocol { get }
 }
 
 // MARK: - FollowDetailComponent
 
 final class FollowDetailComponent: Component<FollowDetailDependency>, TripCalendarDependency, PlaceDetailDependency {
-    var followService: FollowServiceProtocol {
-        dependency.followService
-    }
-
-    var travelService: TravelServiceProtocol {
-        dependency.travelService
+    var followDetailUsecase: FollowDetailUsecaseProtocol {
+        dependency.followDetailUsecase
     }
 }
 
@@ -38,7 +34,7 @@ public protocol FollowDetailBuildable: Buildable {
 
 public final class FollowDetailBuilder: Builder<FollowDetailDependency>, FollowDetailBuildable {
 
-    public override init(dependency: FollowDetailDependency) {
+    override public init(dependency: FollowDetailDependency) {
         super.init(dependency: dependency)
     }
 
@@ -47,8 +43,7 @@ public final class FollowDetailBuilder: Builder<FollowDetailDependency>, FollowD
         let viewController = FollowDetailViewController()
         let interactor = FollowDetailInteractor(
             presenter: viewController,
-            followService: component.followService,
-            travelService: component.travelService,
+            followDetailUsecase: component.followDetailUsecase,
             recommendationId: recommendationId
         )
         interactor.listener = listener

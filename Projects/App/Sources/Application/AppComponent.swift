@@ -14,26 +14,51 @@ import RIBs
 
 final class AppComponent: Component<EmptyDependency>, RootDependency {
     private var travelTemplateRepository: TravelTemplateRepositoryInterface {
-        let service = makeTravelTemplateService(tokenProvider: tokenProvider)
-        return TravelTemplateRepository(service: service)
+        shared {
+            let service = makeTravelTemplateService(tokenProvider: tokenProvider)
+            return TravelTemplateRepository(service: service)
+        }
     }
     
     private var travelProgramRepository: TravelProgramRepositoryInterface {
-        let service = makeTravelProgramService()
-        return TravelProgramRepository(service: service)
+        shared {
+            let service = makeTravelProgramService()
+            return TravelProgramRepository(service: service)
+        }
     }
     
     private var userTravelRepository: UserTravelRepositoryInterface {
-        let service = makeUserTravelService(tokenProvider: tokenProvider)
-        return UserTravelRepository(service: service)
+        shared {
+            let service = makeUserTravelService(tokenProvider: tokenProvider)
+            return UserTravelRepository(service: service)
+        }
+    }
+    
+    private var placeRepository: PlaceRepositoryInterface {
+        shared {
+            let service = makePlaceService()
+            return PlaceRepository(service: service)
+        }
     }
     
     var homeUsecase: HomeUsecaseProtocol {
-        return HomeUsecase(
-            travelTemplateRepository: travelTemplateRepository,
-            travelRepository: travelProgramRepository,
-            userTravelRepository: userTravelRepository
-        )
+        shared {
+            HomeUsecase(
+                travelTemplateRepository: travelTemplateRepository,
+                travelRepository: travelProgramRepository,
+                userTravelRepository: userTravelRepository
+            )
+        }
+    }
+    
+    var followDetailUsecase: FollowDetailUsecaseProtocol {
+        shared {
+            FollowDetailUsecase(
+                travelTemplateRepository: travelTemplateRepository,
+                userTravelRepository: userTravelRepository,
+                placeRepository: placeRepository
+            )
+        }
     }
 
     var tokenProvider: TokenProviding {

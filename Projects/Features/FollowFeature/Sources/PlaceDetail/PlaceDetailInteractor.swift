@@ -39,7 +39,7 @@ final class PlaceDetailInteractor: PresentableInteractor<PlaceDetailPresentable>
     weak var router: PlaceDetailRouting?
     weak var listener: PlaceDetailListener?
 
-    private let followService: FollowServiceProtocol
+    private let followDetailUsecase: FollowDetailUsecaseProtocol
     private let travelPlace: TravelPlace
     private let youtuberName: String
 
@@ -51,11 +51,11 @@ final class PlaceDetailInteractor: PresentableInteractor<PlaceDetailPresentable>
 
     init(
         presenter: PlaceDetailPresentable,
-        followService: FollowServiceProtocol,
+        followDetailUsecase: FollowDetailUsecaseProtocol,
         travelPlace: TravelPlace,
         youtuberName: String
     ) {
-        self.followService = followService
+        self.followDetailUsecase = followDetailUsecase
         self.travelPlace = travelPlace
         self.youtuberName = youtuberName
         super.init(presenter: presenter)
@@ -77,44 +77,19 @@ final class PlaceDetailInteractor: PresentableInteractor<PlaceDetailPresentable>
         Task { [weak self] in
             guard let self else { return }
 
-            async let detailResult = self.followService.fetchPlaceDetail(googlePlaceId: googlePlaceId)
-            async let photosResult = self.followService.fetchPlacePhotos(googlePlaceId: googlePlaceId)
-
-            let (detail, photos) = await (detailResult, photosResult)
-
-            await MainActor.run { [weak self] in
-                guard let self else { return }
-                switch detail {
-                case .success(let placeDetail):
-                    self.placeDetail = placeDetail
-                case .failure(let error):
-                    switch error {
-                    case .missingParameter(let message):
-                        print("PlaceDetail 실패 [missingParameter]: \(message)")
-                    case .notFound(let message):
-                        print("PlaceDetail 실패 [notFound]: \(message)")
-                    case .unknown(let code, let message):
-                        print("PlaceDetail 실패 [unknown] code: \(code), message: \(message)")
-                    }
+            do {
+                async let detailResult = self.followDetailUsecase.fetchPlaceDetail(googlePlaceId: googlePlaceId)
+                async let photosResult = self.followDetailUsecase.fetchPlacePhotos(googlePlaceId: googlePlaceId)
+                
+                let (detail, photos) = try await (detailResult, photosResult)
+                
+                await MainActor.run {
+                    self.placeDetail = detail
+                    self.placePhotos = photos
+                    self.updatePresenter()
                 }
-
-                switch photos {
-                case .success(let placePhotos):
-                    self.placePhotos = placePhotos
-                case .failure(let error):
-                    switch error {
-                    case .missingParameter(let message):
-                        print("PlacePhotos 실패 [missingParameter]: \(message)")
-                    case .serverError(let message):
-                        print("PlacePhotos 실패 [serverError]: \(message)")
-                    case .googleApiError(let message):
-                        print("PlacePhotos 실패 [googleApiError]: \(message)")
-                    case .unknown(let code, let message):
-                        print("PlacePhotos 실패 [unknown] code: \(code), message: \(message)")
-                    }
-                }
-
-                updatePresenter()
+            } catch {
+                print(error)
             }
         }
     }

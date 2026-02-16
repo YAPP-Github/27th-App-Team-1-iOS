@@ -18,15 +18,12 @@ import RIBs
 
 public protocol MainDependency: Dependency {
     var homeUsecase: HomeUsecaseProtocol { get }
+    var followDetailUsecase: FollowDetailUsecaseProtocol { get }
 }
 
 final class MainComponent: Component<MainDependency>, FollowDetailDependency, PopularTravelDependency,SearchDependency, SettingDependency, TabBarDependency {
-    var followService: FollowServiceProtocol {
-        makeFollowService()
-    }
-    
-    var travelService: TravelServiceProtocol {
-        makeTravelService(tokenProvider: tokenProvider)
+    var followDetailUsecase: FollowDetailUsecaseProtocol {
+        dependency.followDetailUsecase
     }
     
     var homeUsecase: HomeUsecaseProtocol {
