@@ -10,7 +10,7 @@ import Foundation
 
 /// 여행 상세 정보
 public struct TravelDetail: Hashable {
-    public let travelId: String
+    public let travelId: Int
     public let country: String
     public let city: String
     public let budgetPerPerson: Int
@@ -19,7 +19,7 @@ public struct TravelDetail: Hashable {
     public let youtube: YouTubeInfo
 
     public init(
-        travelId: String,
+        travelId: Int,
         country: String,
         city: String,
         budgetPerPerson: Int,

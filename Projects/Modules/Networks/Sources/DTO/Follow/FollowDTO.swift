@@ -11,7 +11,7 @@ import Foundation
 // MARK: - Content Card Response (여행 템플릿 상세)
 
 public struct FollowContentCardResponse: Decodable, Sendable {
-    public let travelId: String
+    public let travelId: Int
     public let country: String
     public let city: String
     public let budgetPerPerson: Int
