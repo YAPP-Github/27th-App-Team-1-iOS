@@ -15,11 +15,7 @@ let project = Project.makeModule(
         .makeFrameworkTarget(
             name: "RootFeature",
             dependencies: [
-                .Features.Main.feature,
-                
-                // TODO: - 지워야됨
-                .Modules.networks,
-                .data
+                .Features.Main.feature
             ],
             scripts: [.swiftLint],
             isStatic: true,

@@ -9,7 +9,7 @@
 import Foundation
 
 public struct TripInfo {
-    public let id: String
+    public let id: Int
     public let title: String
     public let thumbnailUrl: String
     public let creator: String
@@ -19,7 +19,7 @@ public struct TripInfo {
     public let days: Int
     
     public init(
-        id: String,
+        id: Int,
         title: String,
         thumbnailUrl: String,
         creator: String,

@@ -8,14 +8,11 @@
 
 import Domain
 
-// TODO: - 지워야됨
-import Data
 import RIBs
 
 // MARK: - HomeDependency
 
 public protocol HomeDependency: Dependency {
-    var tokenProvider: TokenProviding { get }
     var homeUsecase: HomeUsecaseProtocol { get }
 }
 

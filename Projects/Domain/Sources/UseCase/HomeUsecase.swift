@@ -34,27 +34,35 @@ public extension HomeUsecaseProtocol {
 }
 
 public final class HomeUsecase {
-    private let repository: HomeRepositoryInterface
+    private let travelTemplateRepository: TravelTemplateRepositoryInterface
+    private let travelRepository: TravelProgramRepositoryInterface
+    private let userTravelRepository: UserTravelRepositoryInterface
     
-    public init(repository: HomeRepositoryInterface) {
-        self.repository = repository
+    public init(
+        travelTemplateRepository: TravelTemplateRepositoryInterface,
+        travelRepository: TravelProgramRepositoryInterface,
+        userTravelRepository: UserTravelRepositoryInterface
+    ) {
+        self.travelTemplateRepository = travelTemplateRepository
+        self.travelRepository = travelRepository
+        self.userTravelRepository = userTravelRepository
     }
 }
 
 extension HomeUsecase: HomeUsecaseProtocol {
     public func fetchMyTripInfo() async throws -> MyTripSummary {
-        try await repository.fetchMyTripInfo()
+        try await userTravelRepository.fetchUpcoming()
     }
     
     public func fetchCategoryList() async throws -> [TripCategory] {
-        try await repository.fetchCategoryList()
+        try await travelRepository.fetchCategoryList()
     }
     
     public func fetchPopularTripList(id: Int?, page: Int?, size: Int?) async throws -> [TripInfo] {
-        try await repository.fetchPopularTripList(id: id, page: page, size: size)
+        try await travelTemplateRepository.fetchPopularTripList(id: id, page: page, size: size)
     }
     
     public func fetchRecommendTripList(page: Int?, size: Int?) async throws -> [TripInfo] {
-        try await repository.fetchRecommendTripList(page: page, size: size)
+        try await travelTemplateRepository.fetchRecommendTripList(page: page, size: size)
     }
 }

@@ -13,9 +13,52 @@ import RootFeature
 import RIBs
 
 final class AppComponent: Component<EmptyDependency>, RootDependency {
+    private var travelTemplateRepository: TravelTemplateRepositoryInterface {
+        shared {
+            let service = makeTravelTemplateService(tokenProvider: tokenProvider)
+            return TravelTemplateRepository(service: service)
+        }
+    }
+    
+    private var travelProgramRepository: TravelProgramRepositoryInterface {
+        shared {
+            let service = makeTravelProgramService()
+            return TravelProgramRepository(service: service)
+        }
+    }
+    
+    private var userTravelRepository: UserTravelRepositoryInterface {
+        shared {
+            let service = makeUserTravelService(tokenProvider: tokenProvider)
+            return UserTravelRepository(service: service)
+        }
+    }
+    
+    private var placeRepository: PlaceRepositoryInterface {
+        shared {
+            let service = makePlaceService()
+            return PlaceRepository(service: service)
+        }
+    }
+    
     var homeUsecase: HomeUsecaseProtocol {
-        let homeRepository = HomeRepository(homeService: makeHomeService(tokenProvider: tokenProvider))
-        return HomeUsecase(repository: homeRepository)
+        shared {
+            HomeUsecase(
+                travelTemplateRepository: travelTemplateRepository,
+                travelRepository: travelProgramRepository,
+                userTravelRepository: userTravelRepository
+            )
+        }
+    }
+    
+    var followDetailUsecase: FollowDetailUsecaseProtocol {
+        shared {
+            FollowDetailUsecase(
+                travelTemplateRepository: travelTemplateRepository,
+                userTravelRepository: userTravelRepository,
+                placeRepository: placeRepository
+            )
+        }
     }
 
     var tokenProvider: TokenProviding {

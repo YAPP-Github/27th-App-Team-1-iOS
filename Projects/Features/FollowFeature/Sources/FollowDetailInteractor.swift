@@ -47,8 +47,8 @@ final class FollowDetailInteractor: PresentableInteractor<FollowDetailPresentabl
     weak var router: FollowDetailRouting?
     weak var listener: FollowDetailListener?
 
-    private let followService: FollowServiceProtocol
-    private let travelService: TravelServiceProtocol
+    private let followDetailUsecase: FollowDetailUsecaseProtocol
+    
     private let disposeBag = DisposeBag()
 
     // MARK: - Data (Source of Truth)
@@ -60,12 +60,10 @@ final class FollowDetailInteractor: PresentableInteractor<FollowDetailPresentabl
 
     init(
         presenter: FollowDetailPresentable,
-        followService: FollowServiceProtocol,
-        travelService: TravelServiceProtocol,
+        followDetailUsecase: FollowDetailUsecaseProtocol,
         recommendationId: Int
     ) {
-        self.followService = followService
-        self.travelService = travelService
+        self.followDetailUsecase = followDetailUsecase
         self.recommendationId = recommendationId
         super.init(presenter: presenter)
         presenter.listener = self
@@ -87,25 +85,23 @@ final class FollowDetailInteractor: PresentableInteractor<FollowDetailPresentabl
             await MainActor.run {
                 presenter.showLoading()
             }
-
-            let detailResult = await followService.fetchTravelDetail(id: recommendationId)
-
-            guard case .success(let detail) = detailResult else {
+            
+            do {
+                let detail = try await followDetailUsecase.fetchTravelDetail(id: recommendationId)
+                let places = try await followDetailUsecase.fetchPlaces(travelId: recommendationId, day: 1)
+                
+                await MainActor.run {
+                    self.travelDetail = detail
+                    self.placesByDay[1] = places
+                    presenter.updateTravelDetail(detail)
+                    presenter.updatePlaces(places)
+                    presenter.hideLoading()
+                }
+            } catch {
+                print(error)
                 await MainActor.run {
                     presenter.hideLoading()
                 }
-                return
-            }
-
-            let placesResult = await followService.fetchPlaces(travelId: recommendationId, day: 1)
-            let places = (try? placesResult.get()) ?? []
-
-            await MainActor.run {
-                self.travelDetail = detail
-                self.placesByDay[1] = places
-                presenter.updateTravelDetail(detail)
-                presenter.updatePlaces(places)
-                presenter.hideLoading()
             }
         }
     }
@@ -120,14 +116,19 @@ final class FollowDetailInteractor: PresentableInteractor<FollowDetailPresentabl
             await MainActor.run {
                 presenter.showLoading()
             }
-
-            let result = await followService.fetchPlaces(travelId: recommendationId, day: day)
-            let places = (try? result.get()) ?? []
-
-            await MainActor.run {
-                self.placesByDay[day] = places
-                presenter.updatePlaces(places)
-                presenter.hideLoading()
+            
+            do {
+                let places = try await followDetailUsecase.fetchPlaces(travelId: recommendationId, day: day)
+                
+                await MainActor.run {
+                    self.placesByDay[day] = places
+                    presenter.updatePlaces(places)
+                    presenter.hideLoading()
+                }
+            } catch {
+                await MainActor.run {
+                    presenter.hideLoading()
+                }
             }
         }
     }
@@ -191,21 +192,23 @@ extension FollowDetailInteractor: TripCalendarListener {
             await MainActor.run {
                 presenter.showLoading()
             }
-
-            let result = await travelService.createUserTravel(request: request)
-
-            await MainActor.run {
-                presenter.hideLoading()
-                router?.detachTripCalendar()
-
-                switch result {
-                case .success(let response):
+            
+            do {
+                let response = try await followDetailUsecase.createUserTravel(request: request)
+                
+                await MainActor.run {
+                    presenter.hideLoading()
+                    router?.detachTripCalendar()
+                    
                     let tripTitle = "\(travelDetail?.city ?? "새로운") 여행"
                     listener?.followDetailDidAddTrip(title: tripTitle, startDate: startDate, endDate: endDate)
                     print("여행 생성 성공 - userTravelId: \(response.userTravelId)")
-
-                case .failure(let error):
-                    handleCreateTravelError(error)
+                }
+            } catch {
+                await MainActor.run {
+                    presenter.hideLoading()
+                    router?.detachTripCalendar()
+                    print(error)
                 }
             }
         }
