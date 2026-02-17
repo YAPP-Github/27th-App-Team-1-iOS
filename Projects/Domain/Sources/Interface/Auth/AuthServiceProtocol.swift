@@ -1,5 +1,5 @@
 //
-//  AuthServiceProtocol.swift
+//  AuthRepositoryInterface.swift
 //  Domain
 //
 //  Created by NDGL on 2026-02-06.
@@ -8,6 +8,7 @@
 
 import Foundation
 
-public protocol AuthServiceProtocol: Sendable {
-    func signup(info: SignupInfo) async -> Result<SignupResult, SignupError>
+public protocol AuthRepositoryInterface {
+    func signup(info: SignupInfo) async throws -> SignupResult
+    func login(uuid: String) async throws -> LoginResult
 }

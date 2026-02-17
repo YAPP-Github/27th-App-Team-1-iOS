@@ -13,3 +13,8 @@ import Networks
 public func makeAuthService() -> AuthServiceProtocol {
     AuthService()
 }
+
+public func makeAuthRepository() -> AuthRepositoryInterface {
+    let service = makeAuthService()
+    return AuthRepository(service: service)
+}

@@ -6,6 +6,9 @@
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
+import Foundation
+
+import Domain
 import RIBs
 import RxSwift
 
@@ -35,19 +38,57 @@ final class RootInteractor: PresentableInteractor<RootPresentable>, RootInteract
     weak var router: RootRouting?
     weak var listener: RootListener?
 
+    private let authRepository: AuthRepositoryInterface
+    private let tokenRepository: TokenRepositoryProtocol
     private let disposeBag = DisposeBag()
 
-    override init(presenter: RootPresentable) {
+    init(
+        presenter: RootPresentable,
+        authRepository: AuthRepositoryInterface,
+        tokenRepository: TokenRepositoryProtocol
+    ) {
+        self.authRepository = authRepository
+        self.tokenRepository = tokenRepository
         super.init(presenter: presenter)
         presenter.listener = self
     }
 
     override func didBecomeActive() {
         super.didBecomeActive()
+        performAuthFlow()
     }
 
     override func willResignActive() {
         super.willResignActive()
+    }
+
+    private func performAuthFlow() {
+        Task { [weak self] in
+            guard let self else { return }
+
+            do {
+                if let uuid = self.tokenRepository.get(.uuid) {
+                    let loginResult = try await self.authRepository.login(uuid: uuid)
+                    self.tokenRepository.save(loginResult.accessToken, for: .accessToken)
+                } else {
+                    let fcmToken = self.tokenRepository.get(.fcmToken) ?? UUID().uuidString
+                    let signupResult = try await self.authRepository.signup(
+                        info: SignupInfo(fcmToken: fcmToken)
+                    )
+                    self.tokenRepository.save(signupResult.uuid, for: .uuid)
+                    self.tokenRepository.save(signupResult.accessToken, for: .accessToken)
+
+                    let loginResult = try await self.authRepository.login(uuid: signupResult.uuid)
+                    self.tokenRepository.save(loginResult.accessToken, for: .accessToken)
+                }
+
+                await MainActor.run {
+                    self.router?.attachMain()
+                }
+            } catch {
+                print("[RootInteractor] Auth flow failed: \(error)")
+            }
+        }
     }
 }
 

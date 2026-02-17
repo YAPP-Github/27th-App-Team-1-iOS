@@ -6,12 +6,12 @@
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
-import Alamofire
 import Foundation
 import Moya
                                                                                                                       
 public enum AuthAPI {
     case signup(request: SignupRequest)
+    case login(request: LoginRequest)
 }
 
 extension AuthAPI: TargetType {
@@ -23,12 +23,14 @@ extension AuthAPI: TargetType {
         switch self {
         case .signup:
             return "/api/v1/auth/users"
+        case .login:
+            return "/api/v1/auth/login"
         }
     }
 
     public var method: Moya.Method {
         switch self {
-        case .signup:
+        case .signup, .login:
             return .post
         }
     }
@@ -36,6 +38,8 @@ extension AuthAPI: TargetType {
     public var task: Moya.Task {
         switch self {
         case .signup(let request):
+            return .requestJSONEncodable(request)
+        case .login(let request):
             return .requestJSONEncodable(request)
         }
     }

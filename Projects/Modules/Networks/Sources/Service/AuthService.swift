@@ -6,9 +6,13 @@
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
-import Domain
 import Foundation
 import Moya
+
+public protocol AuthServiceProtocol: Sendable {
+    func signup(request: SignupRequest) async throws -> SignupResponse
+    func login(request: LoginRequest) async throws -> LoginResponse
+}
 
 public final class AuthService: AuthServiceProtocol, @unchecked Sendable {
     private let provider: MoyaProvider<AuthAPI>
@@ -17,28 +21,11 @@ public final class AuthService: AuthServiceProtocol, @unchecked Sendable {
         self.provider = provider
     }
 
-    public func signup(info: SignupInfo) async -> Result<SignupResult, SignupError> {
-        // Domain → DTO 변환
-        let request = SignupRequest(fcmToken: info.fcmToken)
+    public func signup(request: SignupRequest) async throws -> SignupResponse {
+        try await provider.asyncThowsRequest(.signup(request: request))
+    }
 
-        let result: NetworkResult<SignupResponse, SignupError> = await provider.request(
-            .signup(request: request),
-            errorMapper: SignupError.init
-        )
-
-        // NetworkResult → Result 변환 + DTO → Domain 변환
-        switch result {
-        case .success(let response):
-            let signupResult = SignupResult(
-                uuid: response.uuid,
-                accessToken: response.accessToken,
-                nickname: response.nickname
-            )
-            return .success(signupResult)
-        case .failure(let error):
-            return .failure(error)
-        case .networkFailure(let error):
-            return .failure(.networkError(message: error.message))
-        }
+    public func login(request: LoginRequest) async throws -> LoginResponse {
+        try await provider.asyncThowsRequest(.login(request: request))
     }
 }
