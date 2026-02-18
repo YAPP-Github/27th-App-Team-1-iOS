@@ -18,7 +18,6 @@ public final class TokenProviderAdapter: TokenProviding, @unchecked Sendable {
     }
 
     public func accessToken() -> String? {
-//        tokenRepository.get(.accessToken)
-        "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiYmE3ODIwYS0wMDUzLTQxZDctODdhYi00Zjk2ZWM3ZDI1MTMiLCJpYXQiOjE3NzEyMzU1MDUsImV4cCI6MTc3MTMyMTkwNX0.SfuVfF9FFpnFcUkGM7zC7mlE7-f8zo3NgG5mm86xekLnurFhGgnTIhwpew7FinguOex0smsnx--EHsMaED8D5A"
+        tokenRepository.get(.accessToken)
     }
 }

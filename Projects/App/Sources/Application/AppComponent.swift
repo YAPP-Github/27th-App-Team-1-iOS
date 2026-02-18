@@ -61,8 +61,16 @@ final class AppComponent: Component<EmptyDependency>, RootDependency {
         }
     }
 
+    var authRepository: AuthRepositoryInterface {
+        shared { makeAuthRepository() }
+    }
+
+    var tokenRepository: TokenRepositoryProtocol {
+        shared { TokenRepositoryFactory.make() }
+    }
+
     var tokenProvider: TokenProviding {
-        shared { TokenRepositoryFactory.makeTokenProvider() }
+        shared { TokenRepositoryFactory.makeTokenProvider(with: tokenRepository) }
     }
 
     init() {

@@ -16,6 +16,8 @@ import RIBs
 public protocol RootDependency: Dependency {
     var homeUsecase: HomeUsecaseProtocol { get }
     var followDetailUsecase: FollowDetailUsecaseProtocol { get }
+    var authRepository: AuthRepositoryInterface { get }
+    var tokenRepository: TokenRepositoryProtocol { get }
 }
 
 // MARK: - RootComponent
@@ -47,7 +49,11 @@ public final class RootBuilder: Builder<RootDependency>, RootBuildable {
     public func build() -> LaunchRouting {
         let component = RootComponent(dependency: dependency)
         let viewController = RootViewController()
-        let interactor = RootInteractor(presenter: viewController)
+        let interactor = RootInteractor(
+            presenter: viewController,
+            authRepository: dependency.authRepository,
+            tokenRepository: dependency.tokenRepository
+        )
 
         let mainBuilder = MainBuilder(dependency: component)
 
