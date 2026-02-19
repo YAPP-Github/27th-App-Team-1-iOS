@@ -13,7 +13,7 @@ import Moya
 public protocol TravelTemplateServiceProtocol {
     func getItinerary(travelId: Int, day: Int) async throws -> FollowItineraryResponse
     func getContentCard(id: Int) async throws -> FollowContentCardResponse
-    func searchTemplate() async throws -> Int
+    func searchTemplate(keyword: String, page: Int?, size: Int?) async throws -> TripResponse
     func getPopularTripList(id: Int?, page: Int?, size: Int?) async throws -> TripResponse
     func getRecommendTripList(page: Int?, size: Int?) async throws -> TripResponse
 }
@@ -33,8 +33,8 @@ public final class TravelTemplateService: TravelTemplateServiceProtocol {
         try await provider.asyncThowsRequest(.getContentCard(id: id))
     }
     
-    public func searchTemplate() async throws -> Int {
-        try await provider.asyncThowsRequest(.searchTemplate)
+    public func searchTemplate(keyword: String, page: Int?, size: Int?) async throws -> TripResponse {
+        try await provider.asyncThowsRequest(.searchTemplate(keyword: keyword, page: page, size: size))
     }
     
     public func getPopularTripList(id: Int?, page: Int?, size: Int?) async throws -> TripResponse {
