@@ -1,5 +1,5 @@
 //
-//  UserTravelRepositoryProtocol.swift
+//  UserTravelRepositoryInterface.swift
 //  Domain
 //
 //  Created by 최안용 on 2/14/26.
