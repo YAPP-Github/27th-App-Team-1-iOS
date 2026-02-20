@@ -85,10 +85,11 @@ extension TravelTemplateAPI: TargetType {
     }
     
     public var headers: [String: String]? {
-        [
-            "Content-Type": "application/json",
-            "X-API-KEY":
-                "ndgl_ios_7d61390564126f8e66deea15e20bb126c3be9190d9faf9d7c84fbe04ff544d4a"
-        ]
+        var headers = ["Content-Type": "application/json"]
+        #if !DEBUG
+        headers["X-API-KEY"] = NetworkConfiguration.apiKey
+        #endif
+        
+        return headers
     }
 }

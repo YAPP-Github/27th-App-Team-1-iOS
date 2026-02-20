@@ -54,6 +54,11 @@ extension PlaceAPI: TargetType {
     }
     
     public var headers: [String : String]? {
-        ["Content-Type": "application/json"]
+        var headers = ["Content-Type": "application/json"]
+        #if !DEBUG
+        headers["X-API-KEY"] = NetworkConfiguration.apiKey
+        #endif
+        
+        return headers
     }
 }
