@@ -13,7 +13,7 @@ enum SettingSection: Int, CaseIterable {
     
     var items: [SettingCellItem] {
         switch self {
-        case .menu: [.notification, .faq, .recommendLink, .terms, .version]
+        case .menu: [.faq, .recommendLink, .identificationCode,.terms, .personalInformation, .version]
         }
     }
 }

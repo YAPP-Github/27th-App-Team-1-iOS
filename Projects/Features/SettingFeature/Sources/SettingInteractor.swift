@@ -6,6 +6,8 @@
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
+import Core
+
 import RIBs
 import RxSwift
 
@@ -15,6 +17,8 @@ public protocol SettingRouting: ViewableRouting {
 
 public protocol SettingPresentable: Presentable {
     var listener: SettingPresentableListener? { get set }
+    
+    func copyToClipboard()
 }
 
 public protocol SettingListener: AnyObject {
@@ -51,15 +55,15 @@ final class SettingInteractor: PresentableInteractor<SettingPresentable>, Settin
 //        case .notification:
 //            print("알림")
         case .faq:
-            print("FAQ")
+            URLHelper.openURL("https://repeated-tapir-33f.notion.site/FAQ-30ccbdc5a38380d6af4af7b7c412921e?source=copy_link")
         case .recommendLink:
-            print("추천 링크")
+            URLHelper.openURL("https://forms.gle/3q1uhQVeeKRrz11y5")
         case .identificationCode:
-            print("내 식별코드")
+            presenter.copyToClipboard()
         case .terms:
-            print("서비스 약관")
+            URLHelper.openURL("https://repeated-tapir-33f.notion.site/2c8cbdc5a3838070a8d8ccdcd0631c9a?source=copy_link")
         case .personalInformation:
-            print("개인정보")
+            URLHelper.openURL("https://repeated-tapir-33f.notion.site/30ccbdc5a38380e3a50ace64a9b0f398?source=copy_link ")
         default: break
         }
     }
