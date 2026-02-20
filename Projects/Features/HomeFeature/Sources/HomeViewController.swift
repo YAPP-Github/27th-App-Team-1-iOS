@@ -44,7 +44,7 @@ final class HomeViewController: UIViewController, HomeViewControllable {
     private let loadingIndicator = UIActivityIndicatorView(style: .medium)
     private let networkErrorView = NDGLErrorView()
     
-    private var dataSource: UICollectionViewDiffableDataSource<HomeSectionKind, HomeItem>?
+    private var dataSource: UICollectionViewDiffableDataSource<HomeSectionKind, HomeItem>! = nil
     
     // MARK: - Lifecycle
     
