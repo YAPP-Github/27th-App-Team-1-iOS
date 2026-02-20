@@ -48,8 +48,8 @@ final class SettingInteractor: PresentableInteractor<SettingPresentable>, Settin
     func didTapMenu(item: SettingCellItem) {
         // 각 메뉴 타이틀에 따른 동작 처리
         switch item {
-        case .notification:
-            print("알림")
+//        case .notification:
+//            print("알림")
         case .faq:
             print("FAQ")
         case .recommendLink:
@@ -58,6 +58,8 @@ final class SettingInteractor: PresentableInteractor<SettingPresentable>, Settin
             print("내 식별코드")
         case .terms:
             print("서비스 약관")
+        case .personalInformation:
+            print("개인정보")
         default: break
         }
     }
