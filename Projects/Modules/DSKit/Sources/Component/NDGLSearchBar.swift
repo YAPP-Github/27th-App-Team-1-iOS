@@ -59,9 +59,21 @@ public final class NDGLSearchBar: UIView {
         trailingButton.rx.tap.asObservable()
     }
     
+    public var searchButtonClicked: ControlEvent<Void> {
+        textField.rx.controlEvent(.editingDidEndOnExit)
+    }
+    
+    public var editingDidBegin: ControlEvent<Void> {
+        textField.rx.controlEvent(.editingDidBegin)
+    }
+    
     /// 텍스트 변경 이벤트
     public var searchText: ControlProperty<String?> {
         textField.rx.text
+    }
+    
+    public func focus() {
+        textField.becomeFirstResponder()
     }
     
     // MARK: - Initializer
