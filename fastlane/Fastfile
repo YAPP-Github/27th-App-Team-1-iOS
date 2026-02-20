@@ -47,6 +47,12 @@ platform :ios do
     begin
       # 1. 인증서 동기화
       match(type: "appstore", readonly: true)
+      build_num = date_based_build_number
+      
+      increment_build_number(
+        build_number: build_num,
+        xcodeproj: "./Projects/App/App.xcodeproj"
+      )
 
       # 2. 앱 빌드
       build_app(
@@ -122,4 +128,11 @@ def send_discord_message(message:, success:, type: "CI")
     description: message,
     success: success
   )
+end
+
+#########################################
+# 🗓 날짜 기반 빌드 번호 함수
+#########################################
+def date_based_build_number
+   Time.new.strftime("%Y.%m%d.%H%M")
 end

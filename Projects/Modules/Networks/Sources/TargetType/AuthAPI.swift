@@ -47,7 +47,7 @@ extension AuthAPI: TargetType {
     public var headers: [String: String]? {
         var headers = ["Content-Type": "application/json"]
         #if !DEBUG
-        headers["X-API-KEY"] = NetworkConfiguration.apiKey
+        headers["X_API_KEY"] = NetworkConfiguration.apiKey
         #endif
         
         return headers

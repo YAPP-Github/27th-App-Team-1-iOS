@@ -22,7 +22,7 @@ public enum NetworkConfiguration {
     
     public static var apiKey: String {
         let bundle = Bundle.main
-        guard let apiHeader = bundle.infoDictionary?["X-API-KEY"] as? String else {
+        guard let apiHeader = bundle.infoDictionary?["X_API_KEY"] as? String else {
             fatalError("X-API-KEY not found in Info.plist")
         }
         return apiHeader
