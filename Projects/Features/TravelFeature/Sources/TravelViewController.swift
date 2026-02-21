@@ -27,14 +27,9 @@ final class TravelViewController: UIViewController, TravelPresentable, TravelVie
 
     // MARK: - UI Components
 
-    private let titleLabel = UILabel().then {
-        $0.setText(.subTitleLSB, text: "다가오는 여행", color: UIColor(hexCode: "#111111"))
-    }
-
-    private let menuButton = UIButton(type: .system).then {
-        $0.setImage(UIImage(systemName: "line.3.horizontal"), for: .normal)
-        $0.tintColor = UIColor(hexCode: "#111111")
-    }
+    private let navigationBar = NDGLNavigationBar(
+        title: "다가오는 여행"
+    )
 
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -77,25 +72,19 @@ final class TravelViewController: UIViewController, TravelPresentable, TravelVie
     private func setupUI() {
         view.backgroundColor = UIColor(hexCode: "#FFFFFF")
 
-        [titleLabel, menuButton, collectionView, emptyStateLabel, loadingIndicator].forEach {
+        [navigationBar, collectionView, emptyStateLabel, loadingIndicator].forEach {
             view.addSubview($0)
         }
     }
 
     private func setupConstraints() {
-        titleLabel.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(16)
-            $0.leading.equalToSuperview().offset(24)
-        }
-
-        menuButton.snp.makeConstraints {
-            $0.centerY.equalTo(titleLabel)
-            $0.trailing.equalToSuperview().offset(-24)
-            $0.size.equalTo(24)
+        navigationBar.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.horizontalEdges.equalToSuperview()
         }
 
         collectionView.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(24)
+            $0.top.equalTo(navigationBar.snp.bottom).offset(24)
             $0.leading.equalToSuperview().offset(24)
             $0.trailing.equalToSuperview().offset(-24)
             $0.bottom.equalToSuperview()
@@ -117,13 +106,6 @@ final class TravelViewController: UIViewController, TravelPresentable, TravelVie
     }
 
     private func setupActions() {
-        menuButton.addTarget(self, action: #selector(menuButtonTapped), for: .touchUpInside)
-    }
-
-    // MARK: - Actions
-
-    @objc private func menuButtonTapped() {
-        listener?.didTapMenuButton()
     }
 }
 

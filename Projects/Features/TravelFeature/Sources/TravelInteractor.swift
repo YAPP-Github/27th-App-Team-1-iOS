@@ -29,7 +29,6 @@ protocol TravelPresentable: Presentable {
 
 protocol TravelPresentableListener: AnyObject {
     func didTapTrip(_ trip: UpcomingTrip)
-    func didTapMenuButton()
 }
 
 // MARK: - TravelInteractor
@@ -114,8 +113,5 @@ final class TravelInteractor: PresentableInteractor<TravelPresentable>, TravelIn
 extension TravelInteractor: TravelPresentableListener {
 
     func didTapTrip(_ trip: UpcomingTrip) {
-    }
-
-    func didTapMenuButton() {
     }
 }

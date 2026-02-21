@@ -31,8 +31,7 @@ final class FollowDetailViewController: UIViewController, FollowDetailPresentabl
     // MARK: - UI Components (Scroll)
     private let navigationBar = NDGLNavigationBar(
         style: .gray,
-        leadingIcon: DSKitAsset.Assets.icChevronLeft3.image,
-        trailingIcon: DSKitAsset.Assets.icShare1.image
+        leadingIcon: DSKitAsset.Assets.icChevronLeft3.image
     )
     
     private let scrollView = UIScrollView().then {
