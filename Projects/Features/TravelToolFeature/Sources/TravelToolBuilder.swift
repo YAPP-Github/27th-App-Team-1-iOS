@@ -6,16 +6,21 @@
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
+import Domain
 import RIBs
 
 // MARK: - TravelToolDependency
 
 public protocol TravelToolDependency: Dependency {
+    var homeUsecase: HomeUsecaseProtocol { get }
 }
 
 // MARK: - TravelToolComponent
 
 final class TravelToolComponent: Component<TravelToolDependency> {
+    var homeUsecase: HomeUsecaseProtocol {
+        dependency.homeUsecase
+    }
 }
 
 // MARK: - TravelToolBuildable
@@ -35,7 +40,10 @@ public final class TravelToolBuilder: Builder<TravelToolDependency>, TravelToolB
     public func build(withListener listener: TravelToolListener) -> TravelToolRouting {
         let component = TravelToolComponent(dependency: dependency)
         let viewController = TravelToolViewController()
-        let interactor = TravelToolInteractor(presenter: viewController)
+        let interactor = TravelToolInteractor(
+            presenter: viewController,
+            usecase: component.homeUsecase
+        )
         interactor.listener = listener
 
         let router = TravelToolRouter(
