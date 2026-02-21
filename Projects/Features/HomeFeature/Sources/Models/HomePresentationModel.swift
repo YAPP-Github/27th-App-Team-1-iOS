@@ -89,21 +89,27 @@ extension HomePresentationModel.Schedule {
 
 extension MyTripSummary {
     func toPresention() -> HomePresentationModel.Banner {
+        let schedule: HomePresentationModel.Schedule
+        if let s = self.tripSchedule {
+            schedule = .init(
+                id: s.id,
+                day: s.day,
+                placeName: s.placeName,
+                thumbnailUrl: s.thumbnailUrl,
+                transport: s.transport,
+                estimatedDuration: s.estimatedDuration
+            )
+        } else {
+            schedule = .empty
+        }
+
         return HomePresentationModel.Banner(
             id: self.id,
             title: self.title,
             startDay: self.startDay,
             endDay: self.endDay,
             duration: "\(self.startDay.toKoreanMMdd())~\(self.endDay.toKoreanMMdd())",
-            tripSchedule:
-                    .init(
-                        id: self.tripSchedule.id,
-                        day: self.tripSchedule.day,
-                        placeName: self.tripSchedule.placeName,
-                        thumbnailUrl: self.tripSchedule.thumbnailUrl,
-                        transport: self.tripSchedule.transport,
-                        estimatedDuration: self.tripSchedule.estimatedDuration
-                    )
+            tripSchedule: schedule
         )
     }
 }
