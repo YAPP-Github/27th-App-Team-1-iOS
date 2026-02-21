@@ -140,6 +140,10 @@ final class MainRouter: ViewableRouter<MainInteractable, MainViewControllable>, 
         self.settingRouter = nil
     }
     
+    func switchToTab(at index: Int) {
+        tabBarRouter?.switchToTab(at: index)
+    }
+
     func attachTabBar() {
         guard tabBarRouter == nil else { return }
         let router = tabBarBuilder.build(withListener: interactor)

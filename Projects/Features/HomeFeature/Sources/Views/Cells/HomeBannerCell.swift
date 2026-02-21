@@ -16,8 +16,8 @@ final class HomeBannerCell: UICollectionViewCell {
     private var type: HomeBannerType = .empty
     
     private let emptyView = HomeBannerEmptyView()
-    private let upCommingView = HomeBannerUpCommingView()
-    private let onGoingView = HomeBannerOnGoingView()
+    private let upCommingView = NDGLUpComingView()
+    private let onGoingView = NDGLOnGoingView()
     private let stackView = UIStackView()
     
     override init(frame: CGRect) {

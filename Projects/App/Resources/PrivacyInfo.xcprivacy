@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- 사용자 행동 추적 여부 -->
+	<key>NSPrivacyTracking</key>
+	<false/>
+
+	<!-- 추적에 사용되는 도메인 (추적 없으므로 빈 배열) -->
+	<key>NSPrivacyTrackingDomains</key>
+	<array/>
+
+	<!-- 수집하는 데이터 유형 (직접 수집 없으므로 빈 배열) -->
+	<key>NSPrivacyCollectedDataTypes</key>
+	<array/>
+
+	<!-- Required Reason API 사용 목적 선언 -->
+	<key>NSPrivacyAccessedAPITypes</key>
+	<array>
+		<!-- UserDefaults: uuid, nickname 등 앱 상태 관리용으로만 사용 -->
+		<dict>
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>CA92.1</string>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>

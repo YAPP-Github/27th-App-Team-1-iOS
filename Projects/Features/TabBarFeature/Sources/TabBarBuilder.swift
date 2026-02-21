@@ -10,18 +10,24 @@ import Domain
 import HomeFeature
 import RIBs
 import TravelFeature
+import TravelToolFeature
 
 // MARK: - TabBarDependency
 
 public protocol TabBarDependency: Dependency {
     var homeUsecase: HomeUsecaseProtocol { get }
+    var weatherRepository: WeatherRepositoryInterface { get }
 }
 
 // MARK: - TabBarComponent
 
-final class TabBarComponent: Component<TabBarDependency>, HomeDependency, TravelDependency {
+final class TabBarComponent: Component<TabBarDependency>, HomeDependency, TravelDependency, TravelToolDependency {
     var homeUsecase: HomeUsecaseProtocol {
         dependency.homeUsecase
+    }
+
+    var weatherRepository: WeatherRepositoryInterface {
+        dependency.weatherRepository
     }
 }
 
@@ -47,12 +53,14 @@ public final class TabBarBuilder: Builder<TabBarDependency>, TabBarBuildable {
 
         let homeBuilder = HomeBuilder(dependency: component)
         let travelBuilder = TravelBuilder(dependency: component)
+        let travelToolBuilder = TravelToolBuilder(dependency: component)
 
         let router = TabBarRouter(
             interactor: interactor,
             viewController: viewController,
             homeBuilder: homeBuilder,
-            travelBuilder: travelBuilder
+            travelBuilder: travelBuilder,
+            travelToolBuilder: travelToolBuilder
         )
 
         return router

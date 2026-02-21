@@ -10,11 +10,13 @@ import Foundation
 import HomeFeature
 import RIBs
 import RxSwift
+import TravelToolFeature
 
 // MARK: - TabBarRouting
 
 public protocol TabBarRouting: ViewableRouting {
     func attachTabs()
+    func switchToTab(at index: Int)
 }
 
 // MARK: - TabBarPresentable
@@ -84,4 +86,9 @@ extension TabBarInteractor: HomeListener {
     func homeDidAddTrip(title: String, startDate: Date, endDate: Date) {
         presenter.switchToTab(at: 2)
     }
+}
+
+// MARK: - TravelToolListener
+
+extension TabBarInteractor: TravelToolListener {
 }

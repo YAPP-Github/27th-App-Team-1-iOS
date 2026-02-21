@@ -143,6 +143,37 @@ extension MoyaProvider {
         }
     }
     
+    func asyncThrowsRequestRaw<T: Decodable>(_ target: Target) async throws -> T {
+        try await withCheckedThrowingContinuation { continuation in
+            NetworkLogger.logRequest(target)
+
+            request(target) { result in
+                switch result {
+                case .success(let response):
+                    NetworkLogger.logResponse(response)
+
+                    guard (200...299).contains(response.statusCode) else {
+                        continuation.resume(
+                            throwing: NetworkError.unknown("Status Code: \(response.statusCode)")
+                        )
+                        return
+                    }
+
+                    do {
+                        let decoded = try JSONDecoder().decode(T.self, from: response.data)
+                        continuation.resume(returning: decoded)
+                    } catch {
+                        NetworkLogger.logDecodingError(error, data: response.data)
+                        continuation.resume(throwing: NetworkError.decodingFailed)
+                    }
+                case .failure(let error):
+                    NetworkLogger.logError(error)
+                    continuation.resume(throwing: NetworkError.unknown(error.localizedDescription))
+                }
+            }
+        }
+    }
+
     private static func mapMoyaError(_ error: MoyaError) -> NetworkError {
         switch error {
         case .underlying(let nsError as NSError, _)

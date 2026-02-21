@@ -168,7 +168,7 @@ private extension NDGLNavigationBar {
         }
         
         containerStackView.snp.makeConstraints {
-            $0.directionalHorizontalEdges.equalToSuperview().inset(24.adjusted)
+            $0.directionalHorizontalEdges.equalToSuperview().inset(14.adjusted)
             $0.directionalVerticalEdges.equalToSuperview().inset(4.adjustedH)
         }
         

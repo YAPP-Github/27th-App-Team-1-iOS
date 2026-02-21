@@ -12,12 +12,14 @@ import RIBs
 import RxSwift
 
 public protocol SearchRouting: ViewableRouting {
-    func attachSearchResult(keyword: String)
-    func detachSearchResult()
 }
 
 protocol SearchPresentable: Presentable {
     var listener: SearchPresentableListener? { get set }
+
+    func update(with model: SearchResultPresentationModel)
+    func setLoading(_ isLoading: Bool)
+    func showErrorView(_ isError: Bool)
 }
 
 public protocol SearchListener: AnyObject {
@@ -30,7 +32,9 @@ final class SearchInteractor: PresentableInteractor<SearchPresentable>, SearchIn
     weak var listener: SearchListener?
 
     private let usecase: TemplatesSearchUsecaseProtocol
-    
+    private var fetchDataTask: Task<Void, Never>?
+    private var lastKeyword: String?
+
     init(presenter: SearchPresentable, usecase: TemplatesSearchUsecaseProtocol) {
         self.usecase = usecase
         super.init(presenter: presenter)
@@ -39,27 +43,56 @@ final class SearchInteractor: PresentableInteractor<SearchPresentable>, SearchIn
 
     override func didBecomeActive() {
         super.didBecomeActive()
-        // TODO: Implement business logic here.
     }
 
     override func willResignActive() {
         super.willResignActive()
-        // TODO: Pause any business logic.
+
+        fetchDataTask?.cancel()
+        fetchDataTask = nil
     }
-    
+
     func search(keyword: String) {
-        router?.attachSearchResult(keyword: keyword)
+        lastKeyword = keyword
+        fetchData(keyword: keyword)
     }
-    
-    func detachSearchResult() {
-        router?.detachSearchResult()
+
+    func itemSelected(item: SearchResultItem) {
+        switch item {
+        case .resultTrip(let trip):
+            listener?.attachFollowDetail(with: trip.id)
+        }
     }
-    
-    func popularTravelDidTapFollowDetail(with recommendationId: Int) {
-        listener?.attachFollowDetail(with: recommendationId)
+
+    func reloadBtnTapped() {
+        guard let keyword = lastKeyword else { return }
+        fetchData(keyword: keyword)
     }
-    
+
     func detachSearch() {
         listener?.detachSearch()
+    }
+
+    private func fetchData(keyword: String) {
+        fetchDataTask?.cancel()
+
+        presenter.setLoading(true)
+        presenter.showErrorView(false)
+
+        fetchDataTask = Task { [weak self] in
+            guard let self, !Task.isCancelled else { return }
+
+            do {
+                let result = try await self.usecase.searchTemplate(keyword: keyword)
+
+                let model = SearchResultPresentationModel(resultTrip: result.map { $0.toSearchResultModel() })
+
+                self.presenter.update(with: model)
+                self.presenter.setLoading(false)
+            } catch {
+                self.presenter.setLoading(false)
+                self.presenter.showErrorView(true)
+            }
+        }
     }
 }

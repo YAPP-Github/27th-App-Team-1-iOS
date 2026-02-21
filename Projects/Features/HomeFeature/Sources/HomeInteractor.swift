@@ -95,51 +95,54 @@ final class HomeInteractor: PresentableInteractor<HomePresentable>, HomeInteract
             owner.presenter.update(with: sections)
         }
         .disposed(by: disposeBag)
-        
-        homeDataRelay
-            .map { $0 == nil }
-            .subscribe(with: self) { owner, isLoading in
-                owner.presenter.setLoading(isLoading)
-            }
-            .disposed(by: disposeBag)
     }
     
+    private static let allCategoryId = -1
+
     private func fetchHomeData() {
         fetchDataTask?.cancel()
-        
+
         presenter.setLoading(true)
         presenter.showErrorView(false)
-        
+
         fetchDataTask = Task { [weak self] in
             guard let self, !Task.isCancelled else { return }
-            
+
             do {
-                let myTripBanner: HomePresentationModel.Banner = await {
-                    do {
-                        return try await self.usecase.fetchMyTripInfo().toPresention()
-                    } catch {
-                        
-                        return .empty
-                    }
-                }()
-                
-                async let categories = self.usecase.fetchCategoryList().map { $0.toHomeModel() }
-                async let populars = self.usecase.fetchPopularTripList().map { $0.toPopularHomeModel() }
+                let usecase = self.usecase
+                var myTripBanner: HomePresentationModel.Banner
+                do {
+                    let tripInfo = try await usecase.fetchMyTripInfo()
+                    myTripBanner = tripInfo.toPresention()
+                } catch {
+                    myTripBanner = .empty
+                }
+
+                let allCategory = HomePresentationModel.Category(
+                    id: HomeInteractor.allCategoryId,
+                    creator: "전체",
+                    viedoType: .none
+                )
+
+                async let apiCategories = self.usecase.fetchCategoryList().map { $0.toHomeModel() }
+                async let populars = self.usecase.fetchPopularTripList(id: nil).map { $0.toPopularHomeModel() }
                 async let recommended = self.usecase.fetchRecommendTripList().map { $0.toRecommendHomeModel() }
-                
+
+                let categories = try await [allCategory] + apiCategories
+
                 let model = try await HomePresentationModel(
                     banner: myTripBanner,
                     category: categories,
                     popularTrip: populars,
                     recommendedTrip: recommended
                 )
-                
+
                 guard !Task.isCancelled else { return }
-                
-                if self.selectedCategoryRelay.value == nil, let firstId = model.category.first?.id {
-                    self.selectedCategoryRelay.accept(firstId)
+
+                if self.selectedCategoryRelay.value == nil {
+                    self.selectedCategoryRelay.accept(HomeInteractor.allCategoryId)
                 }
-                
+
                 homeDataRelay.accept(model)
                 presenter.setLoading(false)
             } catch let error {
@@ -149,10 +152,37 @@ final class HomeInteractor: PresentableInteractor<HomePresentable>, HomeInteract
             }
         }
     }
+
+    private func fetchPopularTrips(categoryId: Int) {
+        Task { [weak self] in
+            guard let self else { return }
+
+            do {
+                let apiId: Int? = categoryId == HomeInteractor.allCategoryId ? nil : categoryId
+                let populars = try await self.usecase.fetchPopularTripList(id: apiId).map { $0.toPopularHomeModel() }
+
+                guard !Task.isCancelled, let model = self.homeDataRelay.value else { return }
+
+                let updated = HomePresentationModel(
+                    banner: model.banner,
+                    category: model.category,
+                    popularTrip: populars,
+                    recommendedTrip: model.recommendedTrip
+                )
+                self.homeDataRelay.accept(updated)
+            } catch {
+                print(error)
+            }
+        }
+    }
 }
 
 // MARK: - HomePresentableListener
 extension HomeInteractor: HomePresentableListener {
+    func viewWillAppear() {
+        fetchHomeData()
+    }
+
     func reloadBtnTapped() {
         fetchHomeData()
     }
@@ -168,7 +198,10 @@ extension HomeInteractor: HomePresentableListener {
     func itemSelected(item: HomeItem) {
         switch item {
         case .category(let category, _):
-            selectedCategoryRelay.accept(category.id)
+            let categoryId = category.id
+            guard categoryId != selectedCategoryRelay.value else { return }
+            selectedCategoryRelay.accept(categoryId)
+            fetchPopularTrips(categoryId: categoryId)
         case .popularTrip(let trip):
             listener?.homeDidTapFollowDetail(with: trip.id)
         case .recommendedTrip(let trip):

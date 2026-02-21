@@ -19,19 +19,24 @@ public protocol MainDependency: Dependency {
     var homeUsecase: HomeUsecaseProtocol { get }
     var followDetailUsecase: FollowDetailUsecaseProtocol { get }
     var templateSearchUsecase: TemplatesSearchUsecaseProtocol { get }
+    var weatherRepository: WeatherRepositoryInterface { get }
 }
 
 final class MainComponent: Component<MainDependency>, FollowDetailDependency, PopularTravelDependency,SearchDependency, SettingDependency, TabBarDependency {
     var searchUsecase: TemplatesSearchUsecaseProtocol {
         dependency.templateSearchUsecase
     }
-    
+
     var followDetailUsecase: FollowDetailUsecaseProtocol {
         dependency.followDetailUsecase
     }
-    
+
     var homeUsecase: HomeUsecaseProtocol {
         dependency.homeUsecase
+    }
+
+    var weatherRepository: WeatherRepositoryInterface {
+        dependency.weatherRepository
     }
 }
 

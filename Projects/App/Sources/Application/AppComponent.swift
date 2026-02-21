@@ -41,6 +41,13 @@ final class AppComponent: Component<EmptyDependency>, RootDependency {
         }
     }
     
+    var weatherRepository: WeatherRepositoryInterface {
+        shared {
+            let service = makeWeatherService()
+            return WeatherRepository(service: service)
+        }
+    }
+
     var homeUsecase: HomeUsecaseProtocol {
         shared {
             HomeUsecase(

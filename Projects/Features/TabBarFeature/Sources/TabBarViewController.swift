@@ -52,24 +52,23 @@ public final class TabBarViewController: UITabBarController, TabBarPresentable, 
     // MARK: - TabBarViewControllable
 
     public func setViewControllers(_ viewControllers: [ViewControllable]) {
-        guard viewControllers.count >= 2 else {
+        guard viewControllers.count >= 3 else {
             return
         }
 
-        let homeVC = viewControllers[0].uiviewController
-        let travelVC = viewControllers[1].uiviewController
+        let travelToolVC = viewControllers[0].uiviewController
+        let homeVC = viewControllers[1].uiviewController
+        let travelVC = viewControllers[2].uiviewController
 
-        let infoDummy = UIViewController().then { $0.view.backgroundColor = .white }
-
-        let infoNav = UINavigationController(rootViewController: infoDummy)
+        let travelToolNav = UINavigationController(rootViewController: travelToolVC)
         let homeNav = UINavigationController(rootViewController: homeVC)
         let travelNav = UINavigationController(rootViewController: travelVC)
 
-        super.setViewControllers([infoNav, homeNav, travelNav], animated: false)
+        super.setViewControllers([travelToolNav, homeNav, travelNav], animated: false)
         setupTabItems()
     }
 
-    func switchToTab(at index: Int) {
+    public func switchToTab(at index: Int) {
         guard index < tabItems.count else { return }
 
         updateSelection(at: index)

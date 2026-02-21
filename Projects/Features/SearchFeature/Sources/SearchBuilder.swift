@@ -14,7 +14,7 @@ public protocol SearchDependency: Dependency {
     var searchUsecase: TemplatesSearchUsecaseProtocol { get }
 }
 
-final class SearchComponent: Component<SearchDependency>, SearchResultDependency {
+final class SearchComponent: Component<SearchDependency> {
     var searchUsecase: TemplatesSearchUsecaseProtocol {
         dependency.searchUsecase
     }
@@ -35,13 +35,10 @@ public final class SearchBuilder: Builder<SearchDependency>, SearchBuildable {
         let viewController = SearchViewController()
         let interactor = SearchInteractor(presenter: viewController, usecase: component.searchUsecase)
         interactor.listener = listener
-        
-        let searchResultBuilder = SearchResultBuilder(dependency: component)
-        
+
         return SearchRouter(
             interactor: interactor,
-            viewController: viewController,
-            searchResultBuilder: searchResultBuilder
+            viewController: viewController
         )
     }
 }

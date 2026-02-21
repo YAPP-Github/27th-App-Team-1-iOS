@@ -15,7 +15,7 @@ import RxSwift
 
 public protocol FollowDetailListener: AnyObject {
     func detachFollowDetail()
-    func followDetailDidAddTrip(title: String, startDate: Date, endDate: Date)
+    func followDetailDidViewTrip()
 }
 
 // MARK: - FollowDetailPresentable
@@ -28,6 +28,7 @@ protocol FollowDetailPresentable: Presentable {
     func updateTravelDetail(_ detail: TravelDetail)
     func updatePlaces(_ places: [TravelPlace])
     func showPlaceDetail(_ place: TravelPlace)
+    func showTripCreatedModal(onLater: @escaping () -> Void, onViewTrip: @escaping () -> Void)
 }
 
 // MARK: - FollowDetailPresentableListener
@@ -192,16 +193,24 @@ extension FollowDetailInteractor: TripCalendarListener {
             await MainActor.run {
                 presenter.showLoading()
             }
-            
+
             do {
                 let response = try await followDetailUsecase.createUserTravel(request: request)
-                
-                await MainActor.run {
+
+                await MainActor.run { [weak self] in
+                    guard let self else { return }
                     presenter.hideLoading()
-                    router?.detachTripCalendar()
-                    
-                    let tripTitle = "\(travelDetail?.city ?? "새로운") 여행"
-                    listener?.followDetailDidAddTrip(title: tripTitle, startDate: startDate, endDate: endDate)
+
+                    presenter.showTripCreatedModal(
+                        onLater: { [weak self] in
+                            self?.router?.detachTripCalendar()
+                            self?.listener?.detachFollowDetail()
+                        },
+                        onViewTrip: { [weak self] in
+                            self?.router?.detachTripCalendar()
+                            self?.listener?.followDetailDidViewTrip()
+                        }
+                    )
                     print("여행 생성 성공 - userTravelId: \(response.userTravelId)")
                 }
             } catch {

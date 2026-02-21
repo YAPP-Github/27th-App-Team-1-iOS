@@ -9,6 +9,7 @@
 import Core
 import DSKit
 import RIBs
+import RxSwift
 import SnapKit
 import Then
 import UIKit
@@ -21,10 +22,16 @@ final class TripCalendarViewController: UIViewController, TripCalendarPresentabl
 
     weak var listener: TripCalendarPresentableListener?
 
+    private let disposeBag = DisposeBag()
     private var selectedStartDate: Date?
     private var selectedEndDate: Date?
 
     // MARK: - UI Components
+
+    private let navigationBar = NDGLNavigationBar(
+        title: "여행 따라가기",
+        leadingIcon: DSKitAsset.Assets.icChevronLeft3.image
+    )
 
     private let calendarView = CalendarView()
 
@@ -50,18 +57,27 @@ final class TripCalendarViewController: UIViewController, TripCalendarPresentabl
 
     // MARK: - Setup
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: animated)
+    }
+
     private func setupUI() {
-        title = "여행 따라가기"
         view.backgroundColor = UIColor(hexCode: "#FFFFFF")
 
-        [calendarView, completeButton].forEach {
+        [navigationBar, calendarView, completeButton].forEach {
             view.addSubview($0)
         }
     }
 
     private func setupConstraints() {
+        navigationBar.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.horizontalEdges.equalToSuperview()
+        }
+
         calendarView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(16)
+            $0.top.equalTo(navigationBar.snp.bottom).offset(16)
             $0.leading.trailing.equalToSuperview()
         }
 
@@ -78,6 +94,12 @@ final class TripCalendarViewController: UIViewController, TripCalendarPresentabl
 
     private func setupActions() {
         completeButton.addTarget(self, action: #selector(completeButtonTapped), for: .touchUpInside)
+
+        navigationBar.leadingButtonDidTap
+            .subscribe(with: self) { owner, _ in
+                owner.navigationController?.popViewController(animated: true)
+            }
+            .disposed(by: disposeBag)
     }
 
     // MARK: - Actions

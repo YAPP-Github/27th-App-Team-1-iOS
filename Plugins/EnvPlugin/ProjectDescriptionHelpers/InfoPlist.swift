@@ -33,7 +33,8 @@ public extension Project {
         ]),
         "ITSAppUsesNonExemptEncryption": .boolean(false),
         "BASE_URL": .string("$(BASE_URL)"),
-        "X_API_KEY": .string("$(X_API_KEY)")
+        "X_API_KEY": .string("$(X_API_KEY)"),
+        "GOOGLE_WEATHER_API_KEY": .string("$(GOOGLE_WEATHER_API_KEY)")
     ]
 
     static let demoInfoPlist: [String: Plist.Value] = [

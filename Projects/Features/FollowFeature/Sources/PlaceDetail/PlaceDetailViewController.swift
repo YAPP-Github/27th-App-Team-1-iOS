@@ -10,6 +10,7 @@ import Domain
 import DSKit
 import Kingfisher
 import RIBs
+import RxSwift
 import SnapKit
 import UIKit
 
@@ -20,7 +21,14 @@ final class PlaceDetailViewController: UIViewController, PlaceDetailPresentable,
     // MARK: - Properties
 
     weak var listener: PlaceDetailPresentableListener?
+    private let disposeBag = DisposeBag()
     private var segmentOriginY: CGFloat = .greatestFiniteMagnitude
+
+    // MARK: - UI Components (Navigation)
+
+    private let navigationBar = NDGLNavigationBar(
+        leadingIcon: DSKitAsset.Assets.icChevronLeft3.image
+    )
 
     // MARK: - UI Components (Fixed Header)
 
@@ -183,7 +191,7 @@ final class PlaceDetailViewController: UIViewController, PlaceDetailPresentable,
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(false, animated: animated)
+        navigationController?.setNavigationBarHidden(true, animated: animated)
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -203,6 +211,7 @@ final class PlaceDetailViewController: UIViewController, PlaceDetailPresentable,
     private func setupUI() {
         view.backgroundColor = .white
 
+        view.addSubview(navigationBar)
         view.addSubview(fixedHeaderView)
         [nameLabel, ratingLabel, reviewCountLabel].forEach { fixedHeaderView.addSubview($0) }
 
@@ -224,8 +233,13 @@ final class PlaceDetailViewController: UIViewController, PlaceDetailPresentable,
     }
 
     private func setupConstraints() {
-        fixedHeaderView.snp.makeConstraints {
+        navigationBar.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.horizontalEdges.equalToSuperview()
+        }
+
+        fixedHeaderView.snp.makeConstraints {
+            $0.top.equalTo(navigationBar.snp.bottom)
             $0.leading.trailing.equalToSuperview()
         }
 
@@ -358,6 +372,12 @@ final class PlaceDetailViewController: UIViewController, PlaceDetailPresentable,
     private func setupActions() {
         segmentedControl.addTarget(self, action: #selector(segmentChanged(_:)), for: .valueChanged)
         stickySegmentedControl.addTarget(self, action: #selector(segmentChanged(_:)), for: .valueChanged)
+
+        navigationBar.leadingButtonDidTap
+            .subscribe(with: self) { owner, _ in
+                owner.navigationController?.popViewController(animated: true)
+            }
+            .disposed(by: disposeBag)
     }
 
     // MARK: - Actions

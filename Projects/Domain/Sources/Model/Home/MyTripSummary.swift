@@ -12,13 +12,17 @@ import Foundation
 public struct MyTripSummary {
     public let id: Int
     public let title: String
+    public let city: String
+    public let country: String
     public let startDay: Date
     public let endDay: Date
     public let tripSchedule: Schedule
-    
-    public init(id: Int, title: String, startDay: Date, endDay: Date, tripSchedule: Schedule) {
+
+    public init(id: Int, title: String, city: String, country: String, startDay: Date, endDay: Date, tripSchedule: Schedule) {
         self.id = id
         self.title = title
+        self.city = city
+        self.country = country
         self.startDay = startDay
         self.endDay = endDay
         self.tripSchedule = tripSchedule
@@ -33,14 +37,18 @@ public struct Schedule {
     public let thumbnailUrl: String
     public let transport: String
     public let estimatedDuration: Int
-    
+    public let latitude: Double
+    public let longitude: Double
+
     public init(
         id: Int,
         day: Int,
         placeName: String,
         thumbnailUrl: String,
         transport: String,
-        estimatedDuration: Int
+        estimatedDuration: Int,
+        latitude: Double,
+        longitude: Double
     ) {
         self.id = id
         self.day = day
@@ -48,5 +56,7 @@ public struct Schedule {
         self.thumbnailUrl = thumbnailUrl
         self.transport = transport
         self.estimatedDuration = estimatedDuration
+        self.latitude = latitude
+        self.longitude = longitude
     }
 }

@@ -31,8 +31,7 @@ final class FollowDetailViewController: UIViewController, FollowDetailPresentabl
     // MARK: - UI Components (Scroll)
     private let navigationBar = NDGLNavigationBar(
         style: .gray,
-        leadingIcon: DSKitAsset.Assets.icChevronLeft3.image,
-        trailingIcon: DSKitAsset.Assets.icShare1.image
+        leadingIcon: DSKitAsset.Assets.icChevronLeft3.image
     )
     
     private let scrollView = UIScrollView().then {
@@ -253,6 +252,18 @@ extension FollowDetailViewController {
         placeListCollectionView.snp.updateConstraints {
             $0.height.greaterThanOrEqualTo(max(400, height))
         }
+    }
+
+    func showTripCreatedModal(onLater: @escaping () -> Void, onViewTrip: @escaping () -> Void) {
+        let modal = NDGLModalViewController(
+            title: "여행이 준비됐어요",
+            subtitle: "이제 선택한 여행을\n그대로 따라갈 수 있어요.",
+            cancelButtonTitle: "나중에 보러가기",
+            actionButtonTitle: "여행 보러가기"
+        )
+        modal.onCancelTapped = onLater
+        modal.onActionTapped = onViewTrip
+        present(modal, animated: true)
     }
 
     func showPlaceDetail(_ place: TravelPlace) {
