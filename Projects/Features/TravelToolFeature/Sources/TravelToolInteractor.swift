@@ -9,6 +9,7 @@
 import Foundation
 
 import Domain
+import DSKit
 import RIBs
 import RxSwift
 
@@ -173,6 +174,8 @@ final class TravelToolInteractor: PresentableInteractor<TravelToolPresentable>, 
             return .onGoing(
                 title: "\(summary.title) \(schedule.day)일차 입니다!",
                 date: duration,
+                transportIcon: DSKitAsset.Assets.icBus2.image,
+                transport: "대중교통",
                 duration: "\(schedule.estimatedDuration)분",
                 place: schedule.placeName,
                 imageUrl: schedule.thumbnailUrl

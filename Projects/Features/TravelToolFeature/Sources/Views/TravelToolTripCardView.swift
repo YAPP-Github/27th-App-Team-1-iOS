@@ -16,6 +16,8 @@ enum TravelToolTripState {
     case onGoing(
         title: String,
         date: String,
+        transportIcon: UIImage?,
+        transport: String,
         duration: String,
         place: String,
         imageUrl: String
@@ -24,8 +26,8 @@ enum TravelToolTripState {
 
 final class TravelToolTripCardView: UIView {
     private let emptyView = TravelToolEmptyView()
-    private let upComingView = TravelToolUpComingView()
-    private let onGoingView = TravelToolOnGoingView()
+    private let upComingView = NDGLUpComingView()
+    private let onGoingView = NDGLOnGoingView()
     private let stackView = UIStackView()
 
     override init(frame: CGRect) {
@@ -49,11 +51,13 @@ final class TravelToolTripCardView: UIView {
         case .upComing(let title, let date, let dDay, let imageUrl):
             upComingView.isHidden = false
             upComingView.configure(title: title, date: date, dDay: dDay, imageUrl: imageUrl)
-        case .onGoing(let title, let date, let duration, let place, let imageUrl):
+        case .onGoing(let title, let date, let transportIcon, let transport, let duration, let place, let imageUrl):
             onGoingView.isHidden = false
             onGoingView.configure(
                 title: title,
                 date: date,
+                transportIcon: transportIcon,
+                transport: transport,
                 duration: duration,
                 place: place,
                 imageUrl: imageUrl

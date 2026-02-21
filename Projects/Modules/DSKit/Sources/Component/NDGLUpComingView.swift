@@ -1,23 +1,28 @@
 //
-//  TravelToolUpComingView.swift
-//  TravelToolFeature
+//  NDGLUpComingView.swift
+//  DSKit
 //
-//  Created by kimnahun on 2026-02-21.
+//  Created by kimnahun on 2026-02-22.
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
 import UIKit
 
-import DSKit
+import Kingfisher
+import SnapKit
+import Then
 
-final class TravelToolUpComingView: UIView {
+public final class NDGLUpComingView: UIView {
     private let imageView = UIImageView()
     private let badge = UIView()
     private let dDayLabel = UILabel()
     private let titleLabel = UILabel()
     private let dateLabel = UILabel()
+    private let titleStackView = UIStackView()
+    private let infoStackView = UIStackView()
+    private let stackView = UIStackView()
 
-    override init(frame: CGRect) {
+    override public init(frame: CGRect) {
         super.init(frame: frame)
 
         setStyle()
@@ -29,7 +34,7 @@ final class TravelToolUpComingView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configure(title: String, date: String, dDay: Int, imageUrl: String) {
+    public func configure(title: String, date: String, dDay: Int, imageUrl: String) {
         titleLabel.setText(.subTitleMSB, text: title, color: DSKitAsset.Colors.black700.color)
         dateLabel.setText(.bodyMR, text: date, color: DSKitAsset.Colors.black600.color)
         dDayLabel.setText(.bodyMM, text: "D-\(dDay)", color: DSKitAsset.Colors.black400.color)
@@ -40,9 +45,17 @@ final class TravelToolUpComingView: UIView {
             imageView.backgroundColor = .systemGray5
         }
     }
+
+    public func prepareForReuse() {
+        imageView.kf.cancelDownloadTask()
+        titleLabel.text = nil
+        dateLabel.text = nil
+        dDayLabel.text = nil
+        imageView.image = nil
+    }
 }
 
-private extension TravelToolUpComingView {
+private extension NDGLUpComingView {
     func setStyle() {
         backgroundColor = .clear
 
@@ -62,27 +75,39 @@ private extension TravelToolUpComingView {
 
         titleLabel.do {
             $0.numberOfLines = 1
-            $0.lineBreakMode = .byTruncatingTail
             $0.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        }
+
+        titleStackView.do {
+            $0.axis = .horizontal
+            $0.spacing = 8.adjusted
+            $0.alignment = .center
+        }
+
+        infoStackView.do {
+            $0.axis = .vertical
+            $0.spacing = 6.adjustedH
+            $0.alignment = .leading
+        }
+
+        stackView.do {
+            $0.axis = .horizontal
+            $0.spacing = 12.adjusted
+            $0.alignment = .center
         }
     }
 
     func setUI() {
         badge.addSubview(dDayLabel)
-        addSubviews(imageView, badge, titleLabel, dateLabel)
+        titleStackView.addArrangedSubviews(badge, titleLabel)
+        infoStackView.addArrangedSubviews(titleStackView, dateLabel)
+        stackView.addArrangedSubviews(imageView, infoStackView)
+        addSubview(stackView)
     }
 
     func setLayout() {
         imageView.snp.makeConstraints {
-            $0.leading.equalToSuperview().inset(16.adjusted)
-            $0.top.bottom.equalToSuperview().inset(8.adjustedH)
             $0.size.equalTo(64.adjustedH)
-        }
-
-        badge.snp.makeConstraints {
-            $0.top.equalTo(imageView).offset(7.adjustedH)
-            $0.leading.equalTo(imageView.snp.trailing).offset(12.adjusted)
-            $0.height.equalTo(26.adjustedH)
         }
 
         dDayLabel.snp.makeConstraints {
@@ -90,15 +115,9 @@ private extension TravelToolUpComingView {
             $0.directionalVerticalEdges.equalToSuperview().inset(4.adjustedH)
         }
 
-        titleLabel.snp.makeConstraints {
-            $0.leading.equalTo(badge.snp.trailing).offset(8.adjusted)
-            $0.centerY.equalTo(badge)
-            $0.trailing.lessThanOrEqualToSuperview().inset(16.adjusted)
-        }
-
-        dateLabel.snp.makeConstraints {
-            $0.top.equalTo(badge.snp.bottom).offset(8.adjustedH)
-            $0.leading.equalTo(badge)
+        stackView.snp.makeConstraints {
+            $0.directionalHorizontalEdges.equalToSuperview().inset(16.adjusted)
+            $0.directionalVerticalEdges.equalToSuperview().inset(8.adjustedH).priority(.high)
         }
     }
 }
