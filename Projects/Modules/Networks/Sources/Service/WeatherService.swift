@@ -10,7 +10,7 @@ import Foundation
 import Moya
 
 public protocol WeatherServiceProtocol {
-    func getCurrentWeather(latitude: Double, longitude: Double) async throws -> CurrentWeatherResponse
+    func getForecast(latitude: Double, longitude: Double, days: Int) async throws -> ForecastResponse
 }
 
 public final class WeatherService: WeatherServiceProtocol {
@@ -20,7 +20,9 @@ public final class WeatherService: WeatherServiceProtocol {
         self.provider = provider
     }
 
-    public func getCurrentWeather(latitude: Double, longitude: Double) async throws -> CurrentWeatherResponse {
-        try await provider.asyncThrowsRequestRaw(.getCurrentWeather(latitude: latitude, longitude: longitude))
+    public func getForecast(latitude: Double, longitude: Double, days: Int) async throws -> ForecastResponse {
+        try await provider.asyncThrowsRequestRaw(
+            .getForecast(latitude: latitude, longitude: longitude, days: days)
+        )
     }
 }

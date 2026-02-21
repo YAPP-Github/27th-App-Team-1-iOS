@@ -23,7 +23,7 @@ protocol TravelToolPresentable: Presentable {
     var listener: TravelToolPresentableListener? { get set }
 
     func updateTripCard(_ state: TravelToolTripState)
-    func updateWeather(_ info: WeatherInfo?)
+    func updateWeather(_ state: TravelToolWeatherState)
 }
 
 // MARK: - TravelToolPresentableListener
@@ -71,48 +71,89 @@ final class TravelToolInteractor: PresentableInteractor<TravelToolPresentable>, 
         fetchTask?.cancel()
 
         fetchTask = Task { [weak self] in
-            guard let self, !Task.isCancelled else { return }
+            guard let self else { return }
 
-            let summary: MyTripSummary? = await {
-                do {
-                    return try await self.usecase.fetchMyTripInfo()
-                } catch {
-                    return nil
-                }
-            }()
+            // 1. 여행 정보 조회
+            var summary: MyTripSummary?
+            do {
+                summary = try await self.usecase.fetchMyTripInfo()
+            } catch {
+                summary = nil
+            }
 
             guard !Task.isCancelled else { return }
 
-            let state: TravelToolTripState
+            // 2. 트립 카드 업데이트
+            let tripState: TravelToolTripState
             if let summary {
-                state = self.convertToState(summary)
+                tripState = self.convertToState(summary)
             } else {
-                state = .empty
+                tripState = .empty
             }
 
-            await MainActor.run {
-                self.presenter.updateTripCard(state)
+            await MainActor.run { [tripState] in
+                self.presenter.updateTripCard(tripState)
             }
 
-            guard let summary, !Task.isCancelled else {
-                await MainActor.run { self.presenter.updateWeather(nil) }
+            // 3. 여행이 없으면 noTrip 상태
+            guard let summary else {
+                await MainActor.run {
+                    self.presenter.updateWeather(.noTrip)
+                }
                 return
             }
 
-            let weatherInfo: WeatherInfo? = await {
-                do {
-                    return try await self.weatherRepository.fetchCurrentWeather(
-                        latitude: summary.tripSchedule.latitude,
-                        longitude: summary.tripSchedule.longitude
-                    )
-                } catch {
-                    return nil
+            guard !Task.isCancelled else { return }
+
+            // 4. 여행 기간 일수 계산
+            let calendar = Calendar.current
+            let startOfToday = calendar.startOfDay(for: Date())
+            let startOfEnd = calendar.startOfDay(for: summary.endDay)
+            let daysFromToday = (calendar.dateComponents([.day], from: startOfToday, to: startOfEnd).day ?? 0) + 1
+
+            guard daysFromToday > 0 else {
+                await MainActor.run {
+                    self.presenter.updateWeather(.preparing)
                 }
-            }()
+                return
+            }
+
+            // 5. 날씨 예보 조회
+            let forecastDays = min(daysFromToday, 10)
+            var forecasts: [DailyWeatherInfo]?
+
+            do {
+                let all = try await self.weatherRepository.fetchForecast(
+                    latitude: summary.tripSchedule.latitude,
+                    longitude: summary.tripSchedule.longitude,
+                    days: forecastDays
+                )
+
+                let startOfTravel = calendar.startOfDay(for: summary.startDay)
+                let endOfTravel = calendar.startOfDay(for: summary.endDay)
+
+                let filtered = all.filter { info in
+                    let day = calendar.startOfDay(for: info.date)
+                    return day >= startOfTravel && day <= endOfTravel
+                }
+
+                forecasts = filtered.isEmpty ? nil : filtered
+            } catch {
+                forecasts = nil
+            }
 
             guard !Task.isCancelled else { return }
-            await MainActor.run {
-                self.presenter.updateWeather(weatherInfo)
+
+            // 6. 날씨 뷰 업데이트
+            let city = summary.city
+            await MainActor.run { [forecasts] in
+                if let forecasts {
+                    self.presenter.updateWeather(
+                        .hasWeather(title: city, forecasts: forecasts)
+                    )
+                } else {
+                    self.presenter.updateWeather(.preparing)
+                }
             }
         }
     }

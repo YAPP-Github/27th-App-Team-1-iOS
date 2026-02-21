@@ -17,6 +17,8 @@ extension UpcomingResponse {
         return .init(
             id: self.userTravelId,
             title: self.title,
+            city: self.city,
+            country: self.country,
             startDay: self.startDate.toDate() ?? .now,
             endDay: self.endDate.toDate() ?? .now,
             tripSchedule: .init(

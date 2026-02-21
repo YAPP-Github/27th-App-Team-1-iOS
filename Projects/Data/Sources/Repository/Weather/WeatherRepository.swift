@@ -17,10 +17,18 @@ public final class WeatherRepository: WeatherRepositoryInterface {
         self.service = service
     }
 
-    public func fetchCurrentWeather(latitude: Double, longitude: Double) async throws -> WeatherInfo {
+    public func fetchForecast(
+        latitude: Double,
+        longitude: Double,
+        days: Int
+    ) async throws -> [DailyWeatherInfo] {
         do {
-            let response = try await service.getCurrentWeather(latitude: latitude, longitude: longitude)
-            return response.toDomain()
+            let response = try await service.getForecast(
+                latitude: latitude,
+                longitude: longitude,
+                days: days
+            )
+            return response.forecastDays.compactMap { $0.toDomain() }
         } catch {
             throw error.toNDGLError()
         }

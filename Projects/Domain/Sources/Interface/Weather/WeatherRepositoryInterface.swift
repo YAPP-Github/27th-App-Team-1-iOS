@@ -9,5 +9,9 @@
 import Foundation
 
 public protocol WeatherRepositoryInterface {
-    func fetchCurrentWeather(latitude: Double, longitude: Double) async throws -> WeatherInfo
+    func fetchForecast(
+        latitude: Double,
+        longitude: Double,
+        days: Int
+    ) async throws -> [DailyWeatherInfo]
 }

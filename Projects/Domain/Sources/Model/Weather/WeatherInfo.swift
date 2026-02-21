@@ -8,21 +8,21 @@
 
 import Foundation
 
-public struct WeatherInfo {
-    public let temperature: Double
-    public let description: String
-    public let iconUrl: String
-    public let humidity: Int
+public struct DailyWeatherInfo {
+    public let date: Date
+    public let maxTemperature: Double
+    public let minTemperature: Double
+    public let weatherType: String
 
     public init(
-        temperature: Double,
-        description: String,
-        iconUrl: String,
-        humidity: Int
+        date: Date,
+        maxTemperature: Double,
+        minTemperature: Double,
+        weatherType: String
     ) {
-        self.temperature = temperature
-        self.description = description
-        self.iconUrl = iconUrl
-        self.humidity = humidity
+        self.date = date
+        self.maxTemperature = maxTemperature
+        self.minTemperature = minTemperature
+        self.weatherType = weatherType
     }
 }

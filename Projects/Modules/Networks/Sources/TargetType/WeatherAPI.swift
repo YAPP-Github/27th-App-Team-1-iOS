@@ -10,7 +10,7 @@ import Foundation
 import Moya
 
 public enum WeatherAPI {
-    case getCurrentWeather(latitude: Double, longitude: Double)
+    case getForecast(latitude: Double, longitude: Double, days: Int)
 }
 
 extension WeatherAPI: TargetType {
@@ -20,26 +20,27 @@ extension WeatherAPI: TargetType {
 
     public var path: String {
         switch self {
-        case .getCurrentWeather:
-            return "/v1/currentConditions:lookup"
+        case .getForecast:
+            return "/v1/forecast/days:lookup"
         }
     }
 
     public var method: Moya.Method {
         switch self {
-        case .getCurrentWeather:
+        case .getForecast:
             return .get
         }
     }
 
     public var task: Moya.Task {
         switch self {
-        case .getCurrentWeather(let latitude, let longitude):
+        case .getForecast(let latitude, let longitude, let days):
             return .requestParameters(
                 parameters: [
                     "key": NetworkConfiguration.weatherApiKey,
                     "location.latitude": latitude,
-                    "location.longitude": longitude
+                    "location.longitude": longitude,
+                    "days": days
                 ],
                 encoding: URLEncoding.queryString
             )

@@ -38,16 +38,11 @@ final class TravelToolViewController: UIViewController, TravelToolPresentable, T
     // MARK: - TravelToolPresentable
 
     func updateTripCard(_ state: TravelToolTripState) {
-         tripCardView.configure(state)
+        tripCardView.configure(state)
     }
 
-    func updateWeather(_ info: WeatherInfo?) {
-        if let info {
-            weatherView.isHidden = false
-            weatherView.configure(with: info)
-        } else {
-            weatherView.isHidden = true
-        }
+    func updateWeather(_ state: TravelToolWeatherState) {
+        weatherView.configure(state)
     }
 }
 
@@ -56,7 +51,6 @@ final class TravelToolViewController: UIViewController, TravelToolPresentable, T
 private extension TravelToolViewController {
     func setStyle() {
         view.backgroundColor = .white
-        weatherView.isHidden = true
     }
 
     func setUI() {

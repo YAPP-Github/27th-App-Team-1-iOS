@@ -112,16 +112,16 @@ final class HomeInteractor: PresentableInteractor<HomePresentable>, HomeInteract
         
         fetchDataTask = Task { [weak self] in
             guard let self, !Task.isCancelled else { return }
-            
+
             do {
-                let myTripBanner: HomePresentationModel.Banner = await {
-                    do {
-                        return try await self.usecase.fetchMyTripInfo().toPresention()
-                    } catch {
-                        
-                        return .empty
-                    }
-                }()
+                let usecase = self.usecase
+                var myTripBanner: HomePresentationModel.Banner
+                do {
+                    let tripInfo = try await usecase.fetchMyTripInfo()
+                    myTripBanner = tripInfo.toPresention()
+                } catch {
+                    myTripBanner = .empty
+                }
                 
                 async let categories = self.usecase.fetchCategoryList().map { $0.toHomeModel() }
                 async let populars = self.usecase.fetchPopularTripList().map { $0.toPopularHomeModel() }

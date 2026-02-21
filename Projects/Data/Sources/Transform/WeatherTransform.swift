@@ -10,20 +10,20 @@ import Foundation
 import Domain
 import Networks
 
-extension CurrentWeatherResponse {
-    func toDomain() -> WeatherInfo {
-        let iconUrl: String
-        if let baseUri = iconBaseUri, let icon = icon {
-            iconUrl = "\(baseUri)/\(icon).png"
-        } else {
-            iconUrl = ""
-        }
+extension ForecastDayResponse {
+    func toDomain() -> DailyWeatherInfo? {
+        var components = DateComponents()
+        components.year = displayDate.year
+        components.month = displayDate.month
+        components.day = displayDate.day
 
-        return WeatherInfo(
-            temperature: temperature.degrees,
-            description: weatherCondition.description.text,
-            iconUrl: iconUrl,
-            humidity: relativeHumidity ?? 0
+        guard let date = Calendar.current.date(from: components) else { return nil }
+
+        return DailyWeatherInfo(
+            date: date,
+            maxTemperature: maxTemperature?.degrees ?? 0,
+            minTemperature: minTemperature?.degrees ?? 0,
+            weatherType: daytimeForecast?.weatherCondition.type ?? "CLOUDY"
         )
     }
 }
