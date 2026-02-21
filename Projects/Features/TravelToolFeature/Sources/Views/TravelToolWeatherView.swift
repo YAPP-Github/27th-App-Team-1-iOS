@@ -89,6 +89,11 @@ private extension TravelToolWeatherView {
     func setStyle() {
         backgroundColor = .clear
 
+        titleLabel.do {
+            $0.numberOfLines = 1
+            $0.lineBreakMode = .byTruncatingTail
+        }
+
         contentStackView.do {
             $0.axis = .vertical
             $0.alignment = .fill

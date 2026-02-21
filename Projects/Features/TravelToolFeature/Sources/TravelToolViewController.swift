@@ -35,6 +35,11 @@ final class TravelToolViewController: UIViewController, TravelToolPresentable, T
         setLayout()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        listener?.viewWillAppear()
+    }
+
     // MARK: - TravelToolPresentable
 
     func updateTripCard(_ state: TravelToolTripState) {

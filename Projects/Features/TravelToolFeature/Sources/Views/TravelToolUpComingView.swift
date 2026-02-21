@@ -56,10 +56,14 @@ private extension TravelToolUpComingView {
             $0.backgroundColor = DSKitAsset.Colors.black100.color
             $0.layer.cornerRadius = 26.adjustedH / 2
             $0.clipsToBounds = true
+            $0.setContentCompressionResistancePriority(.required, for: .horizontal)
+            $0.setContentHuggingPriority(.required, for: .horizontal)
         }
 
         titleLabel.do {
             $0.numberOfLines = 1
+            $0.lineBreakMode = .byTruncatingTail
+            $0.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         }
     }
 

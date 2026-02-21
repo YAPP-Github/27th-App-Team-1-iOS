@@ -254,6 +254,18 @@ extension FollowDetailViewController {
         }
     }
 
+    func showTripCreatedModal(onLater: @escaping () -> Void, onViewTrip: @escaping () -> Void) {
+        let modal = NDGLModalViewController(
+            title: "여행이 준비됐어요",
+            subtitle: "이제 선택한 여행을\n그대로 따라갈 수 있어요.",
+            cancelButtonTitle: "나중에 보러가기",
+            actionButtonTitle: "여행 보러가기"
+        )
+        modal.onCancelTapped = onLater
+        modal.onActionTapped = onViewTrip
+        present(modal, animated: true)
+    }
+
     func showPlaceDetail(_ place: TravelPlace) {
         let contentView = PlaceDetailBottomSheetView()
         contentView.configure(with: place)

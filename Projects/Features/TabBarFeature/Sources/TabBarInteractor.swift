@@ -16,6 +16,7 @@ import TravelToolFeature
 
 public protocol TabBarRouting: ViewableRouting {
     func attachTabs()
+    func switchToTab(at index: Int)
 }
 
 // MARK: - TabBarPresentable

@@ -65,6 +65,7 @@ final class TravelViewController: UIViewController, TravelPresentable, TravelVie
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
+        listener?.viewWillAppear()
     }
 
     // MARK: - Setup

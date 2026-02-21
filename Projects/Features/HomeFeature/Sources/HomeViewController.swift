@@ -23,6 +23,7 @@ protocol HomePresentableListener: AnyObject {
     func itemSelected(item: HomeItem)
     func moreBtnTapped()
     func reloadBtnTapped()
+    func viewWillAppear()
 }
 
 // MARK: - HomeViewController
@@ -62,6 +63,7 @@ final class HomeViewController: UIViewController, HomeViewControllable {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
+        listener?.viewWillAppear()
     }
 }
 

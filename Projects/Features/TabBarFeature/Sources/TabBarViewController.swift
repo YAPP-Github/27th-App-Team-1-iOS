@@ -68,7 +68,7 @@ public final class TabBarViewController: UITabBarController, TabBarPresentable, 
         setupTabItems()
     }
 
-    func switchToTab(at index: Int) {
+    public func switchToTab(at index: Int) {
         guard index < tabItems.count else { return }
 
         updateSelection(at: index)

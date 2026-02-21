@@ -21,6 +21,7 @@ public protocol MainRouting: ViewableRouting {
     func attachSetting()
     func detachSetting()
     func attachTabBar()
+    func switchToTab(at index: Int)
 }
 
 protocol MainPresentable: Presentable {
@@ -52,8 +53,9 @@ final class MainInteractor: PresentableInteractor<MainPresentable>, MainInteract
         router?.detachFollow()
     }
     
-    func followDetailDidAddTrip(title: String, startDate: Date, endDate: Date) {
-        // 이건 뭐임
+    func followDetailDidViewTrip() {
+        router?.detachFollow()
+        router?.switchToTab(at: 1)
     }
     
     func popularTravelDidTapFollowDetail(with recommendationId: Int) {

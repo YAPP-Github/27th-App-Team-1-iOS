@@ -29,6 +29,7 @@ protocol TravelPresentable: Presentable {
 
 protocol TravelPresentableListener: AnyObject {
     func didTapTrip(_ trip: UpcomingTrip)
+    func viewWillAppear()
 }
 
 // MARK: - TravelInteractor
@@ -111,6 +112,10 @@ final class TravelInteractor: PresentableInteractor<TravelPresentable>, TravelIn
 // MARK: - TravelPresentableListener
 
 extension TravelInteractor: TravelPresentableListener {
+
+    func viewWillAppear() {
+        loadTrips()
+    }
 
     func didTapTrip(_ trip: UpcomingTrip) {
     }

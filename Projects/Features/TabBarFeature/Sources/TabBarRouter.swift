@@ -23,6 +23,7 @@ protocol TabBarInteractable: Interactable, HomeListener, TravelListener, TravelT
 
 public protocol TabBarViewControllable: ViewControllable {
     func setViewControllers(_ viewControllers: [ViewControllable])
+    func switchToTab(at index: Int)
 }
 
 // MARK: - TabBarRouter
@@ -56,6 +57,10 @@ final class TabBarRouter: ViewableRouter<TabBarInteractable, TabBarViewControlla
     }
 
     // MARK: - TabBarRouting
+
+    func switchToTab(at index: Int) {
+        viewController.switchToTab(at: index)
+    }
 
     func attachTabs() {
         guard homeRouter == nil, travelRouter == nil, travelToolRouter == nil else { return }

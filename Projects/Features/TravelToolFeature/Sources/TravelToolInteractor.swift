@@ -29,6 +29,7 @@ protocol TravelToolPresentable: Presentable {
 // MARK: - TravelToolPresentableListener
 
 protocol TravelToolPresentableListener: AnyObject {
+    func viewWillAppear()
 }
 
 // MARK: - TravelToolInteractor
@@ -193,6 +194,9 @@ final class TravelToolInteractor: PresentableInteractor<TravelToolPresentable>, 
 // MARK: - TravelToolPresentableListener
 
 extension TravelToolInteractor: TravelToolPresentableListener {
+    func viewWillAppear() {
+        fetchTripInfo()
+    }
 }
 
 // MARK: - Date Extension
