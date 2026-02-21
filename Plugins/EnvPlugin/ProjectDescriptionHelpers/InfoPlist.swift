@@ -32,7 +32,8 @@ public extension Project {
             "NSAllowsArbitraryLoads": .boolean(true)
         ]),
         "ITSAppUsesNonExemptEncryption": .boolean(false),
-        "BASE_URL": .string("$(BASE_URL)")
+        "BASE_URL": .string("$(BASE_URL)"),
+        "X_API_KEY": .string("$(X_API_KEY)")
     ]
 
     static let demoInfoPlist: [String: Plist.Value] = [

@@ -34,9 +34,9 @@ public final class TravelTemplateRepository: TravelTemplateRepositoryInterface {
         }
     }
     
-    public func searchTemplate() async throws -> Int {
+    public func searchTemplate(keyword: String, page: Int?, size: Int?) async throws -> [TripInfo] {
         do {
-            return try await service.searchTemplate()
+            return try await service.searchTemplate(keyword: keyword, page: page, size: size).toDomain()
         } catch {
             throw error.toNDGLError()
         }

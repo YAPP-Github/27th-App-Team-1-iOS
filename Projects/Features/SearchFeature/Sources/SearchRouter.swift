@@ -8,20 +8,45 @@
 
 import RIBs
 
-protocol SearchInteractable: Interactable {
+protocol SearchInteractable: Interactable, SearchResultListener {
     var router: SearchRouting? { get set }
     var listener: SearchListener? { get set }
 }
 
 protocol SearchViewControllable: ViewControllable {
-    
+    func pushChild(_ viewControllable: ViewControllable)
+    func popChild(_ animated: Bool)
 }
 
 final class SearchRouter: ViewableRouter<SearchInteractable, SearchViewControllable>, SearchRouting {
-
-    // TODO: Constructor inject child builder protocols to allow building children.
-    override init(interactor: SearchInteractable, viewController: SearchViewControllable) {
+    private let searchResultBuilder: SearchResultBuildable
+    private var searchResultRouter: SearchResultRouting?
+    
+    init(
+        interactor: SearchInteractable,
+        viewController: SearchViewControllable,
+        searchResultBuilder: SearchResultBuildable
+    ) {
+        self.searchResultBuilder = searchResultBuilder
         super.init(interactor: interactor, viewController: viewController)
         interactor.router = self
+    }
+    
+    func attachSearchResult(keyword: String) {
+        guard searchResultRouter == nil else { return }
+        
+        let router = searchResultBuilder.build(
+            withListener: interactor,
+            searchKeyword: keyword
+        )
+        self.searchResultRouter = router
+        attachChild(router)
+        viewController.pushChild(router.viewControllable)
+    }
+    
+    func detachSearchResult() {
+        guard let routing = searchResultRouter else { return }
+        detachChild(routing)
+        self.searchResultRouter = nil
     }
 }

@@ -107,14 +107,14 @@ final class MainRouter: ViewableRouter<MainInteractable, MainViewControllable>, 
         let router = searchBuilder.build(withListener: interactor)
         self.searchRouter = router
         attachChild(router)
-        viewController.pushViewController(router.viewControllable, animated: true)
+        viewController.pushViewController(router.viewControllable, animated: false)
     }
     
     func detachSearch() {
         guard let router = searchRouter else { return }
         
         if viewController.containsInStack(router.viewControllable) {
-            viewController.popRootViewController(animated: true)
+            viewController.popRootViewController(animated: false)
         }
         
         detachChild(router)

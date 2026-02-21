@@ -59,7 +59,7 @@ public final class TabBarViewController: UITabBarController, TabBarPresentable, 
         let homeVC = viewControllers[0].uiviewController
         let travelVC = viewControllers[1].uiviewController
 
-        let infoDummy = UIViewController().then { $0.view.backgroundColor = .yellow }
+        let infoDummy = UIViewController().then { $0.view.backgroundColor = .white }
 
         let infoNav = UINavigationController(rootViewController: infoDummy)
         let homeNav = UINavigationController(rootViewController: homeVC)

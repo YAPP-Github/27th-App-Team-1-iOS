@@ -7,11 +7,10 @@
 //
 
 import Domain
-import Data
 import FollowFeature
 import PopularTravelFeature
-import SettingFeature
 import SearchFeature
+import SettingFeature
 import TabBarFeature
 
 import RIBs
@@ -19,9 +18,14 @@ import RIBs
 public protocol MainDependency: Dependency {
     var homeUsecase: HomeUsecaseProtocol { get }
     var followDetailUsecase: FollowDetailUsecaseProtocol { get }
+    var templateSearchUsecase: TemplatesSearchUsecaseProtocol { get }
 }
 
 final class MainComponent: Component<MainDependency>, FollowDetailDependency, PopularTravelDependency,SearchDependency, SettingDependency, TabBarDependency {
+    var searchUsecase: TemplatesSearchUsecaseProtocol {
+        dependency.templateSearchUsecase
+    }
+    
     var followDetailUsecase: FollowDetailUsecaseProtocol {
         dependency.followDetailUsecase
     }

@@ -70,6 +70,10 @@ final class RootInteractor: PresentableInteractor<RootPresentable>, RootInteract
                 if let uuid = self.tokenRepository.get(.uuid) {
                     let loginResult = try await self.authRepository.login(uuid: uuid)
                     self.tokenRepository.save(loginResult.accessToken, for: .accessToken)
+                    
+                    // 임시
+                    UserDefaults.standard.set(loginResult.uuid, forKey: "uuid")
+                    UserDefaults.standard.set(loginResult.nickname, forKey: "nickname")
                 } else {
                     let fcmToken = self.tokenRepository.get(.fcmToken) ?? UUID().uuidString
                     let signupResult = try await self.authRepository.signup(
@@ -77,7 +81,11 @@ final class RootInteractor: PresentableInteractor<RootPresentable>, RootInteract
                     )
                     self.tokenRepository.save(signupResult.uuid, for: .uuid)
                     self.tokenRepository.save(signupResult.accessToken, for: .accessToken)
-
+                    
+                    // 임시
+                    UserDefaults.standard.set(signupResult.uuid, forKey: "uuid")
+                    UserDefaults.standard.set(signupResult.nickname, forKey: "nickname")
+                    
                     let loginResult = try await self.authRepository.login(uuid: signupResult.uuid)
                     self.tokenRepository.save(loginResult.accessToken, for: .accessToken)
                 }

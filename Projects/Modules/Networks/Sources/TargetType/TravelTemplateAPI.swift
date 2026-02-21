@@ -13,7 +13,7 @@ import Moya
 public enum TravelTemplateAPI {
     case getItinerary(id: Int, day: Int?)
     case getContentCard(id: Int)
-    case searchTemplate // 아직 적용 x
+    case searchTemplate(keyword: String, page: Int?, size: Int?)
     case getPopularTripList(id: Int?, page: Int?, size: Int?)
     case getRecommendTripList(page: Int?, size: Int?)
 }
@@ -57,8 +57,15 @@ extension TravelTemplateAPI: TargetType {
             return .requestPlain
         case .getContentCard(let id):
             return .requestPlain
-        case .searchTemplate:
-            return .requestPlain
+        case .searchTemplate(let keyword, let page, let size):
+            var params: [String: Any] = [:]
+            
+            params["keyword"] = keyword
+            
+            if let page { params["page"] = page }
+            if let size { params["size"] = size }
+            
+            return .requestParameters(parameters: params, encoding: URLEncoding.queryString)
         case .getPopularTripList(let id, let page, let size):
             var params: [String: Any] = [:]
             
@@ -77,7 +84,12 @@ extension TravelTemplateAPI: TargetType {
         }
     }
     
-    public var headers: [String : String]? {
-        ["Content-Type": "application/json"]
+    public var headers: [String: String]? {
+        var headers = ["Content-Type": "application/json"]
+        #if !DEBUG
+        headers["X-API-KEY"] = NetworkConfiguration.apiKey
+        #endif
+        
+        return headers
     }
 }

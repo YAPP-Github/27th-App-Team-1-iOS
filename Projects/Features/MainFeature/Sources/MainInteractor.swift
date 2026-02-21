@@ -91,4 +91,8 @@ final class MainInteractor: PresentableInteractor<MainPresentable>, MainInteract
     func routeToSearch() {
         router?.attachSearch()
     }
+    
+    func attachFollowDetail(with recommendationId: Int) {
+        router?.attachFollow(with: recommendationId)
+    }
 }

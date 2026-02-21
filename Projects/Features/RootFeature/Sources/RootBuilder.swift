@@ -18,11 +18,16 @@ public protocol RootDependency: Dependency {
     var followDetailUsecase: FollowDetailUsecaseProtocol { get }
     var authRepository: AuthRepositoryInterface { get }
     var tokenRepository: TokenRepositoryProtocol { get }
+    var templateSearchUsecase: TemplatesSearchUsecaseProtocol { get }
 }
 
 // MARK: - RootComponent
 
 final class RootComponent: Component<RootDependency>, MainDependency {
+    var templateSearchUsecase: TemplatesSearchUsecaseProtocol {
+        dependency.templateSearchUsecase
+    }
+    
     var followDetailUsecase: FollowDetailUsecaseProtocol {
         dependency.followDetailUsecase
     }

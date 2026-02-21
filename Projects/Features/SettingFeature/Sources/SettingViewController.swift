@@ -46,6 +46,27 @@ final class SettingViewController: UIViewController, SettingPresentable, Setting
             listener?.detachSetting()
         }
     }
+    
+    func copyToClipboard() {
+        guard let uuid = UserDefaults.standard.string(forKey: "uuid") else {
+            Toast.show(
+                type: .normal,
+                message: "식별코드를 불러올 수 없습니다.",
+                bottomPadding: 50
+            )
+            return
+        }
+        
+        UIPasteboard.general.string = uuid
+        Toast.show(
+            type: .success,
+            message: "클립보드 저장이 완료되었습니다.",
+            bottomPadding: 50
+        )
+        let generator = UINotificationFeedbackGenerator()
+        generator.notificationOccurred(.success)
+        
+    }
 }
 
 private extension SettingViewController {
@@ -117,11 +138,11 @@ extension SettingViewController: UITableViewDataSource, UITableViewDelegate {
         
         cell.configure(title: menu.title, type: type)
         
-        if menu == .notification {
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: tableView.bounds.width)
-        } else {
+//        if menu == .notification {
+//            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: tableView.bounds.width)
+//        } else {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 25.adjusted, bottom: 0, right: 24.adjusted)
-        }
+//        }
         
         return cell
     }

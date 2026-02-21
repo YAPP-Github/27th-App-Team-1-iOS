@@ -6,14 +6,18 @@
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
+import Domain
+
 import RIBs
 
 public protocol SearchDependency: Dependency {
-    
+    var searchUsecase: TemplatesSearchUsecaseProtocol { get }
 }
 
-final class SearchComponent: Component<SearchDependency> {
-    
+final class SearchComponent: Component<SearchDependency>, SearchResultDependency {
+    var searchUsecase: TemplatesSearchUsecaseProtocol {
+        dependency.searchUsecase
+    }
 }
 
 public protocol SearchBuildable: Buildable {
@@ -29,9 +33,15 @@ public final class SearchBuilder: Builder<SearchDependency>, SearchBuildable {
     public func build(withListener listener: SearchListener) -> SearchRouting {
         let component = SearchComponent(dependency: dependency)
         let viewController = SearchViewController()
-        let interactor = SearchInteractor(presenter: viewController)
+        let interactor = SearchInteractor(presenter: viewController, usecase: component.searchUsecase)
         interactor.listener = listener
         
-        return SearchRouter(interactor: interactor, viewController: viewController)
+        let searchResultBuilder = SearchResultBuilder(dependency: component)
+        
+        return SearchRouter(
+            interactor: interactor,
+            viewController: viewController,
+            searchResultBuilder: searchResultBuilder
+        )
     }
 }

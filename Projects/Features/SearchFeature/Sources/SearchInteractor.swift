@@ -6,30 +6,33 @@
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
+import Domain
+
 import RIBs
 import RxSwift
 
 public protocol SearchRouting: ViewableRouting {
-    
+    func attachSearchResult(keyword: String)
+    func detachSearchResult()
 }
 
 protocol SearchPresentable: Presentable {
     var listener: SearchPresentableListener? { get set }
-    // TODO: Declare methods the interactor can invoke the presenter to present data.
 }
 
 public protocol SearchListener: AnyObject {
+    func attachFollowDetail(with recommendationId: Int)
     func detachSearch()
 }
 
 final class SearchInteractor: PresentableInteractor<SearchPresentable>, SearchInteractable, SearchPresentableListener {
-
     weak var router: SearchRouting?
     weak var listener: SearchListener?
 
-    // TODO: Add additional dependencies to constructor. Do not perform any logic
-    // in constructor.
-    override init(presenter: SearchPresentable) {
+    private let usecase: TemplatesSearchUsecaseProtocol
+    
+    init(presenter: SearchPresentable, usecase: TemplatesSearchUsecaseProtocol) {
+        self.usecase = usecase
         super.init(presenter: presenter)
         presenter.listener = self
     }
@@ -42,6 +45,18 @@ final class SearchInteractor: PresentableInteractor<SearchPresentable>, SearchIn
     override func willResignActive() {
         super.willResignActive()
         // TODO: Pause any business logic.
+    }
+    
+    func search(keyword: String) {
+        router?.attachSearchResult(keyword: keyword)
+    }
+    
+    func detachSearchResult() {
+        router?.detachSearchResult()
+    }
+    
+    func popularTravelDidTapFollowDetail(with recommendationId: Int) {
+        listener?.attachFollowDetail(with: recommendationId)
     }
     
     func detachSearch() {
