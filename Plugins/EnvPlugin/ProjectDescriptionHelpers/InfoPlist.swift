@@ -28,9 +28,6 @@ public extension Project {
                     ])
                 ])
         ]),
-        "NSAppTransportSecurity": .dictionary([
-            "NSAllowsArbitraryLoads": .boolean(true)
-        ]),
         "ITSAppUsesNonExemptEncryption": .boolean(false),
         "BASE_URL": .string("$(BASE_URL)"),
         "X_API_KEY": .string("$(X_API_KEY)"),
@@ -56,9 +53,6 @@ public extension Project {
                     ])
                 ])
             ])
-        ]),
-        "NSAppTransportSecurity": .dictionary([
-            "NSAllowsArbitraryLoads": .boolean(true)
         ]),
         "ITSAppUsesNonExemptEncryption": .boolean(false),
         "BASE_URL": .string("$(BASE_URL)")
