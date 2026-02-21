@@ -90,14 +90,14 @@ extension HomePresentationModel.Schedule {
 extension MyTripSummary {
     func toPresention() -> HomePresentationModel.Banner {
         let schedule: HomePresentationModel.Schedule
-        if let s = self.tripSchedule {
+        if let tripSchedule = self.tripSchedule {
             schedule = .init(
-                id: s.id,
-                day: s.day,
-                placeName: s.placeName,
-                thumbnailUrl: s.thumbnailUrl,
-                transport: s.transport,
-                estimatedDuration: s.estimatedDuration
+                id: tripSchedule.id,
+                day: tripSchedule.day,
+                placeName: tripSchedule.placeName,
+                thumbnailUrl: tripSchedule.thumbnailUrl,
+                transport: tripSchedule.transport,
+                estimatedDuration: tripSchedule.estimatedDuration
             )
         } else {
             schedule = .empty
