@@ -9,6 +9,7 @@
 import UIKit
 
 public final class Toast {
+    @MainActor
     public static func show(
         type: NDGLToastView.ToastType,
         message: String,

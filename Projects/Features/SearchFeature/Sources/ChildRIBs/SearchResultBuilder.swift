@@ -6,8 +6,9 @@
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
-import RIBs
 import Domain
+
+import RIBs
 
 protocol SearchResultDependency: Dependency {
     var searchUsecase: TemplatesSearchUsecaseProtocol { get }

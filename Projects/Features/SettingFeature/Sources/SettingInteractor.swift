@@ -63,7 +63,7 @@ final class SettingInteractor: PresentableInteractor<SettingPresentable>, Settin
         case .terms:
             URLHelper.openURL("https://repeated-tapir-33f.notion.site/2c8cbdc5a3838070a8d8ccdcd0631c9a?source=copy_link")
         case .personalInformation:
-            URLHelper.openURL("https://repeated-tapir-33f.notion.site/30ccbdc5a38380e3a50ace64a9b0f398?source=copy_link ")
+            URLHelper.openURL("https://repeated-tapir-33f.notion.site/30ccbdc5a38380e3a50ace64a9b0f398?source=copy_link")
         default: break
         }
     }

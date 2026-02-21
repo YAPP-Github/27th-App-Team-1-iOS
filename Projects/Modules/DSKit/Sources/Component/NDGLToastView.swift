@@ -40,7 +40,11 @@ private extension NDGLToastView {
             $0.layer.cornerRadius = 8.0
         }
         
-        iconImageView.image = type.icon
+        if let image = type.icon {
+            iconImageView.image = image
+        } else {
+            iconImageView.isHidden = true
+        }
         
         titleLabel.setText(.bodyMSB, text: message, color: DSKitAsset.Colors.white.color)
         
@@ -71,21 +75,13 @@ private extension NDGLToastView {
 public extension NDGLToastView {
     enum ToastType {
         case success
-        case place
-        case transport
-        case delete
+        case normal
         
-        var icon: UIImage {
+        var icon: UIImage? {
             switch self {
             case .success:
-                // 아직 아이콘 추가 안됨
-                return DSKitAsset.Assets.icStarFill1.image
-            case .place:
-                return DSKitAsset.Assets.icBag1.image.withTintColor(DSKitAsset.Colors.green500.color, renderingMode: .alwaysTemplate)
-            case .transport:
-                return DSKitAsset.Assets.icBus2.image.withTintColor(DSKitAsset.Colors.white.color, renderingMode: .alwaysTemplate)
-            case .delete:
-                return DSKitAsset.Assets.icTrash1.image
+                return DSKitAsset.Assets.icCheck.image
+            default: return nil
             }
         }
     }

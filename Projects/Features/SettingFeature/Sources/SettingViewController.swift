@@ -48,7 +48,16 @@ final class SettingViewController: UIViewController, SettingPresentable, Setting
     }
     
     func copyToClipboard() {
-        UIPasteboard.general.string = UserDefaults.standard.string(forKey: "uuid") ?? "오류 발생"
+        guard let uuid = UserDefaults.standard.string(forKey: "uuid") else {
+            Toast.show(
+                type: .normal,
+                message: "식별코드를 불러올 수 없습니다.",
+                bottomPadding: 50
+            )
+            return
+        }
+        
+        UIPasteboard.general.string = uuid
         Toast.show(
             type: .success,
             message: "클립보드 저장이 완료되었습니다.",
