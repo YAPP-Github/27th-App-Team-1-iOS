@@ -14,6 +14,22 @@ import Networks
 
 extension UpcomingResponse {
     func toDomain() -> MyTripSummary {
+        let schedule: Schedule?
+        if let place = self.upcomingUserTravelPlace {
+            schedule = .init(
+                id: place.id,
+                day: 1,
+                placeName: place.place.name,
+                thumbnailUrl: place.place.thumbnail ?? "",
+                transport: place.place.category,
+                estimatedDuration: place.estimatedDuration,
+                latitude: place.place.latitude,
+                longitude: place.place.longitude
+            )
+        } else {
+            schedule = nil
+        }
+
         return .init(
             id: self.userTravelId,
             title: self.title,
@@ -21,16 +37,8 @@ extension UpcomingResponse {
             country: self.country,
             startDay: self.startDate.toDate() ?? .now,
             endDay: self.endDate.toDate() ?? .now,
-            tripSchedule: .init(
-                id: self.upcomingUserTravelPlace.id,
-                day: 1, // 서버에서 첫 일정만 보내주고 있음
-                placeName: self.upcomingUserTravelPlace.place.name,
-                thumbnailUrl: self.upcomingUserTravelPlace.place.thumbnail ?? "",
-                transport: self.upcomingUserTravelPlace.place.category,
-                estimatedDuration: self.upcomingUserTravelPlace.estimatedDuration,
-                latitude: self.upcomingUserTravelPlace.place.latitude,
-                longitude: self.upcomingUserTravelPlace.place.longitude
-            )
+            thumbnail: self.thumbnail,
+            tripSchedule: schedule
         )
     }
 }

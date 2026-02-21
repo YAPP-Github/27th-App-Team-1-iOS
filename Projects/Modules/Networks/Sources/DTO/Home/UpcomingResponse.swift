@@ -17,7 +17,8 @@ public struct UpcomingResponse: Decodable {
     public let endDate: String
     public let nights: Int
     public let days: Int
-    public let upcomingUserTravelPlace: UpcomingPlaceResponse
+    public let thumbnail: String?
+    public let upcomingUserTravelPlace: UpcomingPlaceResponse?
 }
 
 public struct UpcomingPlaceResponse: Decodable {

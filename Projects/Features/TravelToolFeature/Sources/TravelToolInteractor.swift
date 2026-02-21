@@ -125,9 +125,13 @@ final class TravelToolInteractor: PresentableInteractor<TravelToolPresentable>, 
             var forecasts: [DailyWeatherInfo]?
 
             do {
+                guard let schedule = summary.tripSchedule else {
+                    forecasts = nil
+                    throw NSError(domain: "", code: 0)
+                }
                 let all = try await self.weatherRepository.fetchForecast(
-                    latitude: summary.tripSchedule.latitude,
-                    longitude: summary.tripSchedule.longitude,
+                    latitude: schedule.latitude,
+                    longitude: schedule.longitude,
                     days: forecastDays
                 )
 
@@ -170,23 +174,31 @@ final class TravelToolInteractor: PresentableInteractor<TravelToolPresentable>, 
         let duration = "\(summary.startDay.toTravelToolKoreanMMdd())~\(summary.endDay.toTravelToolKoreanMMdd())"
 
         if startOfToday >= startOfTravel && startOfToday <= startOfEnd {
-            let schedule = summary.tripSchedule
-            return .onGoing(
-                title: "\(summary.title) \(schedule.day)일차 입니다!",
-                date: duration,
-                transportIcon: DSKitAsset.Assets.icBus2.image,
-                transport: "대중교통",
-                duration: "\(schedule.estimatedDuration)분",
-                place: schedule.placeName,
-                imageUrl: schedule.thumbnailUrl
-            )
+            if let schedule = summary.tripSchedule {
+                return .onGoing(
+                    title: "\(summary.title) \(schedule.day)일차 입니다!",
+                    date: duration,
+                    transportIcon: DSKitAsset.Assets.icBus2.image,
+                    transport: "대중교통",
+                    duration: "\(schedule.estimatedDuration)분",
+                    place: schedule.placeName,
+                    imageUrl: schedule.thumbnailUrl
+                )
+            } else {
+                return .upComing(
+                    title: summary.title,
+                    date: duration,
+                    dDay: 0,
+                    imageUrl: summary.thumbnail ?? ""
+                )
+            }
         } else if startOfToday < startOfTravel {
             let dDayValue = calendar.dateComponents([.day], from: startOfToday, to: startOfTravel).day ?? 0
             return .upComing(
                 title: summary.title,
                 date: duration,
                 dDay: dDayValue,
-                imageUrl: summary.tripSchedule.thumbnailUrl
+                imageUrl: summary.tripSchedule?.thumbnailUrl ?? summary.thumbnail ?? ""
             )
         } else {
             return .empty

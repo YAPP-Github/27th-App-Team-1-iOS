@@ -16,15 +16,17 @@ public struct MyTripSummary {
     public let country: String
     public let startDay: Date
     public let endDay: Date
-    public let tripSchedule: Schedule
+    public let thumbnail: String?
+    public let tripSchedule: Schedule?
 
-    public init(id: Int, title: String, city: String, country: String, startDay: Date, endDay: Date, tripSchedule: Schedule) {
+    public init(id: Int, title: String, city: String, country: String, startDay: Date, endDay: Date, thumbnail: String?, tripSchedule: Schedule?) {
         self.id = id
         self.title = title
         self.city = city
         self.country = country
         self.startDay = startDay
         self.endDay = endDay
+        self.thumbnail = thumbnail
         self.tripSchedule = tripSchedule
     }
 }
