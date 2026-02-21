@@ -247,8 +247,9 @@ final class PlaceCell: UICollectionViewCell {
             thumbnailImageView.isHidden = true
         }
 
-        // 이동 시간 정보 (항상 표시, > 버튼도 항상 표시)
+        // 이동 시간 정보
         travelTimeContainerView.isHidden = false
+        chevronImageView.isHidden = true
         let travelTimeText = formatTravelTime(place: place)
         travelTimeLabel.setText(.bodySR, text: travelTimeText, color: UIColor(hexCode: "#757575"))
     }

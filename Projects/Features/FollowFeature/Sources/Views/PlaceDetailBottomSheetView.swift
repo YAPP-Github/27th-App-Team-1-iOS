@@ -49,6 +49,7 @@ final class PlaceDetailBottomSheetView: UIView {
         $0.image = DSKitAsset.Assets.icChevronRight3.image
         $0.tintColor = UIColor(hexCode: "#757575")
         $0.contentMode = .scaleAspectFit
+        $0.isHidden = true
     }
 
     // 영업시간
@@ -268,10 +269,10 @@ final class PlaceDetailBottomSheetView: UIView {
         let openingHours = place.place.regularOpeningHours ?? "-"
         openingHoursLabel.setText(.bodySR, text: "영업시간 \(openingHours)", color: UIColor(hexCode: "#2C2C2C"))
 
-        // 시간 추가 (기본값)
-        timeLabel.setText(.bodySR, text: "시간 추가", color: UIColor(hexCode: "#444444"))
+        // 시간
+        timeLabel.setText(.bodySR, text: "시간 -", color: UIColor(hexCode: "#444444"))
 
-        // 비용 추가 (기본값)
-        costLabel.setText(.bodySR, text: "비용 추가", color: UIColor(hexCode: "#444444"))
+        // 비용
+        costLabel.setText(.bodySR, text: "비용 -", color: UIColor(hexCode: "#444444"))
     }
 }
