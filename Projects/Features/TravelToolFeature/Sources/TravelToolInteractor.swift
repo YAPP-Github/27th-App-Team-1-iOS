@@ -23,6 +23,7 @@ protocol TravelToolPresentable: Presentable {
     var listener: TravelToolPresentableListener? { get set }
 
     func updateTripCard(_ state: TravelToolTripState)
+    func updateWeather(_ info: WeatherInfo?)
 }
 
 // MARK: - TravelToolPresentableListener
@@ -38,11 +39,17 @@ final class TravelToolInteractor: PresentableInteractor<TravelToolPresentable>, 
     weak var listener: TravelToolListener?
 
     private let usecase: HomeUsecaseProtocol
+    private let weatherRepository: WeatherRepositoryInterface
     private var fetchTask: Task<Void, Never>?
     private let disposeBag = DisposeBag()
 
-    init(presenter: TravelToolPresentable, usecase: HomeUsecaseProtocol) {
+    init(
+        presenter: TravelToolPresentable,
+        usecase: HomeUsecaseProtocol,
+        weatherRepository: WeatherRepositoryInterface
+    ) {
         self.usecase = usecase
+        self.weatherRepository = weatherRepository
         super.init(presenter: presenter)
         presenter.listener = self
     }
@@ -66,18 +73,46 @@ final class TravelToolInteractor: PresentableInteractor<TravelToolPresentable>, 
         fetchTask = Task { [weak self] in
             guard let self, !Task.isCancelled else { return }
 
-            let state: TravelToolTripState = await {
+            let summary: MyTripSummary? = await {
                 do {
-                    let summary = try await self.usecase.fetchMyTripInfo()
-                    return self.convertToState(summary)
+                    return try await self.usecase.fetchMyTripInfo()
                 } catch {
-                    return .empty
+                    return nil
+                }
+            }()
+
+            guard !Task.isCancelled else { return }
+
+            let state: TravelToolTripState
+            if let summary {
+                state = self.convertToState(summary)
+            } else {
+                state = .empty
+            }
+
+            await MainActor.run {
+                self.presenter.updateTripCard(state)
+            }
+
+            guard let summary, !Task.isCancelled else {
+                await MainActor.run { self.presenter.updateWeather(nil) }
+                return
+            }
+
+            let weatherInfo: WeatherInfo? = await {
+                do {
+                    return try await self.weatherRepository.fetchCurrentWeather(
+                        latitude: summary.tripSchedule.latitude,
+                        longitude: summary.tripSchedule.longitude
+                    )
+                } catch {
+                    return nil
                 }
             }()
 
             guard !Task.isCancelled else { return }
             await MainActor.run {
-                presenter.updateTripCard(state)
+                self.presenter.updateWeather(weatherInfo)
             }
         }
     }

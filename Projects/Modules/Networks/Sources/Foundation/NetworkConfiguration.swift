@@ -27,4 +27,12 @@ public enum NetworkConfiguration {
         }
         return apiHeader
     }
+
+    public static var weatherApiKey: String {
+        let bundle = Bundle.main
+        guard let key = bundle.infoDictionary?["GOOGLE_WEATHER_API_KEY"] as? String else {
+            fatalError("GOOGLE_WEATHER_API_KEY not found in Info.plist")
+        }
+        return key
+    }
 }

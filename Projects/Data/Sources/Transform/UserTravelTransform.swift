@@ -25,7 +25,9 @@ extension UpcomingResponse {
                 placeName: self.upcomingUserTravelPlace.place.name,
                 thumbnailUrl: self.upcomingUserTravelPlace.place.thumbnail ?? "",
                 transport: self.upcomingUserTravelPlace.place.category,
-                estimatedDuration: self.upcomingUserTravelPlace.estimatedDuration
+                estimatedDuration: self.upcomingUserTravelPlace.estimatedDuration,
+                latitude: self.upcomingUserTravelPlace.place.latitude,
+                longitude: self.upcomingUserTravelPlace.place.longitude
             )
         )
     }

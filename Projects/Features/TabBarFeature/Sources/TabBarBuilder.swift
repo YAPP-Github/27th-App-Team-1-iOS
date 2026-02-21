@@ -16,6 +16,7 @@ import TravelToolFeature
 
 public protocol TabBarDependency: Dependency {
     var homeUsecase: HomeUsecaseProtocol { get }
+    var weatherRepository: WeatherRepositoryInterface { get }
 }
 
 // MARK: - TabBarComponent
@@ -23,6 +24,10 @@ public protocol TabBarDependency: Dependency {
 final class TabBarComponent: Component<TabBarDependency>, HomeDependency, TravelDependency, TravelToolDependency {
     var homeUsecase: HomeUsecaseProtocol {
         dependency.homeUsecase
+    }
+
+    var weatherRepository: WeatherRepositoryInterface {
+        dependency.weatherRepository
     }
 }
 

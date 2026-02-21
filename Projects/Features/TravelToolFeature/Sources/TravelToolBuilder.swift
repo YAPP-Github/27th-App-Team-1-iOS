@@ -13,6 +13,7 @@ import RIBs
 
 public protocol TravelToolDependency: Dependency {
     var homeUsecase: HomeUsecaseProtocol { get }
+    var weatherRepository: WeatherRepositoryInterface { get }
 }
 
 // MARK: - TravelToolComponent
@@ -20,6 +21,10 @@ public protocol TravelToolDependency: Dependency {
 final class TravelToolComponent: Component<TravelToolDependency> {
     var homeUsecase: HomeUsecaseProtocol {
         dependency.homeUsecase
+    }
+
+    var weatherRepository: WeatherRepositoryInterface {
+        dependency.weatherRepository
     }
 }
 
@@ -42,7 +47,8 @@ public final class TravelToolBuilder: Builder<TravelToolDependency>, TravelToolB
         let viewController = TravelToolViewController()
         let interactor = TravelToolInteractor(
             presenter: viewController,
-            usecase: component.homeUsecase
+            usecase: component.homeUsecase,
+            weatherRepository: component.weatherRepository
         )
         interactor.listener = listener
 

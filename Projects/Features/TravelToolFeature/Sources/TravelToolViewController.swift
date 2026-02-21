@@ -9,6 +9,7 @@
 import RIBs
 import UIKit
 
+import Domain
 import DSKit
 
 // MARK: - TravelToolViewController
@@ -22,6 +23,7 @@ final class TravelToolViewController: UIViewController, TravelToolPresentable, T
     // MARK: - UI
 
     private let tripCardView = TravelToolTripCardView()
+    private let weatherView = TravelToolWeatherView()
 
     // MARK: - Lifecycle
 
@@ -38,6 +40,15 @@ final class TravelToolViewController: UIViewController, TravelToolPresentable, T
     func updateTripCard(_ state: TravelToolTripState) {
          tripCardView.configure(state)
     }
+
+    func updateWeather(_ info: WeatherInfo?) {
+        if let info {
+            weatherView.isHidden = false
+            weatherView.configure(with: info)
+        } else {
+            weatherView.isHidden = true
+        }
+    }
 }
 
 // MARK: - Private
@@ -45,15 +56,21 @@ final class TravelToolViewController: UIViewController, TravelToolPresentable, T
 private extension TravelToolViewController {
     func setStyle() {
         view.backgroundColor = .white
+        weatherView.isHidden = true
     }
 
     func setUI() {
-        view.addSubview(tripCardView)
+        view.addSubviews(tripCardView, weatherView)
     }
 
     func setLayout() {
         tripCardView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.directionalHorizontalEdges.equalToSuperview().inset(24.adjusted)
+        }
+
+        weatherView.snp.makeConstraints {
+            $0.top.equalTo(tripCardView.snp.bottom).offset(16.adjustedH)
             $0.directionalHorizontalEdges.equalToSuperview().inset(24.adjusted)
         }
     }

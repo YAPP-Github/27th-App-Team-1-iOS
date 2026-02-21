@@ -19,6 +19,7 @@ public protocol RootDependency: Dependency {
     var authRepository: AuthRepositoryInterface { get }
     var tokenRepository: TokenRepositoryProtocol { get }
     var templateSearchUsecase: TemplatesSearchUsecaseProtocol { get }
+    var weatherRepository: WeatherRepositoryInterface { get }
 }
 
 // MARK: - RootComponent
@@ -27,13 +28,17 @@ final class RootComponent: Component<RootDependency>, MainDependency {
     var templateSearchUsecase: TemplatesSearchUsecaseProtocol {
         dependency.templateSearchUsecase
     }
-    
+
     var followDetailUsecase: FollowDetailUsecaseProtocol {
         dependency.followDetailUsecase
     }
-    
+
     var homeUsecase: HomeUsecaseProtocol {
         dependency.homeUsecase
+    }
+
+    var weatherRepository: WeatherRepositoryInterface {
+        dependency.weatherRepository
     }
 }
 
