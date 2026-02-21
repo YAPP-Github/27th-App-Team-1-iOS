@@ -25,14 +25,24 @@ public final class TokenRepository: TokenRepositoryProtocol {
     // MARK: - TokenRepositoryProtocol
 
     public func save(_ value: String, for type: TokenType) {
-        keychainStorage.save(value, forKey: type.rawValue)
+        keychainStorage.save(value, forKey: keychainKey(for: type))
     }
 
     public func get(_ type: TokenType) -> String? {
-        keychainStorage.load(forKey: type.rawValue)
+        keychainStorage.load(forKey: keychainKey(for: type))
     }
 
     public func delete(_ type: TokenType) {
-        keychainStorage.delete(forKey: type.rawValue)
+        keychainStorage.delete(forKey: keychainKey(for: type))
+    }
+
+    // MARK: - Private
+
+    private func keychainKey(for type: TokenType) -> String {
+        #if DEBUG
+        return "debug_\(type.rawValue)"
+        #else
+        return "release_\(type.rawValue)"
+        #endif
     }
 }
