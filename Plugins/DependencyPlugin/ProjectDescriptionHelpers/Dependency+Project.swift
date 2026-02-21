@@ -13,10 +13,10 @@ public extension TargetDependency {
         public struct Home {}
         public struct TabBar {}
         public struct Follow {}
-        public struct Travel {}
         public struct Search {}
         public struct Setting {}
         public struct PopularTravel {}
+        public struct MyTravel {}
         public struct TravelTool {}
     }
 
@@ -63,12 +63,6 @@ public extension TargetDependency.Features.Follow {
     static let feature = TargetDependency.Features.project(name: "Feature", group: group)
 }
 
-public extension TargetDependency.Features.Travel {
-    static let group = "Travel"
-
-    static let feature = TargetDependency.Features.project(name: "Feature", group: group)
-}
-
 public extension TargetDependency.Features.Search {
     static let group = "Search"
     
@@ -90,6 +84,12 @@ public extension TargetDependency.Features.Main {
 public extension TargetDependency.Features.PopularTravel {
     static let group = "PopularTravel"
 
+    static let feature = TargetDependency.Features.project(name: "Feature", group: group)
+}
+
+public extension TargetDependency.Features.MyTravel {
+    static let group = "MyTravel"
+    
     static let feature = TargetDependency.Features.project(name: "Feature", group: group)
 }
 
