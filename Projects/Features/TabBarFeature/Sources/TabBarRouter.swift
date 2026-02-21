@@ -10,10 +10,11 @@ import RIBs
 
 import HomeFeature
 import TravelFeature
+import TravelToolFeature
 
 // MARK: - TabBarInteractable
 
-protocol TabBarInteractable: Interactable, HomeListener, TravelListener {
+protocol TabBarInteractable: Interactable, HomeListener, TravelListener, TravelToolListener {
     var router: TabBarRouting? { get set }
     var listener: TabBarListener? { get set }
 }
@@ -30,17 +31,21 @@ final class TabBarRouter: ViewableRouter<TabBarInteractable, TabBarViewControlla
 
     private let homeBuilder: HomeBuildable
     private let travelBuilder: TravelBuildable
+    private let travelToolBuilder: TravelToolBuildable
     private var homeRouter: HomeRouting?
     private var travelRouter: TravelRouting?
+    private var travelToolRouter: TravelToolRouting?
 
     init(
         interactor: TabBarInteractable,
         viewController: TabBarViewControllable,
         homeBuilder: HomeBuildable,
-        travelBuilder: TravelBuildable
+        travelBuilder: TravelBuildable,
+        travelToolBuilder: TravelToolBuildable
     ) {
         self.homeBuilder = homeBuilder
         self.travelBuilder = travelBuilder
+        self.travelToolBuilder = travelToolBuilder
         super.init(interactor: interactor, viewController: viewController)
         interactor.router = self
     }
@@ -53,7 +58,11 @@ final class TabBarRouter: ViewableRouter<TabBarInteractable, TabBarViewControlla
     // MARK: - TabBarRouting
 
     func attachTabs() {
-        guard homeRouter == nil, travelRouter == nil else { return }
+        guard homeRouter == nil, travelRouter == nil, travelToolRouter == nil else { return }
+
+        let travelToolRouter = travelToolBuilder.build(withListener: interactor)
+        self.travelToolRouter = travelToolRouter
+        attachChild(travelToolRouter)
 
         let homeRouter = homeBuilder.build(withListener: interactor)
         self.homeRouter = homeRouter
@@ -64,6 +73,7 @@ final class TabBarRouter: ViewableRouter<TabBarInteractable, TabBarViewControlla
         attachChild(travelRouter)
 
         viewController.setViewControllers([
+            travelToolRouter.viewControllable,
             homeRouter.viewControllable,
             travelRouter.viewControllable
         ])

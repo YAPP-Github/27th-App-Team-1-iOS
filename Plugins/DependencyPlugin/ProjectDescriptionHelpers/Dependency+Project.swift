@@ -17,6 +17,7 @@ public extension TargetDependency {
         public struct Search {}
         public struct Setting {}
         public struct PopularTravel {}
+        public struct TravelTool {}
     }
 
     struct Modules {}
@@ -88,6 +89,12 @@ public extension TargetDependency.Features.Main {
 
 public extension TargetDependency.Features.PopularTravel {
     static let group = "PopularTravel"
-    
+
+    static let feature = TargetDependency.Features.project(name: "Feature", group: group)
+}
+
+public extension TargetDependency.Features.TravelTool {
+    static let group = "TravelTool"
+
     static let feature = TargetDependency.Features.project(name: "Feature", group: group)
 }

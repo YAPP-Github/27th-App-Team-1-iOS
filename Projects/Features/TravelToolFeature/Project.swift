@@ -1,8 +1,8 @@
 //
 //  Project.swift
-//  TabBarFeature
+//  TravelToolFeature
 //
-//  Created by kimnahun on 2026-01-22.
+//  Created by kimnahun on 2026-02-21.
 //
 
 import ProjectDescription
@@ -10,14 +10,12 @@ import ProjectDescriptionHelpers
 import DependencyPlugin
 
 let project = Project.makeModule(
-    name: "TabBarFeature",
+    name: "TravelToolFeature",
     targets: [
         .makeFrameworkTarget(
-            name: "TabBarFeature",
+            name: "TravelToolFeature",
             dependencies: [
-                .Features.Home.feature,
-                .Features.Travel.feature,
-                .Features.TravelTool.feature
+                .Features.baseFeatureDependency
             ],
             scripts: [.swiftLint],
             isStatic: true,
