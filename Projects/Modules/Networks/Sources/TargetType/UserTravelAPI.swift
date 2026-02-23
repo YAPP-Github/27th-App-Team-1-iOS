@@ -16,6 +16,7 @@ public enum UserTravelAPI {
     case getUpcoming
     case getUpcomingList(page: Int?, size: Int?)
     case getItinerary(id: Int, day: Int)
+    case replaceItinerary(id: Int, request: ReplaceItineraryRequest)
 }
 
 extension UserTravelAPI: TargetType {
@@ -33,20 +34,22 @@ extension UserTravelAPI: TargetType {
             return "/api/v1/travels/upcoming"
         case .getUpcomingList:
             return "api/v1/travels/upcoming/list"
-        case .getItinerary(let id, _):
+        case .getItinerary(let id, _), .replaceItinerary(let id, _):
             return "/api/v1/travels/\(id)/itinerary"
         }
     }
-    
+
     public var method: Moya.Method {
         switch self {
         case .createUserTravel:
             return .post
         case .getContentCard, .getUpcoming, .getUpcomingList, .getItinerary:
             return .get
+        case .replaceItinerary:
+            return .put
         }
     }
-    
+
     public var task: Moya.Task {
         switch self {
         case .createUserTravel(let request):
@@ -65,6 +68,8 @@ extension UserTravelAPI: TargetType {
                 parameters: ["day": day],
                 encoding: URLEncoding.queryString
             )
+        case .replaceItinerary(_, let request):
+            return .requestJSONEncodable(request)
         }
     }
     

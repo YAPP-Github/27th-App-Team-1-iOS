@@ -304,6 +304,7 @@ final class FollowDetailViewController: UIViewController, FollowDetailPresentabl
         editModeEntryButton.addTarget(self, action: #selector(editModeEntryButtonTapped), for: .touchUpInside)
         editCompleteButton.addTarget(self, action: #selector(editCompleteButtonTapped), for: .touchUpInside)
         selectAllButton.addTarget(self, action: #selector(selectAllButtonTapped), for: .touchUpInside)
+        deleteSelectionButton.addTarget(self, action: #selector(deleteSelectionButtonTapped), for: .touchUpInside)
         addPlaceButton.addTarget(self, action: #selector(addPlaceButtonTapped), for: .touchUpInside)
 
         navigationBar.leadingButtonDidTap
@@ -328,7 +329,14 @@ final class FollowDetailViewController: UIViewController, FollowDetailPresentabl
     }
 
     @objc private func editCompleteButtonTapped() {
+        let orderedPlaces = placeListCollectionView.currentPlaces
+        listener?.editCompleted(orderedPlaces: orderedPlaces)
         toggleEditMode(entering: false)
+    }
+
+    @objc private func deleteSelectionButtonTapped() {
+        let remaining = placeListCollectionView.deleteSelected()
+        listener?.didDeletePlaces(remaining: remaining)
     }
 
     @objc private func selectAllButtonTapped() {
@@ -404,6 +412,14 @@ extension FollowDetailViewController {
         placeListCollectionView.snp.updateConstraints {
             $0.height.greaterThanOrEqualTo(max(400, height))
         }
+    }
+
+    func showToast(_ message: String) {
+        Toast.show(type: .success, message: message, bottomPadding: 120)
+    }
+
+    func exitEditMode() {
+        toggleEditMode(entering: false)
     }
 
     func showTripCreatedModal(onLater: @escaping () -> Void, onViewTrip: @escaping () -> Void) {

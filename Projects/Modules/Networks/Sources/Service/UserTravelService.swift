@@ -16,6 +16,7 @@ public protocol UserTravelServiceProtocol {
     func getUpcoming() async throws -> UpcomingResponse
     func getUpcomingList(page: Int?, size: Int?) async throws -> UpcomingListResponse
     func getItinerary(travelId: Int, day: Int) async throws -> UserTravelItineraryResponse
+    func replaceItinerary(travelId: Int, request: ReplaceItineraryRequest) async throws
 }
 
 public final class UserTravelService: UserTravelServiceProtocol {
@@ -43,5 +44,9 @@ public final class UserTravelService: UserTravelServiceProtocol {
 
     public func getItinerary(travelId: Int, day: Int) async throws -> UserTravelItineraryResponse {
         try await provider.asyncThowsRequest(.getItinerary(id: travelId, day: day))
+    }
+
+    public func replaceItinerary(travelId: Int, request: ReplaceItineraryRequest) async throws {
+        let _: BaseResponse<EmptyResponse> = try await provider.asyncThrowsRequestRaw(.replaceItinerary(id: travelId, request: request))
     }
 }

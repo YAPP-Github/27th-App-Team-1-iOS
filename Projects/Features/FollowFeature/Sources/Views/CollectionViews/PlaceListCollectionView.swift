@@ -144,6 +144,19 @@ final class PlaceListCollectionView: UICollectionView {
         return isAllSelected
     }
 
+    /// 현재 표시 중인 장소 목록 (드래그 재정렬 이후 순서 반영)
+    var currentPlaces: [TravelPlace] {
+        places
+    }
+
+    /// 선택된 장소를 삭제하고 남은 목록을 반환
+    func deleteSelected() -> [TravelPlace] {
+        let remaining = places.filter { !selectedIds.contains($0.id) }
+        selectedIds.removeAll()
+        applySnapshot(places: remaining)
+        return remaining
+    }
+
     func applySnapshot(places: [TravelPlace]) {
         self.places = places
 

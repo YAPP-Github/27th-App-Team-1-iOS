@@ -30,6 +30,8 @@ protocol FollowDetailPresentable: Presentable {
     func updatePlaces(_ places: [TravelPlace])
     func showPlaceDetail(_ place: TravelPlace)
     func showTripCreatedModal(onLater: @escaping () -> Void, onViewTrip: @escaping () -> Void)
+    func showToast(_ message: String)
+    func exitEditMode()
 }
 
 // MARK: - FollowDetailPresentableListener
@@ -39,6 +41,8 @@ protocol FollowDetailPresentableListener: AnyObject {
     func viewDidLoad()
     func didTapAddToTrip()
     func didTapAddPlace()
+    func didDeletePlaces(remaining: [TravelPlace])
+    func editCompleted(orderedPlaces: [TravelPlace])
     func didSelectDay(_ day: Int)
     func didSelectPlace(_ place: TravelPlace)
     func didTapPlaceDetailChevron(_ place: TravelPlace)
@@ -174,13 +178,39 @@ extension FollowDetailInteractor: FollowDetailPresentableListener {
             let totalDays = travelDetail?.days ?? 1
             router?.routeToTripCalendar(templateTotalDays: totalDays)
         case .myTravel:
-            // 내 여행 수정 플로우 (추후 구현)
-            break
+            router?.routeToAddPlace()
         }
     }
 
     func didTapAddPlace() {
         router?.routeToAddPlace()
+    }
+
+    func didDeletePlaces(remaining: [TravelPlace]) {
+        placesByDay[currentDay] = remaining
+        presenter.showToast("장소가 삭제되었습니다.")
+    }
+
+    func editCompleted(orderedPlaces: [TravelPlace]) {
+        placesByDay[currentDay] = orderedPlaces
+
+        Task {
+            do {
+                try await followDetailUsecase.replaceItinerary(
+                    travelId: travelId,
+                    places: buildAllPlaces()
+                )
+                await MainActor.run {
+                    self.presenter.showToast("편집이 완료되었습니다.")
+                }
+            } catch {
+                print(error)
+            }
+        }
+    }
+
+    private func buildAllPlaces() -> [TravelPlace] {
+        placesByDay.values.flatMap { $0 }
     }
 
     func didSelectDay(_ day: Int) {
@@ -216,7 +246,27 @@ extension FollowDetailInteractor: AddPlaceListener {
 
     func addPlaceDidComplete(with place: PlaceSearchResult) {
         router?.detachAddPlace()
-        // 일정에 장소 추가하는 로직은 추후 구현
+
+        let existing = placesByDay[currentDay] ?? []
+        let newPlace = TravelPlace(
+            id: -(existing.count + 1),
+            day: currentDay,
+            sequence: existing.count + 1,
+            place: PlaceInfo(
+                googlePlaceId: place.googlePlaceId,
+                thumbnail: nil,
+                latitude: place.latitude,
+                longitude: place.longitude,
+                name: place.name,
+                regularOpeningHours: nil,
+                googleMapsUri: ""
+            )
+        )
+
+        let updated = existing + [newPlace]
+        placesByDay[currentDay] = updated
+        presenter.updatePlaces(updated)
+        presenter.showToast("내 일정에 추가되었습니다.")
     }
 }
 

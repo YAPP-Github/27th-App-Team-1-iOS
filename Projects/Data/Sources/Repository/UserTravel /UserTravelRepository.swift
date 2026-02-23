@@ -65,4 +65,25 @@ public final class UserTravelRepository: UserTravelRepositoryInterface {
             throw error.toNDGLError()
         }
     }
+
+    public func replaceItinerary(travelId: Int, places: [TravelPlace]) async throws {
+        do {
+            let items = places.enumerated().map { index, place in
+                ReplaceItineraryItemRequest(
+                    placeId: place.id,
+                    day: place.day,
+                    sequence: index + 1,
+                    startTime: nil,
+                    estimatedDuration: place.estimatedDuration,
+                    travelerTip: nil
+                )
+            }
+            try await service.replaceItinerary(
+                travelId: travelId,
+                request: ReplaceItineraryRequest(itineraries: items)
+            )
+        } catch {
+            throw error.toNDGLError()
+        }
+    }
 }

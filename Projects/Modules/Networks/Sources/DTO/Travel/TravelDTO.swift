@@ -28,6 +28,41 @@ public struct CreateUserTravelResponse: Decodable, Sendable {
     public let userTravelId: Int
 }
 
+// MARK: - Replace Itinerary Request
+
+public struct ReplaceItineraryRequest: Encodable, Sendable {
+    public let itineraries: [ReplaceItineraryItemRequest]
+
+    public init(itineraries: [ReplaceItineraryItemRequest]) {
+        self.itineraries = itineraries
+    }
+}
+
+public struct ReplaceItineraryItemRequest: Encodable, Sendable {
+    public let placeId: Int
+    public let day: Int
+    public let sequence: Int
+    public let startTime: String?
+    public let estimatedDuration: Int?
+    public let travelerTip: String?
+
+    public init(
+        placeId: Int,
+        day: Int,
+        sequence: Int,
+        startTime: String? = nil,
+        estimatedDuration: Int? = nil,
+        travelerTip: String? = nil
+    ) {
+        self.placeId = placeId
+        self.day = day
+        self.sequence = sequence
+        self.startTime = startTime
+        self.estimatedDuration = estimatedDuration
+        self.travelerTip = travelerTip
+    }
+}
+
 // MARK: - User Travel Itinerary Response
 
 public struct UserTravelItineraryResponse: Decodable, Sendable {

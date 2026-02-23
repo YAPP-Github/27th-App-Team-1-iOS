@@ -15,4 +15,5 @@ public protocol UserTravelRepositoryInterface {
     func fetchUpcomingList(page: Int?, size: Int?) async throws -> [UpcomingInfo]
     func fetchUserTravelDetail(id: Int) async throws -> TravelDetail
     func fetchItinerary(travelId: Int, day: Int) async throws -> [TravelPlace]
+    func replaceItinerary(travelId: Int, places: [TravelPlace]) async throws
 }
