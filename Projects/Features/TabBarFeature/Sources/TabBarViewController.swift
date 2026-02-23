@@ -58,13 +58,13 @@ public final class TabBarViewController: UITabBarController, TabBarPresentable, 
 
         let travelToolVC = viewControllers[0].uiviewController
         let homeVC = viewControllers[1].uiviewController
-        let travelVC = viewControllers[2].uiviewController
+        let myTravelVC = viewControllers[2].uiviewController
 
         let travelToolNav = UINavigationController(rootViewController: travelToolVC)
         let homeNav = UINavigationController(rootViewController: homeVC)
-        let travelNav = UINavigationController(rootViewController: travelVC)
+        let myTravelNav = UINavigationController(rootViewController: myTravelVC)
 
-        super.setViewControllers([travelToolNav, homeNav, travelNav], animated: false)
+        super.setViewControllers([travelToolNav, homeNav, myTravelNav], animated: false)
         setupTabItems()
     }
 

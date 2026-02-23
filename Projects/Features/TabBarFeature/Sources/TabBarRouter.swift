@@ -9,12 +9,12 @@
 import RIBs
 
 import HomeFeature
-import TravelFeature
+import MyTravelFeature
 import TravelToolFeature
 
 // MARK: - TabBarInteractable
 
-protocol TabBarInteractable: Interactable, HomeListener, TravelListener, TravelToolListener {
+protocol TabBarInteractable: Interactable, HomeListener, MyTravelListener, TravelToolListener {
     var router: TabBarRouting? { get set }
     var listener: TabBarListener? { get set }
 }
@@ -31,21 +31,21 @@ public protocol TabBarViewControllable: ViewControllable {
 final class TabBarRouter: ViewableRouter<TabBarInteractable, TabBarViewControllable>, TabBarRouting {
 
     private let homeBuilder: HomeBuildable
-    private let travelBuilder: TravelBuildable
+    private let myTravelBuilder: MyTravelBuildable
     private let travelToolBuilder: TravelToolBuildable
     private var homeRouter: HomeRouting?
-    private var travelRouter: TravelRouting?
+    private var myTravelRouter: MyTravelRouting?
     private var travelToolRouter: TravelToolRouting?
 
     init(
         interactor: TabBarInteractable,
         viewController: TabBarViewControllable,
         homeBuilder: HomeBuildable,
-        travelBuilder: TravelBuildable,
+        myTravelBuilder: MyTravelBuildable,
         travelToolBuilder: TravelToolBuildable
     ) {
         self.homeBuilder = homeBuilder
-        self.travelBuilder = travelBuilder
+        self.myTravelBuilder = myTravelBuilder
         self.travelToolBuilder = travelToolBuilder
         super.init(interactor: interactor, viewController: viewController)
         interactor.router = self
@@ -63,7 +63,7 @@ final class TabBarRouter: ViewableRouter<TabBarInteractable, TabBarViewControlla
     }
 
     func attachTabs() {
-        guard homeRouter == nil, travelRouter == nil, travelToolRouter == nil else { return }
+        guard homeRouter == nil, myTravelRouter == nil, travelToolRouter == nil else { return }
 
         let travelToolRouter = travelToolBuilder.build(withListener: interactor)
         self.travelToolRouter = travelToolRouter
@@ -73,14 +73,14 @@ final class TabBarRouter: ViewableRouter<TabBarInteractable, TabBarViewControlla
         self.homeRouter = homeRouter
         attachChild(homeRouter)
 
-        let travelRouter = travelBuilder.build(withListener: interactor)
-        self.travelRouter = travelRouter
-        attachChild(travelRouter)
+        let myTravelRouter = myTravelBuilder.build(withListener: interactor)
+        self.myTravelRouter = myTravelRouter
+        attachChild(myTravelRouter)
 
         viewController.setViewControllers([
             travelToolRouter.viewControllable,
             homeRouter.viewControllable,
-            travelRouter.viewControllable
+            myTravelRouter.viewControllable
         ])
     }
 }

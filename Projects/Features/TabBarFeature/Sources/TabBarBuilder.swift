@@ -8,20 +8,26 @@
 
 import Domain
 import HomeFeature
-import RIBs
-import TravelFeature
+import MyTravelFeature
 import TravelToolFeature
+
+import RIBs
 
 // MARK: - TabBarDependency
 
 public protocol TabBarDependency: Dependency {
     var homeUsecase: HomeUsecaseProtocol { get }
     var weatherRepository: WeatherRepositoryInterface { get }
+    var myTravelUsecase: MyTravelUsecaseProtocol { get }
 }
 
 // MARK: - TabBarComponent
 
-final class TabBarComponent: Component<TabBarDependency>, HomeDependency, TravelDependency, TravelToolDependency {
+final class TabBarComponent: Component<TabBarDependency>, HomeDependency, MyTravelDependency, TravelToolDependency {
+    var myTravelUsecase: MyTravelUsecaseProtocol {
+        dependency.myTravelUsecase
+    }
+    
     var homeUsecase: HomeUsecaseProtocol {
         dependency.homeUsecase
     }
@@ -52,14 +58,14 @@ public final class TabBarBuilder: Builder<TabBarDependency>, TabBarBuildable {
         interactor.listener = listener
 
         let homeBuilder = HomeBuilder(dependency: component)
-        let travelBuilder = TravelBuilder(dependency: component)
+        let myTravelBuilder = MyTravelBuilder(dependency: component)
         let travelToolBuilder = TravelToolBuilder(dependency: component)
 
         let router = TabBarRouter(
             interactor: interactor,
             viewController: viewController,
             homeBuilder: homeBuilder,
-            travelBuilder: travelBuilder,
+            myTravelBuilder: myTravelBuilder,
             travelToolBuilder: travelToolBuilder
         )
 
