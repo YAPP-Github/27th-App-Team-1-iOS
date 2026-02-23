@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Core
+
 import RIBs
 import RxSwift
 
@@ -26,6 +28,8 @@ public protocol MainRouting: ViewableRouting {
 
 protocol MainPresentable: Presentable {
     var listener: MainPresentableListener? { get set }
+    
+    func showServiceNoticeModal()
 }
 
 public protocol MainListener: AnyObject { }
@@ -47,6 +51,16 @@ final class MainInteractor: PresentableInteractor<MainPresentable>, MainInteract
 
     override func willResignActive() {
         super.willResignActive()
+    }
+    
+    func viewDidLoad() {
+        checkFirstOpenStatus()
+    }
+    
+    private func checkFirstOpenStatus() {
+        if UserManager.shared.isFirstOpenApp() {
+            presenter.showServiceNoticeModal()
+        }
     }
     
     func detachFollowDetail() {
