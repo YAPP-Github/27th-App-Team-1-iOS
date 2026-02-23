@@ -23,6 +23,7 @@ public protocol FollowDetailListener: AnyObject {
 protocol FollowDetailPresentable: Presentable {
     var listener: FollowDetailPresentableListener? { get set }
 
+    func configureMode(isMyTravel: Bool)
     func showLoading()
     func hideLoading()
     func updateTravelDetail(_ detail: TravelDetail)
@@ -35,6 +36,7 @@ protocol FollowDetailPresentable: Presentable {
 
 protocol FollowDetailPresentableListener: AnyObject {
     func detachFollowDetail()
+    func viewDidLoad()
     func didTapAddToTrip()
     func didSelectDay(_ day: Int)
     func didSelectPlace(_ place: TravelPlace)
@@ -74,6 +76,11 @@ final class FollowDetailInteractor: PresentableInteractor<FollowDetailPresentabl
         self.mode = mode
         super.init(presenter: presenter)
         presenter.listener = self
+    }
+
+    private var isMyTravelMode: Bool {
+        if case .myTravel = mode { return true }
+        return false
     }
 
     override func didBecomeActive() {
@@ -154,6 +161,10 @@ final class FollowDetailInteractor: PresentableInteractor<FollowDetailPresentabl
 extension FollowDetailInteractor: FollowDetailPresentableListener {
     func detachFollowDetail() {
         listener?.detachFollowDetail()
+    }
+
+    func viewDidLoad() {
+        presenter.configureMode(isMyTravel: isMyTravelMode)
     }
 
     func didTapAddToTrip() {
