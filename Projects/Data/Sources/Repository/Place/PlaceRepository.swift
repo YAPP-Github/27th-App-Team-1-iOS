@@ -29,9 +29,9 @@ public final class PlaceRepository: PlaceRepositoryInterface {
         }
     }
 
-    public func searchPlaces() async throws -> Int {
+    public func registerPlace(googlePlaceId: String) async throws {
         do {
-            return try await service.searchPlaces()
+            try await service.registerPlace(googlePlaceId: googlePlaceId)
         } catch {
             throw error.toNDGLError()
         }

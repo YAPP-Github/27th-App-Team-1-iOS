@@ -66,6 +66,15 @@ public final class UserTravelRepository: UserTravelRepositoryInterface {
         }
     }
 
+    public func addItinerary(travelId: Int, googlePlaceId: String, day: Int, sequence: Int) async throws {
+        do {
+            let request = AddItineraryRequest(googlePlaceId: googlePlaceId, day: day, sequence: sequence)
+            try await service.addItinerary(travelId: travelId, request: request)
+        } catch {
+            throw error.toNDGLError()
+        }
+    }
+
     public func replaceItinerary(travelId: Int, places: [TravelPlace]) async throws {
         do {
             let items = places.enumerated().map { index, place in

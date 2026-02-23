@@ -17,6 +17,8 @@ public protocol FollowDetailUsecaseProtocol {
     func fetchPlaceDetail(googlePlaceId: String) async throws -> PlaceDetail
     func fetchPlacePhotos(googlePlaceId: String) async throws -> [PlacePhoto]
     func searchPlaces(keyword: String) async throws -> [PlaceSearchResult]
+    func registerPlace(googlePlaceId: String) async throws
+    func addItinerary(travelId: Int, googlePlaceId: String, day: Int, sequence: Int) async throws
     func replaceItinerary(travelId: Int, places: [TravelPlace]) async throws
 }
 
@@ -67,6 +69,14 @@ extension FollowDetailUsecase: FollowDetailUsecaseProtocol {
 
     public func searchPlaces(keyword: String) async throws -> [PlaceSearchResult] {
         try await placeRepository.searchPlaces(keyword: keyword)
+    }
+
+    public func registerPlace(googlePlaceId: String) async throws {
+        try await placeRepository.registerPlace(googlePlaceId: googlePlaceId)
+    }
+
+    public func addItinerary(travelId: Int, googlePlaceId: String, day: Int, sequence: Int) async throws {
+        try await userTravelRepository.addItinerary(travelId: travelId, googlePlaceId: googlePlaceId, day: day, sequence: sequence)
     }
 
     public func replaceItinerary(travelId: Int, places: [TravelPlace]) async throws {

@@ -16,6 +16,7 @@ public enum UserTravelAPI {
     case getUpcoming
     case getUpcomingList(page: Int?, size: Int?)
     case getItinerary(id: Int, day: Int)
+    case addItinerary(id: Int, request: AddItineraryRequest)
     case replaceItinerary(id: Int, request: ReplaceItineraryRequest)
 }
 
@@ -34,7 +35,7 @@ extension UserTravelAPI: TargetType {
             return "/api/v1/travels/upcoming"
         case .getUpcomingList:
             return "api/v1/travels/upcoming/list"
-        case .getItinerary(let id, _), .replaceItinerary(let id, _):
+        case .getItinerary(let id, _), .addItinerary(let id, _), .replaceItinerary(let id, _):
             return "/api/v1/travels/\(id)/itinerary"
         }
     }
@@ -45,6 +46,8 @@ extension UserTravelAPI: TargetType {
             return .post
         case .getContentCard, .getUpcoming, .getUpcomingList, .getItinerary:
             return .get
+        case .addItinerary:
+            return .post
         case .replaceItinerary:
             return .put
         }
@@ -68,6 +71,8 @@ extension UserTravelAPI: TargetType {
                 parameters: ["day": day],
                 encoding: URLEncoding.queryString
             )
+        case .addItinerary(_, let request):
+            return .requestJSONEncodable(request)
         case .replaceItinerary(_, let request):
             return .requestJSONEncodable(request)
         }

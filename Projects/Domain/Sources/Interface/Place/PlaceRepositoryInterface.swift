@@ -10,7 +10,7 @@ import Foundation
 
 public protocol PlaceRepositoryInterface {
     func searchPlaces(keyword: String) async throws -> [PlaceSearchResult]
-    func searchPlaces() async throws -> Int //임시
+    func registerPlace(googlePlaceId: String) async throws
     func fetchPlacePhotos(googlePlaceId: String) async throws -> [PlacePhoto]
     func fetchPlaceDetail(googlePlaceId: String) async throws -> PlaceDetail
 }

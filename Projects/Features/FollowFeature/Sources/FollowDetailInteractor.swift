@@ -247,26 +247,30 @@ extension FollowDetailInteractor: AddPlaceListener {
     func addPlaceDidComplete(with place: PlaceSearchResult) {
         router?.detachAddPlace()
 
-        let existing = placesByDay[currentDay] ?? []
-        let newPlace = TravelPlace(
-            id: -(existing.count + 1),
-            day: currentDay,
-            sequence: existing.count + 1,
-            place: PlaceInfo(
-                googlePlaceId: place.googlePlaceId,
-                thumbnail: nil,
-                latitude: place.latitude,
-                longitude: place.longitude,
-                name: place.name,
-                regularOpeningHours: nil,
-                googleMapsUri: ""
-            )
-        )
+        let sequence = (placesByDay[currentDay]?.count ?? 0) + 1
 
-        let updated = existing + [newPlace]
-        placesByDay[currentDay] = updated
-        presenter.updatePlaces(updated)
-        presenter.showToast("내 일정에 추가되었습니다.")
+        Task {
+            await MainActor.run { presenter.showLoading() }
+
+            do {
+                try await followDetailUsecase.registerPlace(googlePlaceId: place.googlePlaceId)
+                try await followDetailUsecase.addItinerary(
+                    travelId: travelId,
+                    googlePlaceId: place.googlePlaceId,
+                    day: currentDay,
+                    sequence: sequence
+                )
+                placesByDay[currentDay] = nil
+                await MainActor.run {
+                    presenter.hideLoading()
+                    presenter.showToast("내 일정에 추가되었습니다.")
+                }
+                loadPlaces(for: currentDay)
+            } catch {
+                await MainActor.run { presenter.hideLoading() }
+                print(error)
+            }
+        }
     }
 }
 

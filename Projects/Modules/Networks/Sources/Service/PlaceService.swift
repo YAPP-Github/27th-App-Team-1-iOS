@@ -11,7 +11,7 @@ import Foundation
 import Moya
 
 public protocol PlaceServiceProtocol {
-    func searchPlaces() async throws -> Int
+    func registerPlace(googlePlaceId: String) async throws
     func getPlacePhotos(googlePlaceId: String) async throws -> PlacePhotosResponse
     func getPlaceDetails(googlePlaceId: String) async throws -> PlaceDetailResponse
 }
@@ -23,8 +23,8 @@ public final class PlaceService: PlaceServiceProtocol {
         self.provider = provider
     }
     
-    public func searchPlaces() async throws -> Int {
-        try await provider.asyncThowsRequest(.searchPlaces)
+    public func registerPlace(googlePlaceId: String) async throws {
+        let _: BaseResponse<EmptyResponse> = try await provider.asyncThrowsRequestRaw(.registerPlace(googlePlaceId: googlePlaceId))
     }
     
     public func getPlacePhotos(googlePlaceId: String) async throws -> PlacePhotosResponse {

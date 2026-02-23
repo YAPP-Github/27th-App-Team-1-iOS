@@ -28,6 +28,20 @@ public struct CreateUserTravelResponse: Decodable, Sendable {
     public let userTravelId: Int
 }
 
+// MARK: - Add Itinerary Request
+
+public struct AddItineraryRequest: Encodable, Sendable {
+    public let googlePlaceId: String
+    public let day: Int
+    public let sequence: Int
+
+    public init(googlePlaceId: String, day: Int, sequence: Int) {
+        self.googlePlaceId = googlePlaceId
+        self.day = day
+        self.sequence = sequence
+    }
+}
+
 // MARK: - Replace Itinerary Request
 
 public struct ReplaceItineraryRequest: Encodable, Sendable {
