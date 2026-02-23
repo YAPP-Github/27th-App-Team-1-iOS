@@ -130,7 +130,7 @@ extension UpcomingInfo {
         return MyTravelPresentationModel.Upcoming(
             id: self.id,
             title: self.title,
-            profileImage: self.profileImage ?? "",
+            profileImage: self.thumbnail ?? "",
             dDay: dDayValue,
             duration: "\(self.startDate.toKoreanMMdd())~\(self.endDate.toKoreanMMdd())"
         )
