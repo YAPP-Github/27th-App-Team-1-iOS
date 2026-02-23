@@ -69,7 +69,7 @@ private extension MyTravelViewController {
             $0.backgroundColor = .clear
             $0.contentInset = .zero
             $0.isScrollEnabled = true
-            $0.contentInset = .init(top: 19.adjustedH, left: 0, bottom: 0, right: 0)
+            $0.contentInset = .init(top: 21.adjustedH, left: 0, bottom: 0, right: 0)
         }
         
         loadingIndicator.do {
