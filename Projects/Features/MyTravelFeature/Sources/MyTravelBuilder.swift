@@ -6,35 +6,38 @@
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
+import Domain
+
 import RIBs
 
-protocol MyTravelDependency: Dependency {
-    // TODO: Declare the set of dependencies required by this RIB, but cannot be
-    // created by this RIB.
+public protocol MyTravelDependency: Dependency {
+    var myTravelUsecase: MyTravelUsecaseProtocol { get }
 }
 
 final class MyTravelComponent: Component<MyTravelDependency> {
-
-    // TODO: Declare 'fileprivate' dependencies that are only used by this RIB.
+    var myTravelUsecase: MyTravelUsecaseProtocol {
+        dependency.myTravelUsecase
+    }
 }
 
 // MARK: - Builder
 
-protocol MyTravelBuildable: Buildable {
+public protocol MyTravelBuildable: Buildable {
     func build(withListener listener: MyTravelListener) -> MyTravelRouting
 }
 
-final class MyTravelBuilder: Builder<MyTravelDependency>, MyTravelBuildable {
+public final class MyTravelBuilder: Builder<MyTravelDependency>, MyTravelBuildable {
 
-    override init(dependency: MyTravelDependency) {
+    override public init(dependency: MyTravelDependency) {
         super.init(dependency: dependency)
     }
 
-    func build(withListener listener: MyTravelListener) -> MyTravelRouting {
+    public func build(withListener listener: MyTravelListener) -> MyTravelRouting {
         let component = MyTravelComponent(dependency: dependency)
         let viewController = MyTravelViewController()
-        let interactor = MyTravelInteractor(presenter: viewController)
+        let interactor = MyTravelInteractor(presenter: viewController, usecase: component.myTravelUsecase)
         interactor.listener = listener
+        
         return MyTravelRouter(interactor: interactor, viewController: viewController)
     }
 }
