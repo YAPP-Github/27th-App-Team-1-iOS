@@ -41,13 +41,16 @@ final class UpcomingCell: UICollectionViewCell {
         dDayLabel.setText(.bodyMM, text: "D-\(dDay)", color: DSKitAsset.Colors.black400.color)
 
         if let url = URL(string: imageUrl) {
-            imageView.kf.setImage(with: url)
+            imageView.kf.setImage(with: url, options: [.transition(.fade(0.3))])
         } else {
+            print(imageUrl)
             imageView.backgroundColor = .systemGray5
         }
     }
     
     override public func prepareForReuse() {
+        super.prepareForReuse()
+        
         imageView.kf.cancelDownloadTask()
         titleLabel.text = nil
         dateLabel.text = nil
