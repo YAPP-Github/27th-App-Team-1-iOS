@@ -31,4 +31,11 @@ public extension String {
         let locale = Locale(identifier: "ko_KR")
         return locale.localizedString(forRegionCode: self) ?? "알 수 없음"
     }
+    
+    func toDate() -> Date? {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter.date(from: self)
+    }
 }
