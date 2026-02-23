@@ -41,4 +41,12 @@ public final class UserTravelRepository: UserTravelRepositoryInterface {
             throw error.toNDGLError()
         }
     }
+    
+    public func fetchUpcomingList(page: Int?, size: Int?) async throws -> [UpcomingInfo] {
+        do {
+            return try await service.getUpcomingList(page: page, size: size).toDomain()
+        } catch {
+            throw error.toNDGLError()
+        }
+    }
 }

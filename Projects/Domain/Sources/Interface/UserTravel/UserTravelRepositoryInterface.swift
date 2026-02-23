@@ -10,5 +10,7 @@ import Foundation
 
 public protocol UserTravelRepositoryInterface {
     func createUserTravel(request: CreateTravelRequest) async throws -> CreateTravelResponse
+//    func fetchContentCard(id: Int) async throws ->
     func fetchUpcoming() async throws -> MyTripSummary
+    func fetchUpcomingList(page: Int?, size: Int?) async throws -> [UpcomingInfo]
 }
