@@ -27,3 +27,21 @@ public struct CreateUserTravelRequest: Encodable, Sendable {
 public struct CreateUserTravelResponse: Decodable, Sendable {
     public let userTravelId: Int
 }
+
+// MARK: - User Travel Itinerary Response
+
+public struct UserTravelItineraryResponse: Decodable, Sendable {
+    public let itineraries: [UserTravelPlaceResponse]
+}
+
+public struct UserTravelPlaceResponse: Decodable, Sendable {
+    public let id: Int
+    public let day: Int
+    public let sequence: Int
+    public let distanceKm: Double?
+    public let transportation: [TransportationResponse]?
+    public let travelerTips: [String]?
+    public let planB: [PlanBResponse]?
+    public let estimatedDuration: Int?
+    public let place: PlaceResponse?
+}

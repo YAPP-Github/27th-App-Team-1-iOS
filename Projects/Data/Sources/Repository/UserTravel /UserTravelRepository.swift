@@ -49,4 +49,20 @@ public final class UserTravelRepository: UserTravelRepositoryInterface {
             throw error.toNDGLError()
         }
     }
+
+    public func fetchUserTravelDetail(id: Int) async throws -> TravelDetail {
+        do {
+            return try await service.getContentCard(id: id).toDomain()
+        } catch {
+            throw error.toNDGLError()
+        }
+    }
+
+    public func fetchItinerary(travelId: Int, day: Int) async throws -> [TravelPlace] {
+        do {
+            return try await service.getItinerary(travelId: travelId, day: day).toDomain()
+        } catch {
+            throw error.toNDGLError()
+        }
+    }
 }

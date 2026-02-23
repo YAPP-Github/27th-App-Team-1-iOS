@@ -24,10 +24,17 @@ final class FollowDetailComponent: Component<FollowDetailDependency>, TripCalend
     }
 }
 
+// MARK: - FollowDetailMode
+
+public enum FollowDetailMode {
+    case template(id: Int)
+    case myTravel(id: Int)
+}
+
 // MARK: - FollowDetailBuildable
 
 public protocol FollowDetailBuildable: Buildable {
-    func build(withListener listener: FollowDetailListener, recommendationId: Int) -> FollowDetailRouting
+    func build(withListener listener: FollowDetailListener, mode: FollowDetailMode) -> FollowDetailRouting
 }
 
 // MARK: - FollowDetailBuilder
@@ -38,13 +45,13 @@ public final class FollowDetailBuilder: Builder<FollowDetailDependency>, FollowD
         super.init(dependency: dependency)
     }
 
-    public func build(withListener listener: FollowDetailListener, recommendationId: Int) -> FollowDetailRouting {
+    public func build(withListener listener: FollowDetailListener, mode: FollowDetailMode) -> FollowDetailRouting {
         let component = FollowDetailComponent(dependency: dependency)
         let viewController = FollowDetailViewController()
         let interactor = FollowDetailInteractor(
             presenter: viewController,
             followDetailUsecase: component.followDetailUsecase,
-            recommendationId: recommendationId
+            mode: mode
         )
         interactor.listener = listener
 

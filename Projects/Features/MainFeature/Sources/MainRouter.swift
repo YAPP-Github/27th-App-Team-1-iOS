@@ -65,7 +65,18 @@ final class MainRouter: ViewableRouter<MainInteractable, MainViewControllable>, 
         guard followRouter == nil else { return }
         let router = followBuilder.build(
             withListener: interactor,
-            recommendationId: recommendationId
+            mode: .template(id: recommendationId)
+        )
+        self.followRouter = router
+        attachChild(router)
+        viewController.pushViewController(router.viewControllable, animated: true)
+    }
+
+    func attachMyTravelDetail(with userTravelId: Int) {
+        guard followRouter == nil else { return }
+        let router = followBuilder.build(
+            withListener: interactor,
+            mode: .myTravel(id: userTravelId)
         )
         self.followRouter = router
         attachChild(router)

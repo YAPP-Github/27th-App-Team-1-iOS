@@ -12,6 +12,27 @@ import Domain
 import Networks
 
 
+extension UserContentCardResponse {
+    func toDomain() -> TravelDetail {
+        TravelDetail(
+            travelId: userTravelId,
+            country: country,
+            city: city,
+            budgetPerPerson: 0,
+            nights: nights,
+            days: days,
+            youtube: YouTubeInfo(
+                title: title,
+                youtuber: "",
+                thumbnail: nil,
+                profileImage: nil,
+                link: nil,
+                summary: ""
+            )
+        )
+    }
+}
+
 extension UpcomingResponse {
     func toDomain() -> MyTripSummary {
         let schedule: Schedule?
@@ -46,6 +67,29 @@ extension UpcomingResponse {
 extension CreateUserTravelResponse {
     func toDomain() -> CreateTravelResponse {
         .init(userTravelId: self.userTravelId)
+    }
+}
+
+extension UserTravelItineraryResponse {
+    func toDomain() -> [TravelPlace] {
+        itineraries.compactMap { $0.toDomain() }
+    }
+}
+
+extension UserTravelPlaceResponse {
+    func toDomain() -> TravelPlace? {
+        guard let place else { return nil }
+        return TravelPlace(
+            id: id,
+            day: day,
+            sequence: sequence,
+            distanceKm: distanceKm,
+            transportation: transportation?.map { $0.toDomain() } ?? [],
+            youtubeTips: travelerTips ?? [],
+            planB: planB?.map { $0.toDomain() } ?? [],
+            estimatedDuration: estimatedDuration,
+            place: place.toDomain()
+        )
     }
 }
 

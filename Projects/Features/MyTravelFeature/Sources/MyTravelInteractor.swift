@@ -29,6 +29,7 @@ protocol MyTravelPresentable: Presentable {
 
 public protocol MyTravelListener: AnyObject {
     func myTraveDidTapFollowDetail(with recommendationId: Int)
+    func myTraveDidTapMyTravelDetail(with userTravelId: Int)
     func myTraveDidTapSearch()
     func myTraveDidTapPopularTravel()
 }
@@ -137,9 +138,9 @@ extension MyTravelInteractor: MyTravelPresentableListener {
         case .recommendTrip(let trip):
             listener?.myTraveDidTapFollowDetail(with: trip.id)
         case .upcomingList(let upcoming):
-            listener?.myTraveDidTapFollowDetail(with: upcoming.id)
+            listener?.myTraveDidTapMyTravelDetail(with: upcoming.id)
         case .banner(let myTrip):
-            listener?.myTraveDidTapFollowDetail(with: myTrip.id)
+            listener?.myTraveDidTapMyTravelDetail(with: myTrip.id)
         }
     }
     

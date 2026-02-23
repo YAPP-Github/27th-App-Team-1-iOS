@@ -15,6 +15,7 @@ public enum UserTravelAPI {
     case getContentCard(id: Int)
     case getUpcoming
     case getUpcomingList(page: Int?, size: Int?)
+    case getItinerary(id: Int, day: Int)
 }
 
 extension UserTravelAPI: TargetType {
@@ -32,6 +33,8 @@ extension UserTravelAPI: TargetType {
             return "/api/v1/travels/upcoming"
         case .getUpcomingList:
             return "api/v1/travels/upcoming/list"
+        case .getItinerary(let id, _):
+            return "/api/v1/travels/\(id)/itinerary"
         }
     }
     
@@ -39,7 +42,7 @@ extension UserTravelAPI: TargetType {
         switch self {
         case .createUserTravel:
             return .post
-        case .getContentCard, .getUpcoming, .getUpcomingList:
+        case .getContentCard, .getUpcoming, .getUpcomingList, .getItinerary:
             return .get
         }
     }
@@ -52,11 +55,16 @@ extension UserTravelAPI: TargetType {
             return .requestPlain
         case .getUpcomingList(let page, let size):
             var params: [String: Any] = [:]
-            
+
             if let page { params["page"] = page }
             if let size { params["size"] = size }
-            
+
             return .requestParameters(parameters: params, encoding: URLEncoding.queryString)
+        case .getItinerary(_, let day):
+            return .requestParameters(
+                parameters: ["day": day],
+                encoding: URLEncoding.queryString
+            )
         }
     }
     

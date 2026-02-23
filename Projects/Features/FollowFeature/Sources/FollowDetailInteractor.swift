@@ -49,12 +49,18 @@ final class FollowDetailInteractor: PresentableInteractor<FollowDetailPresentabl
     weak var listener: FollowDetailListener?
 
     private let followDetailUsecase: FollowDetailUsecaseProtocol
-    
+    private let mode: FollowDetailMode
+
     private let disposeBag = DisposeBag()
 
     // MARK: - Data (Source of Truth)
 
-    private let recommendationId: Int
+    private var travelId: Int {
+        switch mode {
+        case .template(let id): return id
+        case .myTravel(let id): return id
+        }
+    }
     private var travelDetail: TravelDetail?
     private var currentDay: Int = 1
     private var placesByDay: [Int: [TravelPlace]] = [:]
@@ -62,10 +68,10 @@ final class FollowDetailInteractor: PresentableInteractor<FollowDetailPresentabl
     init(
         presenter: FollowDetailPresentable,
         followDetailUsecase: FollowDetailUsecaseProtocol,
-        recommendationId: Int
+        mode: FollowDetailMode
     ) {
         self.followDetailUsecase = followDetailUsecase
-        self.recommendationId = recommendationId
+        self.mode = mode
         super.init(presenter: presenter)
         presenter.listener = self
     }
@@ -83,14 +89,21 @@ final class FollowDetailInteractor: PresentableInteractor<FollowDetailPresentabl
 
     private func loadTravelDetail() {
         Task {
-            await MainActor.run {
-                presenter.showLoading()
-            }
-            
+            await MainActor.run { presenter.showLoading() }
+
             do {
-                let detail = try await followDetailUsecase.fetchTravelDetail(id: recommendationId)
-                let places = try await followDetailUsecase.fetchPlaces(travelId: recommendationId, day: 1)
-                
+                let detail: TravelDetail
+                let places: [TravelPlace]
+
+                switch mode {
+                case .template:
+                    detail = try await followDetailUsecase.fetchTravelDetail(id: travelId)
+                    places = try await followDetailUsecase.fetchPlaces(travelId: travelId, day: 1)
+                case .myTravel:
+                    detail = try await followDetailUsecase.fetchMyTravelDetail(id: travelId)
+                    places = try await followDetailUsecase.fetchMyTravelPlaces(travelId: travelId, day: 1)
+                }
+
                 await MainActor.run {
                     self.travelDetail = detail
                     self.placesByDay[1] = places
@@ -100,9 +113,7 @@ final class FollowDetailInteractor: PresentableInteractor<FollowDetailPresentabl
                 }
             } catch {
                 print(error)
-                await MainActor.run {
-                    presenter.hideLoading()
-                }
+                await MainActor.run { presenter.hideLoading() }
             }
         }
     }
@@ -114,22 +125,25 @@ final class FollowDetailInteractor: PresentableInteractor<FollowDetailPresentabl
         }
 
         Task {
-            await MainActor.run {
-                presenter.showLoading()
-            }
-            
+            await MainActor.run { presenter.showLoading() }
+
             do {
-                let places = try await followDetailUsecase.fetchPlaces(travelId: recommendationId, day: day)
-                
+                let places: [TravelPlace]
+
+                switch mode {
+                case .template:
+                    places = try await followDetailUsecase.fetchPlaces(travelId: travelId, day: day)
+                case .myTravel:
+                    places = try await followDetailUsecase.fetchMyTravelPlaces(travelId: travelId, day: day)
+                }
+
                 await MainActor.run {
                     self.placesByDay[day] = places
                     presenter.updatePlaces(places)
                     presenter.hideLoading()
                 }
             } catch {
-                await MainActor.run {
-                    presenter.hideLoading()
-                }
+                await MainActor.run { presenter.hideLoading() }
             }
         }
     }
@@ -143,8 +157,14 @@ extension FollowDetailInteractor: FollowDetailPresentableListener {
     }
 
     func didTapAddToTrip() {
-        let totalDays = travelDetail?.days ?? 1
-        router?.routeToTripCalendar(templateTotalDays: totalDays)
+        switch mode {
+        case .template:
+            let totalDays = travelDetail?.days ?? 1
+            router?.routeToTripCalendar(templateTotalDays: totalDays)
+        case .myTravel:
+            // 내 여행 수정 플로우 (추후 구현)
+            break
+        }
     }
 
     func didSelectDay(_ day: Int) {
@@ -184,7 +204,7 @@ extension FollowDetailInteractor: TripCalendarListener {
 
     private func createUserTravel(startDate: Date, endDate: Date) {
         let request = CreateTravelRequest(
-            templateId: recommendationId,
+            templateId: travelId,
             startDate: startDate,
             endDate: endDate
         )

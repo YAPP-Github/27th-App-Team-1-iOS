@@ -11,6 +11,8 @@ import Foundation
 public protocol FollowDetailUsecaseProtocol {
     func fetchTravelDetail(id: Int) async throws -> TravelDetail
     func fetchPlaces(travelId: Int, day: Int) async throws -> [TravelPlace]
+    func fetchMyTravelDetail(id: Int) async throws -> TravelDetail
+    func fetchMyTravelPlaces(travelId: Int, day: Int) async throws -> [TravelPlace]
     func createUserTravel(request: CreateTravelRequest) async throws -> CreateTravelResponse
     func fetchPlaceDetail(googlePlaceId: String) async throws -> PlaceDetail
     func fetchPlacePhotos(googlePlaceId: String) async throws -> [PlacePhoto]
@@ -39,6 +41,14 @@ extension FollowDetailUsecase: FollowDetailUsecaseProtocol {
     
     public func fetchPlaces(travelId: Int, day: Int) async throws -> [TravelPlace] {
         try await travelTemplateRepository.fetchPlaces(travelId: travelId, day: day)
+    }
+
+    public func fetchMyTravelDetail(id: Int) async throws -> TravelDetail {
+        try await userTravelRepository.fetchUserTravelDetail(id: id)
+    }
+
+    public func fetchMyTravelPlaces(travelId: Int, day: Int) async throws -> [TravelPlace] {
+        try await userTravelRepository.fetchItinerary(travelId: travelId, day: day)
     }
     
     public func createUserTravel(request: CreateTravelRequest) async throws -> CreateTravelResponse {
