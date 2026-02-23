@@ -1,8 +1,8 @@
 //
 //  Project.swift
-//  TravelFeature
+//  ProjectDescriptionHelpers
 //
-//  Created by kimnahun on 2026-01-24.
+//  Created by 최안용 on 2026/02/21.
 //
 
 import ProjectDescription
@@ -10,10 +10,10 @@ import ProjectDescriptionHelpers
 import DependencyPlugin
 
 let project = Project.makeModule(
-    name: "TravelFeature",
+    name: "MyTravelFeature",
     targets: [
         .makeFrameworkTarget(
-            name: "TravelFeature",
+            name: "MyTravelFeature",
             dependencies: [
                 .Features.baseFeatureDependency
             ],

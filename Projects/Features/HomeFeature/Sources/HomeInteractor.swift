@@ -64,9 +64,6 @@ final class HomeInteractor: PresentableInteractor<HomePresentable>, HomeInteract
 
     override func didBecomeActive() {
         super.didBecomeActive()
-        
-        setupStream()
-        fetchHomeData()
     }
 
     override func willResignActive() {
@@ -179,7 +176,8 @@ final class HomeInteractor: PresentableInteractor<HomePresentable>, HomeInteract
 
 // MARK: - HomePresentableListener
 extension HomeInteractor: HomePresentableListener {
-    func viewWillAppear() {
+    func viewDidLoad() {
+        setupStream()
         fetchHomeData()
     }
 

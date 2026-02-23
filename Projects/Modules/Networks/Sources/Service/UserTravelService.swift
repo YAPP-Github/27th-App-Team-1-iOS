@@ -12,7 +12,9 @@ import Moya
 
 public protocol UserTravelServiceProtocol {
     func createUserTravel(request: CreateUserTravelRequest) async throws -> CreateUserTravelResponse
+    func getContentCard(id: Int) async throws -> UserContentCardResponse
     func getUpcoming() async throws -> UpcomingResponse
+    func getUpcomingList(page: Int?, size: Int?) async throws -> UpcomingListResponse
 }
 
 public final class UserTravelService: UserTravelServiceProtocol {
@@ -26,7 +28,15 @@ public final class UserTravelService: UserTravelServiceProtocol {
         try await provider.asyncThowsRequest(.createUserTravel(request: request))
     }
     
+    public func getContentCard(id: Int) async throws -> UserContentCardResponse {
+        try await provider.asyncThowsRequest(.getContentCard(id: id))
+    }
+    
     public func getUpcoming() async throws -> UpcomingResponse {
         try await provider.asyncThowsRequest(.getUpcoming)
+    }
+    
+    public func getUpcomingList(page: Int?, size: Int?) async throws -> UpcomingListResponse {
+        try await provider.asyncThowsRequest(.getUpcomingList(page: page, size: size))
     }
 }

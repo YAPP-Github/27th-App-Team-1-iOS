@@ -8,7 +8,9 @@
 
 import Foundation
 
+import Core
 import Domain
+
 import RIBs
 import RxSwift
 
@@ -71,9 +73,8 @@ final class RootInteractor: PresentableInteractor<RootPresentable>, RootInteract
                     let loginResult = try await self.authRepository.login(uuid: uuid)
                     self.tokenRepository.save(loginResult.accessToken, for: .accessToken)
                     
-                    // 임시
-                    UserDefaults.standard.set(loginResult.uuid, forKey: "uuid")
-                    UserDefaults.standard.set(loginResult.nickname, forKey: "nickname")
+                    UserManager.shared.uuid = loginResult.uuid
+                    UserManager.shared.nickname = loginResult.nickname
                 } else {
                     let fcmToken = self.tokenRepository.get(.fcmToken) ?? UUID().uuidString
                     let signupResult = try await self.authRepository.signup(
@@ -82,9 +83,8 @@ final class RootInteractor: PresentableInteractor<RootPresentable>, RootInteract
                     self.tokenRepository.save(signupResult.uuid, for: .uuid)
                     self.tokenRepository.save(signupResult.accessToken, for: .accessToken)
                     
-                    // 임시
-                    UserDefaults.standard.set(signupResult.uuid, forKey: "uuid")
-                    UserDefaults.standard.set(signupResult.nickname, forKey: "nickname")
+                    UserManager.shared.uuid = signupResult.uuid
+                    UserManager.shared.nickname = signupResult.nickname
                     
                     let loginResult = try await self.authRepository.login(uuid: signupResult.uuid)
                     self.tokenRepository.save(loginResult.accessToken, for: .accessToken)

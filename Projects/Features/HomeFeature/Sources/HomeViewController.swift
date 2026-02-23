@@ -23,7 +23,7 @@ protocol HomePresentableListener: AnyObject {
     func itemSelected(item: HomeItem)
     func moreBtnTapped()
     func reloadBtnTapped()
-    func viewWillAppear()
+    func viewDidLoad()
 }
 
 // MARK: - HomeViewController
@@ -58,12 +58,12 @@ final class HomeViewController: UIViewController, HomeViewControllable {
         setCollectionView()
         setDataSource()
         bindInteractor()
+        listener?.viewDidLoad()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
-        listener?.viewWillAppear()
     }
 }
 
@@ -239,7 +239,7 @@ private extension HomeViewController {
         let headerRegistration = createHeaderRegistration()
         let popularFooterRegistration = createPopularFooterRegistration()
         
-        dataSource?.supplementaryViewProvider = { collectionView, kind, indexPath in
+        dataSource.supplementaryViewProvider = { collectionView, kind, indexPath in
             guard HomeSectionKind(rawValue: indexPath.section) != nil else {
                 return UICollectionReusableView()
             }

@@ -73,6 +73,15 @@ final class AppComponent: Component<EmptyDependency>, RootDependency {
             TemplatesSearchUsecase(travelTemplateRepository: travelTemplateRepository)
         }
     }
+    
+    var myTravelUsecase: MyTravelUsecaseProtocol {
+        shared {
+            MyTravelUsecase(
+                travelTemplateRepository: travelTemplateRepository,
+                userTravelRepository: userTravelRepository
+            )
+        }
+    }
 
     var authRepository: AuthRepositoryInterface {
         shared { makeAuthRepository() }

@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Core
+
 enum HomeSectionKind: Int, CaseIterable {
     case banner
     case category
@@ -19,7 +21,7 @@ enum HomeSectionKind: Int, CaseIterable {
         case .category:
             return "인기 여행 따라가기"
         case .recommendedTrip:
-            let nickname = UserDefaults.standard.string(forKey: "nickname") ?? "알 수 없음"
+            let nickname = UserManager.shared.nickname ?? "알 수 없음"
             return "\(nickname)님께 추천하는\n따라가기 여행 콘텐츠에요!"
         default: return ""
         }

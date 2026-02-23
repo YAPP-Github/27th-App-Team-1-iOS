@@ -12,7 +12,9 @@ import Moya
 
 public enum UserTravelAPI {
     case createUserTravel(request: CreateUserTravelRequest)
+    case getContentCard(id: Int)
     case getUpcoming
+    case getUpcomingList(page: Int?, size: Int?)
 }
 
 extension UserTravelAPI: TargetType {
@@ -24,8 +26,12 @@ extension UserTravelAPI: TargetType {
         switch self {
         case .createUserTravel:
             return "/api/v1/travels"
+        case .getContentCard(id: let id):
+            return "/api/v1/travels/\(id)/content-card"
         case .getUpcoming:
             return "/api/v1/travels/upcoming"
+        case .getUpcomingList:
+            return "api/v1/travels/upcoming/list"
         }
     }
     
@@ -33,7 +39,7 @@ extension UserTravelAPI: TargetType {
         switch self {
         case .createUserTravel:
             return .post
-        case .getUpcoming:
+        case .getContentCard, .getUpcoming, .getUpcomingList:
             return .get
         }
     }
@@ -42,8 +48,15 @@ extension UserTravelAPI: TargetType {
         switch self {
         case .createUserTravel(let request):
             return .requestJSONEncodable(request)
-        case .getUpcoming:
+        case .getContentCard, .getUpcoming:
             return .requestPlain
+        case .getUpcomingList(let page, let size):
+            var params: [String: Any] = [:]
+            
+            if let page { params["page"] = page }
+            if let size { params["size"] = size }
+            
+            return .requestParameters(parameters: params, encoding: URLEncoding.queryString)
         }
     }
     

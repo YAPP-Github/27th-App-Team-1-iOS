@@ -49,11 +49,22 @@ extension CreateUserTravelResponse {
     }
 }
 
-extension String {
-    func toDate() -> Date? {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.dateFormat = "yyyy-MM-dd"
-        return formatter.date(from: self)
+extension UpcomingListResponse {
+    func toDomain() -> [UpcomingInfo] {
+        self.content.map {
+            .init(
+                id: $0.id,
+                title: $0.title,
+                country: $0.country,
+                city: $0.city,
+                startDate: $0.startDate.toDate() ?? .now,
+                endDate: $0.endDate.toDate() ?? .now,
+                nights: $0.nights,
+                days: $0.days,
+                templateId: $0.templateId,
+                thumbnail: $0.thumbnail,
+                profileImage: $0.profileImage
+            )
+        }
     }
 }

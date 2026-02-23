@@ -8,6 +8,7 @@
 
 import UIKit
 
+import Core
 import DSKit
 
 import RIBs
@@ -48,7 +49,7 @@ final class SettingViewController: UIViewController, SettingPresentable, Setting
     }
     
     func copyToClipboard() {
-        guard let uuid = UserDefaults.standard.string(forKey: "uuid") else {
+        guard let uuid = UserManager.shared.uuid else {
             Toast.show(
                 type: .normal,
                 message: "식별코드를 불러올 수 없습니다.",

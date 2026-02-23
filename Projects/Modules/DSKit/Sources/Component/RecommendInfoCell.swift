@@ -1,18 +1,18 @@
 //
 //  RecommendInfoCell.swift
-//  HomeFeature
+//  DSKit
 //
-//  Created by 최안용 on 1/31/26.
+//  Created by 최안용 on 2/22/26.
 //  Copyright © 2026 NDGL-iOS. All rights reserved.
 //
 
 import UIKit
 
-import DSKit
+import Kingfisher
 
-final class RecommendInfoCell: UICollectionViewCell {
-    static let defaultWidth = 240.adjusted
-    static let defaultHeight = 253.adjustedH
+public final class RecommendInfoCell: UICollectionViewCell {
+    public static let defaultWidth = 240.adjusted
+    public static let defaultHeight = 253.adjustedH
     
     // MARK: - UI Components
     private let thumbnailView = UIImageView()
@@ -30,7 +30,7 @@ final class RecommendInfoCell: UICollectionViewCell {
     private let infoStackView = UIStackView()
     
     // MARK: - Init
-    override init(frame: CGRect) {
+    override public init(frame: CGRect) {
         super.init(frame: frame)
         setStyle()
         setUI()
@@ -55,16 +55,23 @@ final class RecommendInfoCell: UICollectionViewCell {
     }
     
     // MARK: - Configure
-    func configure(_ model: HomePresentationModel.RecommendedTrip) {
-        if let url = URL(string: model.thumbnailUrl) {
+    public func configure(
+        title: String,
+        thumbnailUrl: String,
+        countryCode: String,
+        creator: String,
+        city: String,
+        schedule: String
+    ) {
+        if let url = URL(string: thumbnailUrl) {
             thumbnailView.kf.setImage(with: url, options: [.transition(.fade(0.3))])
         }
-        nationalFlagLabel.text = model.country.toFlag()
-        nationLabel.setText(.bodyMM, text: model.country.toKoreanCountryName(), color: DSKitAsset.Colors.black400.color)
-        titleLabel.setText(.bodyLSB, text: model.title, color: DSKitAsset.Colors.black700.color)
-        nameLabel.setText(.bodyMM, text: model.creator, color: DSKitAsset.Colors.black400.color)
-        cityLabel.setText(.bodyMM, text: model.city, color: DSKitAsset.Colors.black400.color)
-        scheduleLabel.setText(.bodyMM, text: model.schedule, color: DSKitAsset.Colors.black400.color)
+        nationalFlagLabel.text = countryCode.toFlag()
+        nationLabel.setText(.bodyMM, text: countryCode.toKoreanCountryName(), color: DSKitAsset.Colors.black400.color)
+        titleLabel.setText(.bodyLSB, text: title, color: DSKitAsset.Colors.black700.color)
+        nameLabel.setText(.bodyMM, text: creator, color: DSKitAsset.Colors.black400.color)
+        cityLabel.setText(.bodyMM, text: city, color: DSKitAsset.Colors.black400.color)
+        scheduleLabel.setText(.bodyMM, text: schedule, color: DSKitAsset.Colors.black400.color)
     }
 }
 
