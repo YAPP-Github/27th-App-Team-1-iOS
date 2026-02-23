@@ -24,6 +24,7 @@ protocol HomePresentableListener: AnyObject {
     func moreBtnTapped()
     func reloadBtnTapped()
     func viewDidLoad()
+    func viewWillAppear()
 }
 
 // MARK: - HomeViewController
@@ -64,6 +65,7 @@ final class HomeViewController: UIViewController, HomeViewControllable {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
+        listener?.viewWillAppear()
     }
 }
 
@@ -211,11 +213,11 @@ private extension HomeViewController {
                     for: indexPath,
                     item: banner
                 )
-            case .category(let category):
+            case .category(let category, let isSelected):
                 return collectionView.dequeueConfiguredReusableCell(
                     using: categoryRegistration,
                     for: indexPath,
-                    item: category
+                    item: (category, isSelected)
                 )
             case .popularTrip(let tripList):
                 return collectionView.dequeueConfiguredReusableCell(
