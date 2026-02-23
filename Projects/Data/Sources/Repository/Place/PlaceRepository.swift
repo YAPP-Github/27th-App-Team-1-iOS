@@ -13,11 +13,22 @@ import Networks
 
 public final class PlaceRepository: PlaceRepositoryInterface {
     private let service: PlaceServiceProtocol
-    
-    public init(service: PlaceServiceProtocol) {
+    private let googlePlacesService: GooglePlacesServiceProtocol
+
+    public init(service: PlaceServiceProtocol, googlePlacesService: GooglePlacesServiceProtocol) {
         self.service = service
+        self.googlePlacesService = googlePlacesService
     }
-    
+
+    public func searchPlaces(keyword: String) async throws -> [PlaceSearchResult] {
+        do {
+            let response = try await googlePlacesService.searchText(keyword: keyword)
+            return (response.places ?? []).compactMap { $0.toDomain() }
+        } catch {
+            throw error.toNDGLError()
+        }
+    }
+
     public func searchPlaces() async throws -> Int {
         do {
             return try await service.searchPlaces()

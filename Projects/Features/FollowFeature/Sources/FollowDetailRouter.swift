@@ -11,7 +11,7 @@ import RIBs
 
 // MARK: - FollowDetailInteractable
 
-protocol FollowDetailInteractable: Interactable, TripCalendarListener, PlaceDetailListener {
+protocol FollowDetailInteractable: Interactable, TripCalendarListener, PlaceDetailListener, AddPlaceListener {
     var router: FollowDetailRouting? { get set }
     var listener: FollowDetailListener? { get set }
 }
@@ -30,6 +30,8 @@ public protocol FollowDetailRouting: ViewableRouting {
     func detachTripCalendar()
     func routeToPlaceDetail(travelPlace: TravelPlace, youtuberName: String)
     func detachPlaceDetail()
+    func routeToAddPlace()
+    func detachAddPlace()
 }
 
 // MARK: - FollowDetailRouter
@@ -42,14 +44,19 @@ final class FollowDetailRouter: ViewableRouter<FollowDetailInteractable, FollowD
     private let placeDetailBuilder: PlaceDetailBuildable
     private var placeDetailRouter: PlaceDetailRouting?
 
+    private let addPlaceBuilder: AddPlaceBuildable
+    private var addPlaceRouter: AddPlaceRouting?
+
     init(
         interactor: FollowDetailInteractable,
         viewController: FollowDetailViewControllable,
         tripCalendarBuilder: TripCalendarBuildable,
-        placeDetailBuilder: PlaceDetailBuildable
+        placeDetailBuilder: PlaceDetailBuildable,
+        addPlaceBuilder: AddPlaceBuildable
     ) {
         self.tripCalendarBuilder = tripCalendarBuilder
         self.placeDetailBuilder = placeDetailBuilder
+        self.addPlaceBuilder = addPlaceBuilder
         super.init(interactor: interactor, viewController: viewController)
         interactor.router = self
     }
@@ -97,5 +104,26 @@ final class FollowDetailRouter: ViewableRouter<FollowDetailInteractable, FollowD
 
         detachChild(router)
         placeDetailRouter = nil
+    }
+
+    func routeToAddPlace() {
+        guard addPlaceRouter == nil else { return }
+
+        let router = addPlaceBuilder.build(withListener: interactor)
+        addPlaceRouter = router
+        attachChild(router)
+        viewController.present(router.viewControllable)
+    }
+
+    func detachAddPlace() {
+        guard let router = addPlaceRouter else { return }
+
+        if let navController = viewController.uiviewController.navigationController,
+           navController.viewControllers.contains(router.viewControllable.uiviewController) {
+            viewController.dismiss(router.viewControllable)
+        }
+
+        detachChild(router)
+        addPlaceRouter = nil
     }
 }

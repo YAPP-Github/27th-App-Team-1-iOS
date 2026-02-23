@@ -304,6 +304,7 @@ final class FollowDetailViewController: UIViewController, FollowDetailPresentabl
         editModeEntryButton.addTarget(self, action: #selector(editModeEntryButtonTapped), for: .touchUpInside)
         editCompleteButton.addTarget(self, action: #selector(editCompleteButtonTapped), for: .touchUpInside)
         selectAllButton.addTarget(self, action: #selector(selectAllButtonTapped), for: .touchUpInside)
+        addPlaceButton.addTarget(self, action: #selector(addPlaceButtonTapped), for: .touchUpInside)
 
         navigationBar.leadingButtonDidTap
             .subscribe(with: self) { owner, _ in
@@ -316,6 +317,10 @@ final class FollowDetailViewController: UIViewController, FollowDetailPresentabl
 
     @objc private func addToTripButtonTapped() {
         listener?.didTapAddToTrip()
+    }
+
+    @objc private func addPlaceButtonTapped() {
+        listener?.didTapAddPlace()
     }
 
     @objc private func editModeEntryButtonTapped() {

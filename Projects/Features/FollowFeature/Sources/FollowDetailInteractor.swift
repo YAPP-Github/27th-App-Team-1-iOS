@@ -38,6 +38,7 @@ protocol FollowDetailPresentableListener: AnyObject {
     func detachFollowDetail()
     func viewDidLoad()
     func didTapAddToTrip()
+    func didTapAddPlace()
     func didSelectDay(_ day: Int)
     func didSelectPlace(_ place: TravelPlace)
     func didTapPlaceDetailChevron(_ place: TravelPlace)
@@ -178,6 +179,10 @@ extension FollowDetailInteractor: FollowDetailPresentableListener {
         }
     }
 
+    func didTapAddPlace() {
+        router?.routeToAddPlace()
+    }
+
     func didSelectDay(_ day: Int) {
         guard day != currentDay else { return }
         currentDay = day
@@ -199,6 +204,19 @@ extension FollowDetailInteractor: FollowDetailPresentableListener {
 extension FollowDetailInteractor: PlaceDetailListener {
     func placeDetailDidTapBack() {
         router?.detachPlaceDetail()
+    }
+}
+
+// MARK: - AddPlaceListener
+
+extension FollowDetailInteractor: AddPlaceListener {
+    func addPlaceDidCancel() {
+        router?.detachAddPlace()
+    }
+
+    func addPlaceDidComplete(with place: PlaceSearchResult) {
+        router?.detachAddPlace()
+        // 일정에 장소 추가하는 로직은 추후 구현
     }
 }
 

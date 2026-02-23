@@ -37,7 +37,8 @@ final class AppComponent: Component<EmptyDependency>, RootDependency {
     private var placeRepository: PlaceRepositoryInterface {
         shared {
             let service = makePlaceService()
-            return PlaceRepository(service: service)
+            let googlePlacesService = makeGooglePlacesService()
+            return PlaceRepository(service: service, googlePlacesService: googlePlacesService)
         }
     }
     
