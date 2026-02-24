@@ -79,7 +79,7 @@ public final class UserTravelRepository: UserTravelRepositoryInterface {
         do {
             let items = places.enumerated().map { index, place in
                 ReplaceItineraryItemRequest(
-                    placeId: place.id,
+                    googlePlaceId: place.place.googlePlaceId,
                     day: place.day,
                     sequence: index + 1,
                     startTime: nil,

@@ -53,7 +53,7 @@ public struct ReplaceItineraryRequest: Encodable, Sendable {
 }
 
 public struct ReplaceItineraryItemRequest: Encodable, Sendable {
-    public let placeId: Int
+    public let googlePlaceId: String
     public let day: Int
     public let sequence: Int
     public let startTime: String?
@@ -61,14 +61,14 @@ public struct ReplaceItineraryItemRequest: Encodable, Sendable {
     public let travelerTip: String?
 
     public init(
-        placeId: Int,
+        googlePlaceId: String,
         day: Int,
         sequence: Int,
         startTime: String? = nil,
         estimatedDuration: Int? = nil,
         travelerTip: String? = nil
     ) {
-        self.placeId = placeId
+        self.googlePlaceId = googlePlaceId
         self.day = day
         self.sequence = sequence
         self.startTime = startTime
