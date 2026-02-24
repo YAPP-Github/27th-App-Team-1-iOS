@@ -84,7 +84,7 @@ public final class UserTravelRepository: UserTravelRepositoryInterface {
                     sequence: index + 1,
                     startTime: nil,
                     estimatedDuration: place.estimatedDuration,
-                    travelerTip: nil
+                    memo: nil
                 )
             }
             try await service.replaceItinerary(
