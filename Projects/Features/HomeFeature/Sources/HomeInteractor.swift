@@ -28,7 +28,7 @@ public protocol HomeRouting: ViewableRouting {
 // MARK: - HomePresentable
 protocol HomePresentable: Presentable {
     var listener: HomePresentableListener? { get set }
-    
+
     func update(with sections: [HomeSectionModel])
     func setLoading(_ isLoading: Bool)
     func showErrorView(_ isError: Bool)
@@ -150,6 +150,26 @@ final class HomeInteractor: PresentableInteractor<HomePresentable>, HomeInteract
         }
     }
 
+    private func refreshBanner() {
+        Task { [weak self] in
+            guard let self else { return }
+            do {
+                let tripInfo = try await self.usecase.fetchMyTripInfo()
+                let banner = tripInfo.toPresention()
+                guard let model = self.homeDataRelay.value else { return }
+                let updated = HomePresentationModel(
+                    banner: banner,
+                    category: model.category,
+                    popularTrip: model.popularTrip,
+                    recommendedTrip: model.recommendedTrip
+                )
+                self.homeDataRelay.accept(updated)
+            } catch {
+                // 여행 없으면 empty 유지
+            }
+        }
+    }
+
     private func fetchPopularTrips(categoryId: Int) {
         Task { [weak self] in
             guard let self else { return }
@@ -179,6 +199,11 @@ extension HomeInteractor: HomePresentableListener {
     func viewDidLoad() {
         setupStream()
         fetchHomeData()
+    }
+
+    func viewWillAppear() {
+        guard homeDataRelay.value != nil else { return }
+        refreshBanner()
     }
 
     func reloadBtnTapped() {

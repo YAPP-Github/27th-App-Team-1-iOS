@@ -169,11 +169,11 @@ private extension PopularTravelViewController {
         
         dataSource = UICollectionViewDiffableDataSource(collectionView: collectionView) { collectionView, indexPath, item in
             switch item {
-            case .category(let category):
+            case .category(let category, let isSelected):
                 return collectionView.dequeueConfiguredReusableCell(
                     using: categoryRegistration,
                     for: indexPath,
-                    item: category
+                    item: (category, isSelected)
                 )
             case .popularTrip(let tripList):
                 return collectionView.dequeueConfiguredReusableCell(

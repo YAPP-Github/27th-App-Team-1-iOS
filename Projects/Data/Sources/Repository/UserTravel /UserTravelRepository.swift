@@ -49,4 +49,50 @@ public final class UserTravelRepository: UserTravelRepositoryInterface {
             throw error.toNDGLError()
         }
     }
+
+    public func fetchUserTravelDetail(id: Int) async throws -> TravelDetail {
+        do {
+            return try await service.getContentCard(id: id).toDomain()
+        } catch {
+            throw error.toNDGLError()
+        }
+    }
+
+    public func fetchItinerary(travelId: Int, day: Int) async throws -> [TravelPlace] {
+        do {
+            return try await service.getItinerary(travelId: travelId, day: day).toDomain()
+        } catch {
+            throw error.toNDGLError()
+        }
+    }
+
+    public func addItinerary(travelId: Int, googlePlaceId: String, day: Int, sequence: Int) async throws {
+        do {
+            let request = AddItineraryRequest(googlePlaceId: googlePlaceId, day: day, sequence: sequence)
+            try await service.addItinerary(travelId: travelId, request: request)
+        } catch {
+            throw error.toNDGLError()
+        }
+    }
+
+    public func replaceItinerary(travelId: Int, places: [TravelPlace]) async throws {
+        do {
+            let items = places.enumerated().map { index, place in
+                ReplaceItineraryItemRequest(
+                    googlePlaceId: place.place.googlePlaceId,
+                    day: place.day,
+                    sequence: index + 1,
+                    startTime: nil,
+                    estimatedDuration: place.estimatedDuration,
+                    travelerTip: nil
+                )
+            }
+            try await service.replaceItinerary(
+                travelId: travelId,
+                request: ReplaceItineraryRequest(itineraries: items)
+            )
+        } catch {
+            throw error.toNDGLError()
+        }
+    }
 }
