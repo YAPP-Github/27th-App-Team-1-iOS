@@ -34,11 +34,13 @@ public struct AddItineraryRequest: Encodable, Sendable {
     public let googlePlaceId: String
     public let day: Int
     public let sequence: Int
+    public let memo: String?
 
-    public init(googlePlaceId: String, day: Int, sequence: Int) {
+    public init(googlePlaceId: String, day: Int, sequence: Int, memo: String? = nil) {
         self.googlePlaceId = googlePlaceId
         self.day = day
         self.sequence = sequence
+        self.memo = memo
     }
 }
 
@@ -58,7 +60,7 @@ public struct ReplaceItineraryItemRequest: Encodable, Sendable {
     public let sequence: Int
     public let startTime: String?
     public let estimatedDuration: Int?
-    public let travelerTip: String?
+    public let memo: String?
 
     public init(
         googlePlaceId: String,
@@ -66,14 +68,14 @@ public struct ReplaceItineraryItemRequest: Encodable, Sendable {
         sequence: Int,
         startTime: String? = nil,
         estimatedDuration: Int? = nil,
-        travelerTip: String? = nil
+        memo: String? = nil
     ) {
         self.googlePlaceId = googlePlaceId
         self.day = day
         self.sequence = sequence
         self.startTime = startTime
         self.estimatedDuration = estimatedDuration
-        self.travelerTip = travelerTip
+        self.memo = memo
     }
 }
 
@@ -89,7 +91,8 @@ public struct UserTravelPlaceResponse: Decodable, Sendable {
     public let sequence: Int
     public let distanceKm: Double?
     public let transportation: [TransportationResponse]?
-    public let travelerTips: [String]?
+    public let travelerTips: [String]?  // 구버전 호환
+    public let memo: String?            // 신버전
     public let planB: [PlanBResponse]?
     public let estimatedDuration: Int?
     public let place: PlaceResponse?

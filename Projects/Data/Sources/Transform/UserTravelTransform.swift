@@ -85,7 +85,7 @@ extension UserTravelPlaceResponse {
             sequence: sequence,
             distanceKm: distanceKm,
             transportation: transportation?.map { $0.toDomain() } ?? [],
-            youtubeTips: travelerTips ?? [],
+            youtubeTips: memo.map { [$0] } ?? travelerTips ?? [],
             planB: planB?.map { $0.toDomain() } ?? [],
             estimatedDuration: estimatedDuration,
             place: place.toDomain()
