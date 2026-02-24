@@ -43,7 +43,7 @@ extension UpcomingResponse {
                 placeName: place.place.name,
                 thumbnailUrl: place.place.thumbnail ?? "",
                 transport: place.place.category,
-                estimatedDuration: place.estimatedDuration,
+                estimatedDuration: place.estimatedDuration ?? 0,
                 latitude: place.place.latitude,
                 longitude: place.place.longitude
             )
