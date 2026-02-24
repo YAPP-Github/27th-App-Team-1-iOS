@@ -8,12 +8,13 @@
 
 import UIKit
 
+import Core
 import DSKit
 
 import RIBs
 
 protocol MainPresentableListener: AnyObject {
-    
+    func viewDidLoad()
 }
 
 final class MainViewController: UINavigationController, MainPresentable, MainViewControllable {
@@ -30,6 +31,7 @@ final class MainViewController: UINavigationController, MainPresentable, MainVie
         
         setStyle()
         setupDelegate()
+        listener?.viewDidLoad()        
     }
     
     func setViewControllers(_ viewControllables: [ViewControllable]) {
@@ -47,6 +49,18 @@ final class MainViewController: UINavigationController, MainPresentable, MainVie
     
     func containsInStack(_ viewControllable: ViewControllable) -> Bool {
         self.viewControllers.contains(viewControllable.uiviewController)
+    }
+    
+    func showServiceNoticeModal() {
+        let noticeVC = ServiceNoticeViewController()
+        noticeVC.modalPresentationStyle = .overFullScreen
+        noticeVC.modalTransitionStyle = .crossDissolve
+        
+        noticeVC.termsHandler = {
+            URLHelper.openURL("https://repeated-tapir-33f.notion.site/2c8cbdc5a3838070a8d8ccdcd0631c9a?source=copy_link")
+        }
+        
+        self.present(noticeVC, animated: true)
     }
 }
 

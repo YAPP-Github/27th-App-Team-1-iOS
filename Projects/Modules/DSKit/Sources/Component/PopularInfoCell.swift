@@ -118,9 +118,8 @@ private extension PopularInfoCell {
     func setLayout() {
         thumbnailView.snp.makeConstraints {
             $0.width.equalTo(140.adjusted)
-            $0.height.equalTo(thumbnailView.snp.width).multipliedBy(88.0 / 140.0)
+            $0.height.equalTo(88.adjustedH).priority(.high)
             $0.leading.top.equalToSuperview()
-            $0.bottom.lessThanOrEqualToSuperview()
         }
         
         nationStackView.snp.makeConstraints {

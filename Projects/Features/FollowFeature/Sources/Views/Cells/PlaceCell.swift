@@ -20,6 +20,10 @@ final class PlaceCell: UICollectionViewCell {
     // MARK: - Properties
 
     var onContainerTapped: (() -> Void)?
+    var onDragHandlePan: ((UIPanGestureRecognizer) -> Void)?
+
+    private var isChecked: Bool = false
+    private var containerTrailingConstraint: Constraint?
 
     // MARK: - UI Components
 
@@ -30,6 +34,30 @@ final class PlaceCell: UICollectionViewCell {
     }
 
     private let sequenceLabel = UILabel()
+
+    // 체크박스 (편집 모드)
+    private let checkboxView = UIView().then {
+        $0.layer.borderWidth = 1.5
+        $0.layer.borderColor = UIColor(hexCode: "#28A745").cgColor
+        $0.layer.cornerRadius = 4
+        $0.backgroundColor = .clear
+        $0.isHidden = true
+    }
+
+    private let checkmarkImageView = UIImageView().then {
+        $0.image = UIImage(systemName: "checkmark")
+        $0.tintColor = .white
+        $0.contentMode = .scaleAspectFit
+        $0.isHidden = true
+    }
+
+    // 드래그 핸들 (편집 모드)
+    private let dragHandleImageView = UIImageView().then {
+        $0.image = UIImage(systemName: "line.3.horizontal")
+        $0.tintColor = UIColor(hexCode: "#BDBDBD")
+        $0.contentMode = .scaleAspectFit
+        $0.isHidden = true
+    }
 
     // 메인 컨테이너
     private let containerView = UIView().then {
@@ -87,6 +115,8 @@ final class PlaceCell: UICollectionViewCell {
         thumbnailImageView.image = nil
         travelTimeContainerView.isHidden = false
         onContainerTapped = nil
+        onDragHandlePan = nil
+        setEditMode(false)
     }
 
     // MARK: - Gestures
@@ -95,10 +125,23 @@ final class PlaceCell: UICollectionViewCell {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(containerViewTapped))
         containerView.addGestureRecognizer(tapGesture)
         containerView.isUserInteractionEnabled = true
+
+        // 체크박스 자체를 눌러도 동일하게 동작
+        let checkboxTapGesture = UITapGestureRecognizer(target: self, action: #selector(containerViewTapped))
+        checkboxView.addGestureRecognizer(checkboxTapGesture)
+        checkboxView.isUserInteractionEnabled = true
+
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handleDragHandlePan(_:)))
+        dragHandleImageView.addGestureRecognizer(panGesture)
+        dragHandleImageView.isUserInteractionEnabled = true
     }
 
     @objc private func containerViewTapped() {
         onContainerTapped?()
+    }
+
+    @objc private func handleDragHandlePan(_ gesture: UIPanGestureRecognizer) {
+        onDragHandlePan?(gesture)
     }
 
     // MARK: - Setup
@@ -107,6 +150,13 @@ final class PlaceCell: UICollectionViewCell {
         // 순서 뷰
         contentView.addSubview(sequenceView)
         sequenceView.addSubview(sequenceLabel)
+
+        // 체크박스 (편집 모드)
+        contentView.addSubview(checkboxView)
+        checkboxView.addSubview(checkmarkImageView)
+
+        // 드래그 핸들 (편집 모드)
+        contentView.addSubview(dragHandleImageView)
 
         // 메인 컨테이너
         contentView.addSubview(containerView)
@@ -124,13 +174,6 @@ final class PlaceCell: UICollectionViewCell {
     }
 
     private func setupConstraints() {
-        // 메인 컨테이너
-        containerView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(7.5)
-            $0.trailing.equalToSuperview()
-            $0.height.equalTo(84)
-        }
-
         // 순서 뷰 (왼쪽, centerY를 container에 맞춤)
         sequenceView.snp.makeConstraints {
             $0.leading.equalToSuperview()
@@ -142,9 +185,31 @@ final class PlaceCell: UICollectionViewCell {
             $0.center.equalToSuperview()
         }
 
-        // 컨테이너 leading은 순서뷰 trailing에서 띄움
+        // 체크박스 (편집 모드, 순서 뷰와 동일 위치)
+        checkboxView.snp.makeConstraints {
+            $0.leading.equalToSuperview()
+            $0.centerY.equalTo(containerView)
+            $0.size.equalTo(20)
+        }
+
+        checkmarkImageView.snp.makeConstraints {
+            $0.center.equalToSuperview()
+            $0.size.equalTo(12)
+        }
+
+        // 드래그 핸들 (편집 모드, 오른쪽)
+        dragHandleImageView.snp.makeConstraints {
+            $0.trailing.equalToSuperview()
+            $0.centerY.equalTo(containerView)
+            $0.size.equalTo(20)
+        }
+
+        // 메인 컨테이너
         containerView.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(7.5)
             $0.leading.equalTo(sequenceView.snp.trailing).offset(8)
+            containerTrailingConstraint = $0.trailing.equalToSuperview().constraint
+            $0.height.equalTo(84)
         }
 
         // 체류 시간
@@ -183,6 +248,34 @@ final class PlaceCell: UICollectionViewCell {
             $0.leading.equalTo(travelTimeLabel.snp.trailing).offset(4)
             $0.centerY.equalToSuperview()
             $0.size.equalTo(16)
+        }
+    }
+
+    // MARK: - Edit Mode
+
+    func setEditMode(_ isEditing: Bool, isChecked: Bool = false) {
+        sequenceView.isHidden = isEditing
+        checkboxView.isHidden = !isEditing
+        dragHandleImageView.isHidden = !isEditing
+
+        if isEditing {
+            containerTrailingConstraint?.update(inset: 28)
+        } else {
+            containerTrailingConstraint?.update(inset: 0)
+        }
+
+        self.isChecked = isChecked
+        updateCheckboxAppearance()
+        setNeedsLayout()
+    }
+
+    private func updateCheckboxAppearance() {
+        if isChecked {
+            checkboxView.backgroundColor = UIColor(hexCode: "#28A745")
+            checkmarkImageView.isHidden = false
+        } else {
+            checkboxView.backgroundColor = .clear
+            checkmarkImageView.isHidden = true
         }
     }
 

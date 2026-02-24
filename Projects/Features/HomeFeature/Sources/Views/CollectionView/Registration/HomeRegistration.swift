@@ -47,7 +47,14 @@ extension HomeViewController {
     
     func createRecommedTripCellRegistration() -> UICollectionView.CellRegistration<RecommendInfoCell, HomePresentationModel.RecommendedTrip> {
         return UICollectionView.CellRegistration { cell, indexPath, item in
-            cell.configure(item)
+            cell.configure(
+                title: item.title,
+                thumbnailUrl: item.thumbnailUrl,
+                countryCode: item.country,
+                creator: item.creator,
+                city: item.city,
+                schedule: item.schedule
+            )
         }
     }
     

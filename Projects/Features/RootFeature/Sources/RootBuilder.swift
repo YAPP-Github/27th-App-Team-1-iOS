@@ -15,6 +15,7 @@ import RIBs
 
 public protocol RootDependency: Dependency {
     var homeUsecase: HomeUsecaseProtocol { get }
+    var myTravelUsecase: MyTravelUsecaseProtocol { get }
     var followDetailUsecase: FollowDetailUsecaseProtocol { get }
     var authRepository: AuthRepositoryInterface { get }
     var tokenRepository: TokenRepositoryProtocol { get }
@@ -39,6 +40,10 @@ final class RootComponent: Component<RootDependency>, MainDependency {
 
     var weatherRepository: WeatherRepositoryInterface {
         dependency.weatherRepository
+    }
+    
+    var myTravelUsecase: MyTravelUsecaseProtocol {
+        dependency.myTravelUsecase
     }
 }
 

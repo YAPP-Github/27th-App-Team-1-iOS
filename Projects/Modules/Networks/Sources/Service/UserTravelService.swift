@@ -12,7 +12,12 @@ import Moya
 
 public protocol UserTravelServiceProtocol {
     func createUserTravel(request: CreateUserTravelRequest) async throws -> CreateUserTravelResponse
+    func getContentCard(id: Int) async throws -> UserContentCardResponse
     func getUpcoming() async throws -> UpcomingResponse
+    func getUpcomingList(page: Int?, size: Int?) async throws -> UpcomingListResponse
+    func getItinerary(travelId: Int, day: Int) async throws -> UserTravelItineraryResponse
+    func addItinerary(travelId: Int, request: AddItineraryRequest) async throws
+    func replaceItinerary(travelId: Int, request: ReplaceItineraryRequest) async throws
 }
 
 public final class UserTravelService: UserTravelServiceProtocol {
@@ -26,7 +31,27 @@ public final class UserTravelService: UserTravelServiceProtocol {
         try await provider.asyncThowsRequest(.createUserTravel(request: request))
     }
     
+    public func getContentCard(id: Int) async throws -> UserContentCardResponse {
+        try await provider.asyncThowsRequest(.getContentCard(id: id))
+    }
+    
     public func getUpcoming() async throws -> UpcomingResponse {
         try await provider.asyncThowsRequest(.getUpcoming)
+    }
+    
+    public func getUpcomingList(page: Int?, size: Int?) async throws -> UpcomingListResponse {
+        try await provider.asyncThowsRequest(.getUpcomingList(page: page, size: size))
+    }
+
+    public func getItinerary(travelId: Int, day: Int) async throws -> UserTravelItineraryResponse {
+        try await provider.asyncThowsRequest(.getItinerary(id: travelId, day: day))
+    }
+
+    public func addItinerary(travelId: Int, request: AddItineraryRequest) async throws {
+        let _: BaseResponse<EmptyResponse> = try await provider.asyncThrowsRequestRaw(.addItinerary(id: travelId, request: request))
+    }
+
+    public func replaceItinerary(travelId: Int, request: ReplaceItineraryRequest) async throws {
+        let _: BaseResponse<EmptyResponse> = try await provider.asyncThrowsRequestRaw(.replaceItinerary(id: travelId, request: request))
     }
 }

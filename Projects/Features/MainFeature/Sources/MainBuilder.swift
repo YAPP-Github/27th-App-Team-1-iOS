@@ -20,9 +20,14 @@ public protocol MainDependency: Dependency {
     var followDetailUsecase: FollowDetailUsecaseProtocol { get }
     var templateSearchUsecase: TemplatesSearchUsecaseProtocol { get }
     var weatherRepository: WeatherRepositoryInterface { get }
+    var myTravelUsecase: MyTravelUsecaseProtocol { get }
 }
 
 final class MainComponent: Component<MainDependency>, FollowDetailDependency, PopularTravelDependency,SearchDependency, SettingDependency, TabBarDependency {
+    var myTravelUsecase: MyTravelUsecaseProtocol {
+        dependency.myTravelUsecase
+    }
+    
     var searchUsecase: TemplatesSearchUsecaseProtocol {
         dependency.templateSearchUsecase
     }

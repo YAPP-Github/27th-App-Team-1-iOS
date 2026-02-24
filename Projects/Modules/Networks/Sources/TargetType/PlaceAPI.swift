@@ -11,7 +11,7 @@ import Foundation
 import Moya
 
 public enum PlaceAPI {
-    case searchPlaces // 아직 적용x
+    case registerPlace(googlePlaceId: String)
     case getPlacePhotos(googlePlaceId: String)
     case getPlaceDetails(googlePlaceId: String)
 }
@@ -23,7 +23,7 @@ extension PlaceAPI: TargetType {
     
     public var path: String {
         switch self {
-        case .searchPlaces:
+        case .registerPlace:
             return "/api/v1/places"
         case .getPlacePhotos:
             return "/api/v1/places/photos"
@@ -34,7 +34,7 @@ extension PlaceAPI: TargetType {
     
     public var method: Moya.Method {
         switch self {
-        case .searchPlaces:
+        case .registerPlace:
             return .post
         case .getPlacePhotos, .getPlaceDetails:
             return .get
@@ -43,8 +43,10 @@ extension PlaceAPI: TargetType {
     
     public var task: Moya.Task {
         switch self {
-        case .searchPlaces:
-            return .requestPlain
+        case .registerPlace(let googlePlaceId):
+            let body = ["googlePlaceId": googlePlaceId]
+            let data = (try? JSONSerialization.data(withJSONObject: body)) ?? Data()
+            return .requestData(data)
         case .getPlacePhotos(let googlePlaceId), .getPlaceDetails(let googlePlaceId):
             return .requestParameters(
                 parameters:  ["googlePlaceId": googlePlaceId],

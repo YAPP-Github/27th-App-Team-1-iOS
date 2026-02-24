@@ -42,11 +42,14 @@ final class PopularTravelInteractor: PresentableInteractor<PopularTravelPresenta
     weak var listener: PopularTravelListener?
 
     private var fetchDataTask: Task<Void, Never>?
+    private var fetchTripsTask: Task<Void, Never>?
     private let usecase: HomeUsecaseProtocol
     private let disposeBag = DisposeBag()
-    
-    private let popularTravelDataRelay = BehaviorRelay<PopularTravelPresentationModel?>(value: nil)
+
+    private let categoriesRelay = BehaviorRelay<[PopularTravelPresentationModel.Category]>(value: [])
+    private let popularTripsRelay = BehaviorRelay<[PopularTravelPresentationModel.PopularTrip]>(value: [])
     private let selectedCategoryRelay = BehaviorRelay<Int?>(value: nil)
+    private let isLoadingRelay = BehaviorRelay<Bool>(value: true)
     
     init(presenter: PopularTravelPresentable, usecase: HomeUsecaseProtocol) {
         self.usecase = usecase
@@ -63,31 +66,33 @@ final class PopularTravelInteractor: PresentableInteractor<PopularTravelPresenta
 
     override func willResignActive() {
         super.willResignActive()
-        
+
         fetchDataTask?.cancel()
         fetchDataTask = nil
+        fetchTripsTask?.cancel()
+        fetchTripsTask = nil
     }
-    
+
     private func setupStream() {
         Observable.combineLatest(
-            popularTravelDataRelay.compactMap { $0 },
+            categoriesRelay,
+            popularTripsRelay,
             selectedCategoryRelay
         )
-        .map { model, selectedId -> [PopularTravelSectionModel] in
+        .map { categories, popularTrips, selectedId -> [PopularTravelSectionModel] in
             return [
-                .init(section: .category, items: model.category.map {
+                .init(section: .category, items: categories.map {
                     .category($0, isSelected: $0.id == selectedId)
                 }),
-                .init(section: .popularTrip, items: model.popularTrip.map { .popularTrip($0) })
+                .init(section: .popularTrip, items: popularTrips.map { .popularTrip($0) })
             ]
         }
         .subscribe(with: self) { owner, sections in
             owner.presenter.update(with: sections)
         }
         .disposed(by: disposeBag)
-        
-        popularTravelDataRelay
-            .map { $0 == nil }
+
+        isLoadingRelay
             .subscribe(with: self) { owner, isLoading in
                 owner.presenter.setLoading(isLoading)
             }
@@ -96,33 +101,47 @@ final class PopularTravelInteractor: PresentableInteractor<PopularTravelPresenta
 
     private func fetchData() {
         fetchDataTask?.cancel()
-        
-        presenter.setLoading(true)
+
+        isLoadingRelay.accept(true)
         presenter.showErrorView(false)
-        
+
         fetchDataTask = Task { [weak self] in
             guard let self, !Task.isCancelled else { return }
-            
+
             do {
                 async let categories = self.usecase.fetchCategoryList().map { $0.toPopularTravelModel() }
                 async let populars = self.usecase.fetchPopularTripList().map { $0.toPopularTravelModel() }
-                
-                let model = try await PopularTravelPresentationModel(
-                    category: categories,
-                    popularTrip: populars
-                )
-                
+
+                let (cats, trips) = try await (categories, populars)
+
                 guard !Task.isCancelled else { return }
-                
-                if self.selectedCategoryRelay.value == nil, let firstId = model.category.first?.id {
+
+                if self.selectedCategoryRelay.value == nil, let firstId = cats.first?.id {
                     self.selectedCategoryRelay.accept(firstId)
                 }
-                
-                popularTravelDataRelay.accept(model)
-                presenter.setLoading(false)
-            } catch let error {
-                presenter.setLoading(false)
-                presenter.showErrorView(true)
+
+                self.categoriesRelay.accept(cats)
+                self.popularTripsRelay.accept(trips)
+                self.isLoadingRelay.accept(false)
+            } catch {
+                self.isLoadingRelay.accept(false)
+                self.presenter.showErrorView(true)
+            }
+        }
+    }
+
+    private func fetchPopularTrips(categoryId: Int) {
+        fetchTripsTask?.cancel()
+
+        fetchTripsTask = Task { [weak self] in
+            guard let self, !Task.isCancelled else { return }
+
+            do {
+                let trips = try await self.usecase.fetchPopularTripList(id: categoryId).map { $0.toPopularTravelModel() }
+                guard !Task.isCancelled else { return }
+                self.popularTripsRelay.accept(trips)
+            } catch {
+                // 카테고리 필터 실패 시 기존 목록 유지
             }
         }
     }
@@ -141,6 +160,7 @@ extension PopularTravelInteractor: PopularTravelPresentableListener {
         switch item {
         case .category(let category, _):
             selectedCategoryRelay.accept(category.id)
+            fetchPopularTrips(categoryId: category.id)
         case .popularTrip(let trip):
             listener?.popularTravelDidTapFollowDetail(with: trip.id)
         }

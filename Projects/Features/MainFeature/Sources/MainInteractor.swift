@@ -8,11 +8,14 @@
 
 import Foundation
 
+import Core
+
 import RIBs
 import RxSwift
 
 public protocol MainRouting: ViewableRouting {
     func attachFollow(with recommendationId: Int)
+    func attachMyTravelDetail(with userTravelId: Int)
     func detachFollow()
     func attachPopularTravel()
     func detachPopularTravel()
@@ -26,6 +29,8 @@ public protocol MainRouting: ViewableRouting {
 
 protocol MainPresentable: Presentable {
     var listener: MainPresentableListener? { get set }
+    
+    func showServiceNoticeModal()
 }
 
 public protocol MainListener: AnyObject { }
@@ -47,6 +52,16 @@ final class MainInteractor: PresentableInteractor<MainPresentable>, MainInteract
 
     override func willResignActive() {
         super.willResignActive()
+    }
+    
+    func viewDidLoad() {
+        checkFirstOpenStatus()
+    }
+    
+    private func checkFirstOpenStatus() {
+        if UserManager.shared.isFirstOpenApp() {
+            presenter.showServiceNoticeModal()
+        }
     }
     
     func detachFollowDetail() {
@@ -84,6 +99,10 @@ final class MainInteractor: PresentableInteractor<MainPresentable>, MainInteract
     
     func routeToFollow(with recommendationId: Int) {
         router?.attachFollow(with: recommendationId)
+    }
+
+    func routeToMyTravelDetail(with userTravelId: Int) {
+        router?.attachMyTravelDetail(with: userTravelId)
     }
     
     func routeToSetting() {

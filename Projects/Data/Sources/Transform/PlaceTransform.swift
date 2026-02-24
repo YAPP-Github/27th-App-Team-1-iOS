@@ -54,3 +54,16 @@ extension PlacePhotoResponse {
         )
     }
 }
+
+extension GooglePlaceItem {
+    func toDomain() -> PlaceSearchResult? {
+        guard let location = location else { return nil }
+        return PlaceSearchResult(
+            googlePlaceId: id,
+            name: displayName?.text ?? "",
+            address: formattedAddress ?? "",
+            latitude: location.latitude,
+            longitude: location.longitude
+        )
+    }
+}

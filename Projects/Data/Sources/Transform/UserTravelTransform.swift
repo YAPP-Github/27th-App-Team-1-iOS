@@ -12,6 +12,27 @@ import Domain
 import Networks
 
 
+extension UserContentCardResponse {
+    func toDomain() -> TravelDetail {
+        TravelDetail(
+            travelId: userTravelId,
+            country: country,
+            city: city,
+            budgetPerPerson: 0,
+            nights: nights,
+            days: days,
+            youtube: YouTubeInfo(
+                title: title,
+                youtuber: "",
+                thumbnail: nil,
+                profileImage: nil,
+                link: nil,
+                summary: ""
+            )
+        )
+    }
+}
+
 extension UpcomingResponse {
     func toDomain() -> MyTripSummary {
         let schedule: Schedule?
@@ -49,11 +70,45 @@ extension CreateUserTravelResponse {
     }
 }
 
-extension String {
-    func toDate() -> Date? {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.dateFormat = "yyyy-MM-dd"
-        return formatter.date(from: self)
+extension UserTravelItineraryResponse {
+    func toDomain() -> [TravelPlace] {
+        itineraries.compactMap { $0.toDomain() }
+    }
+}
+
+extension UserTravelPlaceResponse {
+    func toDomain() -> TravelPlace? {
+        guard let place else { return nil }
+        return TravelPlace(
+            id: id,
+            day: day,
+            sequence: sequence,
+            distanceKm: distanceKm,
+            transportation: transportation?.map { $0.toDomain() } ?? [],
+            youtubeTips: travelerTips ?? [],
+            planB: planB?.map { $0.toDomain() } ?? [],
+            estimatedDuration: estimatedDuration,
+            place: place.toDomain()
+        )
+    }
+}
+
+extension UpcomingListResponse {
+    func toDomain() -> [UpcomingInfo] {
+        self.content.map {
+            .init(
+                id: $0.id,
+                title: $0.title,
+                country: $0.country,
+                city: $0.city,
+                startDate: $0.startDate.toDate() ?? .now,
+                endDate: $0.endDate.toDate() ?? .now,
+                nights: $0.nights,
+                days: $0.days,
+                templateId: $0.templateId,
+                thumbnail: $0.thumbnail,
+                profileImage: $0.profileImage
+            )
+        }
     }
 }

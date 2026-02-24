@@ -11,6 +11,7 @@ import HomeFeature
 import RIBs
 import RxSwift
 import TravelToolFeature
+import MyTravelFeature
 
 // MARK: - TabBarRouting
 
@@ -31,6 +32,7 @@ protocol TabBarPresentable: Presentable {
 
 public protocol TabBarListener: AnyObject {
     func routeToFollow(with recommendationId: Int)
+    func routeToMyTravelDetail(with userTravelId: Int)
     func routeToSetting()
     func routeToSearch()
     func routeToPopularTravel()
@@ -39,7 +41,6 @@ public protocol TabBarListener: AnyObject {
 // MARK: - TabBarInteractor
 
 final class TabBarInteractor: PresentableInteractor<TabBarPresentable>, TabBarInteractable {
-
     weak var router: TabBarRouting?
     weak var listener: TabBarListener?
 
@@ -91,4 +92,22 @@ extension TabBarInteractor: HomeListener {
 // MARK: - TravelToolListener
 
 extension TabBarInteractor: TravelToolListener {
+}
+
+extension TabBarInteractor: MyTravelListener {
+    func myTraveDidTapFollowDetail(with recommendationId: Int) {
+        listener?.routeToFollow(with: recommendationId)
+    }
+
+    func myTraveDidTapMyTravelDetail(with userTravelId: Int) {
+        listener?.routeToMyTravelDetail(with: userTravelId)
+    }
+
+    func myTraveDidTapSearch() {
+        listener?.routeToSearch()
+    }
+
+    func myTraveDidTapPopularTravel() {
+        listener?.routeToPopularTravel()
+    }
 }

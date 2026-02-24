@@ -20,6 +20,12 @@ final class PlaceListCollectionView: UICollectionView {
     weak var placeDelegate: PlaceListCollectionViewDelegate?
     private var diffableDataSource: UICollectionViewDiffableDataSource<Int, TravelPlace>?
     private var places: [TravelPlace] = []
+    private var isEditMode: Bool = false
+    private var selectedIds: Set<Int> = []
+
+    var isAllSelected: Bool {
+        !places.isEmpty && selectedIds.count == places.count
+    }
 
     // MARK: - Initialization
 
@@ -50,25 +56,106 @@ final class PlaceListCollectionView: UICollectionView {
         diffableDataSource = UICollectionViewDiffableDataSource<Int, TravelPlace>(
             collectionView: self
         ) { [weak self] collectionView, indexPath, place in
-            guard let self = self,
+            guard let self,
                   let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: PlaceCell.identifier,
-                for: indexPath
-            ) as? PlaceCell else {
+                    withReuseIdentifier: PlaceCell.identifier,
+                    for: indexPath
+                  ) as? PlaceCell else {
                 return UICollectionViewCell()
             }
 
-            let isLast = indexPath.item == (self.places.count) - 1
+            let isLast = indexPath.item == self.places.count - 1
             cell.configure(with: place, isLast: isLast)
-            cell.onContainerTapped = { [weak self] in
-                guard let self = self else { return }
-                self.placeDelegate?.placeListCollectionView(self, didSelectPlace: place)
+            cell.setEditMode(self.isEditMode, isChecked: self.selectedIds.contains(place.id))
+
+            cell.onContainerTapped = { [weak self, weak cell] in
+                guard let self else { return }
+                if self.isEditMode {
+                    // 체크박스 토글
+                    let isNowSelected = !self.selectedIds.contains(place.id)
+                    if isNowSelected {
+                        self.selectedIds.insert(place.id)
+                    } else {
+                        self.selectedIds.remove(place.id)
+                    }
+                    cell?.setEditMode(true, isChecked: isNowSelected)
+                } else {
+                    self.placeDelegate?.placeListCollectionView(self, didSelectPlace: place)
+                }
             }
+
+            cell.onDragHandlePan = { [weak self, weak cell] gesture in
+                guard let self, let cell else { return }
+                let location = gesture.location(in: self)
+                switch gesture.state {
+                case .began:
+                    if let ip = self.indexPath(for: cell) {
+                        self.beginInteractiveMovementForItem(at: ip)
+                    }
+                case .changed:
+                    self.updateInteractiveMovementTargetPosition(location)
+                case .ended:
+                    self.endInteractiveMovement()
+                default:
+                    self.cancelInteractiveMovement()
+                }
+            }
+
             return cell
+        }
+
+        // 재정렬 핸들러 (iOS 14+)
+        diffableDataSource?.reorderingHandlers.canReorderItem = { [weak self] _ in
+            return self?.isEditMode ?? false
+        }
+        diffableDataSource?.reorderingHandlers.didReorder = { [weak self] transaction in
+            self?.places = transaction.finalSnapshot.itemIdentifiers(inSection: 0)
         }
     }
 
     // MARK: - Public Methods
+
+    func setEditMode(_ isEditing: Bool) {
+        isEditMode = isEditing
+        if !isEditing {
+            selectedIds.removeAll()
+        }
+        for cell in visibleCells.compactMap({ $0 as? PlaceCell }) {
+            if let indexPath = indexPath(for: cell) {
+                let place = places[indexPath.item]
+                cell.setEditMode(isEditing, isChecked: isEditing && selectedIds.contains(place.id))
+            }
+        }
+    }
+
+    /// 전체 선택/해제 토글. 전체 선택 상태가 되면 true 반환.
+    func toggleSelectAll() -> Bool {
+        if isAllSelected {
+            selectedIds.removeAll()
+        } else {
+            selectedIds = Set(places.map { $0.id })
+        }
+        for cell in visibleCells.compactMap({ $0 as? PlaceCell }) {
+            if let indexPath = indexPath(for: cell) {
+                let place = places[indexPath.item]
+                cell.setEditMode(true, isChecked: selectedIds.contains(place.id))
+            }
+        }
+        return isAllSelected
+    }
+
+    /// 현재 표시 중인 장소 목록 (드래그 재정렬 이후 순서 반영)
+    var currentPlaces: [TravelPlace] {
+        places
+    }
+
+    /// 선택된 장소를 삭제하고 남은 목록을 반환
+    func deleteSelected() -> [TravelPlace] {
+        let remaining = places.filter { !selectedIds.contains($0.id) }
+        selectedIds.removeAll()
+        applySnapshot(places: remaining)
+        return remaining
+    }
 
     func applySnapshot(places: [TravelPlace]) {
         self.places = places

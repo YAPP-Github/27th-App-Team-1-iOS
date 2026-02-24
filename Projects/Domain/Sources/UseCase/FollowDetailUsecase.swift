@@ -11,9 +11,15 @@ import Foundation
 public protocol FollowDetailUsecaseProtocol {
     func fetchTravelDetail(id: Int) async throws -> TravelDetail
     func fetchPlaces(travelId: Int, day: Int) async throws -> [TravelPlace]
+    func fetchMyTravelDetail(id: Int) async throws -> TravelDetail
+    func fetchMyTravelPlaces(travelId: Int, day: Int) async throws -> [TravelPlace]
     func createUserTravel(request: CreateTravelRequest) async throws -> CreateTravelResponse
     func fetchPlaceDetail(googlePlaceId: String) async throws -> PlaceDetail
     func fetchPlacePhotos(googlePlaceId: String) async throws -> [PlacePhoto]
+    func searchPlaces(keyword: String) async throws -> [PlaceSearchResult]
+    func registerPlace(googlePlaceId: String) async throws
+    func addItinerary(travelId: Int, googlePlaceId: String, day: Int, sequence: Int) async throws
+    func replaceItinerary(travelId: Int, places: [TravelPlace]) async throws
 }
 
 public final class FollowDetailUsecase {
@@ -40,6 +46,14 @@ extension FollowDetailUsecase: FollowDetailUsecaseProtocol {
     public func fetchPlaces(travelId: Int, day: Int) async throws -> [TravelPlace] {
         try await travelTemplateRepository.fetchPlaces(travelId: travelId, day: day)
     }
+
+    public func fetchMyTravelDetail(id: Int) async throws -> TravelDetail {
+        try await userTravelRepository.fetchUserTravelDetail(id: id)
+    }
+
+    public func fetchMyTravelPlaces(travelId: Int, day: Int) async throws -> [TravelPlace] {
+        try await userTravelRepository.fetchItinerary(travelId: travelId, day: day)
+    }
     
     public func createUserTravel(request: CreateTravelRequest) async throws -> CreateTravelResponse {
         try await userTravelRepository.createUserTravel(request: request)
@@ -51,5 +65,21 @@ extension FollowDetailUsecase: FollowDetailUsecaseProtocol {
     
     public func fetchPlacePhotos(googlePlaceId: String) async throws -> [PlacePhoto] {
         try await placeRepository.fetchPlacePhotos(googlePlaceId: googlePlaceId)
+    }
+
+    public func searchPlaces(keyword: String) async throws -> [PlaceSearchResult] {
+        try await placeRepository.searchPlaces(keyword: keyword)
+    }
+
+    public func registerPlace(googlePlaceId: String) async throws {
+        try await placeRepository.registerPlace(googlePlaceId: googlePlaceId)
+    }
+
+    public func addItinerary(travelId: Int, googlePlaceId: String, day: Int, sequence: Int) async throws {
+        try await userTravelRepository.addItinerary(travelId: travelId, googlePlaceId: googlePlaceId, day: day, sequence: sequence)
+    }
+
+    public func replaceItinerary(travelId: Int, places: [TravelPlace]) async throws {
+        try await userTravelRepository.replaceItinerary(travelId: travelId, places: places)
     }
 }

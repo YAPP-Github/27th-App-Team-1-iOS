@@ -23,6 +23,7 @@ protocol HomePresentableListener: AnyObject {
     func itemSelected(item: HomeItem)
     func moreBtnTapped()
     func reloadBtnTapped()
+    func viewDidLoad()
     func viewWillAppear()
 }
 
@@ -58,6 +59,7 @@ final class HomeViewController: UIViewController, HomeViewControllable {
         setCollectionView()
         setDataSource()
         bindInteractor()
+        listener?.viewDidLoad()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -211,11 +213,11 @@ private extension HomeViewController {
                     for: indexPath,
                     item: banner
                 )
-            case .category(let category):
+            case .category(let category, let isSelected):
                 return collectionView.dequeueConfiguredReusableCell(
                     using: categoryRegistration,
                     for: indexPath,
-                    item: category
+                    item: (category, isSelected)
                 )
             case .popularTrip(let tripList):
                 return collectionView.dequeueConfiguredReusableCell(
@@ -239,7 +241,7 @@ private extension HomeViewController {
         let headerRegistration = createHeaderRegistration()
         let popularFooterRegistration = createPopularFooterRegistration()
         
-        dataSource?.supplementaryViewProvider = { collectionView, kind, indexPath in
+        dataSource.supplementaryViewProvider = { collectionView, kind, indexPath in
             guard HomeSectionKind(rawValue: indexPath.section) != nil else {
                 return UICollectionReusableView()
             }

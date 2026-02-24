@@ -37,7 +37,8 @@ final class AppComponent: Component<EmptyDependency>, RootDependency {
     private var placeRepository: PlaceRepositoryInterface {
         shared {
             let service = makePlaceService()
-            return PlaceRepository(service: service)
+            let googlePlacesService = makeGooglePlacesService()
+            return PlaceRepository(service: service, googlePlacesService: googlePlacesService)
         }
     }
     
@@ -71,6 +72,15 @@ final class AppComponent: Component<EmptyDependency>, RootDependency {
     var templateSearchUsecase: TemplatesSearchUsecaseProtocol {
         shared {
             TemplatesSearchUsecase(travelTemplateRepository: travelTemplateRepository)
+        }
+    }
+    
+    var myTravelUsecase: MyTravelUsecaseProtocol {
+        shared {
+            MyTravelUsecase(
+                travelTemplateRepository: travelTemplateRepository,
+                userTravelRepository: userTravelRepository
+            )
         }
     }
 
