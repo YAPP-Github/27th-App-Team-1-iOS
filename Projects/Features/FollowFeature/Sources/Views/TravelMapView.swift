@@ -21,8 +21,10 @@ final class TravelMapView: UIView {
     private let mapView = MKMapView().then {
         $0.layer.cornerRadius = 12
         $0.clipsToBounds = true
-        $0.isScrollEnabled = false
-        $0.isZoomEnabled = false
+        $0.isScrollEnabled = true
+        $0.isZoomEnabled = true
+        $0.isPitchEnabled = false
+        $0.isRotateEnabled = false
     }
 
     // MARK: - Properties
@@ -89,15 +91,15 @@ final class TravelMapView: UIView {
             mapView.addOverlay(polyline)
         }
 
-        // 지도 영역 설정
-        if let firstCoordinate = coordinates.first {
-            let region = MKCoordinateRegion(
-                center: firstCoordinate,
-                latitudinalMeters: 10000,
-                longitudinalMeters: 10000
-            )
-            mapView.setRegion(region, animated: false)
-        }
+        // 전체 마커가 한눈에 들어오도록 자동 맞춤
+        let annotations = mapView.annotations.filter { !($0 is MKUserLocation) }
+        let edgePadding = UIEdgeInsets(top: 48, left: 48, bottom: 48, right: 48)
+        mapView.showAnnotations(annotations, animated: false)
+        mapView.setVisibleMapRect(
+            mapView.visibleMapRect,
+            edgePadding: edgePadding,
+            animated: false
+        )
     }
 }
 

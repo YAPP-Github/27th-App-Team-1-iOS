@@ -100,6 +100,7 @@ extension UpcomingListResponse {
                 id: $0.id,
                 title: $0.title,
                 country: $0.country,
+                countryName: $0.countryName,
                 city: $0.city,
                 startDate: $0.startDate.toDate() ?? .now,
                 endDate: $0.endDate.toDate() ?? .now,
