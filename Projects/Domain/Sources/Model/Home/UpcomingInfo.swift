@@ -12,6 +12,7 @@ public struct UpcomingInfo {
     public let id: Int
     public let title: String
     public let country: String
+    public let countryName: String?
     public let city: String
     public let startDate: Date
     public let endDate: Date
@@ -25,6 +26,7 @@ public struct UpcomingInfo {
         id: Int,
         title: String,
         country: String,
+        countryName: String? = nil,
         city: String,
         startDate: Date,
         endDate: Date,
@@ -37,6 +39,7 @@ public struct UpcomingInfo {
         self.id = id
         self.title = title
         self.country = country
+        self.countryName = countryName
         self.city = city
         self.startDate = startDate
         self.endDate = endDate

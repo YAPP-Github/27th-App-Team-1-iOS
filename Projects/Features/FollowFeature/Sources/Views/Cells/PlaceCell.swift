@@ -312,7 +312,7 @@ final class PlaceCell: UICollectionViewCell {
 
     func configure(with place: TravelPlace, isLast: Bool = false) {
         // 순서
-        sequenceLabel.setText(.bodySSB, text: "\(place.sequence - 1)", color: UIColor(hexCode: "#FFFFFF"))
+        sequenceLabel.setText(.bodySSB, text: "\(place.sequence)", color: UIColor(hexCode: "#FFFFFF"))
 
         // 체류 시간
         if let duration = place.estimatedDuration {

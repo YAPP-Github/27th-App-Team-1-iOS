@@ -17,6 +17,7 @@ public struct UpcomingContentResponse: Decodable {
     public let id: Int
     public let title: String
     public let country: String
+    public let countryName: String?
     public let city: String
     public let startDate: String
     public let endDate: String
