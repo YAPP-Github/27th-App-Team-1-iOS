@@ -23,7 +23,7 @@ public struct UpcomingResponse: Decodable {
 
 public struct UpcomingPlaceResponse: Decodable {
     public let id: Int
-    public let estimatedDuration: Int
+    public let estimatedDuration: Int?
     public let place: UpcomingPlaceDetailResponse
 }
 

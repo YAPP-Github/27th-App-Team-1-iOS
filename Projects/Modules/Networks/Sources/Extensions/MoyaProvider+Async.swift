@@ -133,6 +133,7 @@ extension MoyaProvider {
                             continuation.resume(throwing: NetworkError.noData)
                         }
                     } catch {
+                        NetworkLogger.logDecodingError(error, data: response.data)
                         continuation.resume(throwing: NetworkError.decodingFailed)
                     }
                 case .failure(let error):
