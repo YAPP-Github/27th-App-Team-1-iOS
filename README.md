@@ -1,6 +1,10 @@
 # NDGL-iOS
 
 <p align="center">
+  <img src="docs/images/00_thumbnail.jpg" width="800" alt="나도갈래 - 영상 속 여행을 내 일정으로!" />
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/Swift-5.0-orange.svg" />
   <img src="https://img.shields.io/badge/iOS-17.0+-blue.svg" />
   <img src="https://img.shields.io/badge/Tuist-4.x-purple.svg" />
@@ -9,7 +13,42 @@
 
 ## 📱 프로젝트 소개
 
-NDGL은 여행 콘텐츠를 따라가며 나만의 여행을 계획할 수 있는 iOS 앱입니다.
+NDGL(나도갈래)은 여행 콘텐츠를 따라가며 나만의 여행을 계획할 수 있는 iOS 앱입니다.
+
+<p align="center">
+  <img src="docs/images/01_intro.jpg" width="700" alt="이제 여행은 '검색'이 아니라 '시청'에서 시작돼요" />
+</p>
+
+> 이제 여행은 '검색'이 아니라 '시청'에서 시작돼요.
+> TV·영화·유튜브 속 여행지를 그대로 따라가는 여행, **나도갈래**에서 시작하세요.
+
+## ✨ 주요 기능
+
+### STEP 1~2 · 콘텐츠 고르고, 검증된 동선 그대로
+
+<p align="center">
+  <img src="docs/images/02_step12.jpg" width="700" alt="STEP 1~2 콘텐츠 선택과 검증된 동선" />
+</p>
+
+### STEP 3~4 · 내 취향대로 일정 커스텀 & 실전 정보
+
+<p align="center">
+  <img src="docs/images/03_step34.jpg" width="700" alt="STEP 3~4 일정 커스텀과 실전 정보" />
+</p>
+
+<p align="center">
+  <img src="docs/images/04_step34_alt.jpg" width="700" alt="STEP 3~4 상세 화면" />
+</p>
+
+### STEP 5~6 · 변수에도 강하게 & 여행 중 필수 정보
+
+<p align="center">
+  <img src="docs/images/05_step56.jpg" width="700" alt="STEP 5~6 Plan B와 여행 도구" />
+</p>
+
+<p align="center">
+  <img src="docs/images/06_outro.jpg" width="800" alt="따라가기 여행 지금 바로 시작하세요!" />
+</p>
 
 ## 🛠 기술 스택
 
